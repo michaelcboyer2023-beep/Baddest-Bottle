@@ -3649,8 +3649,8 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
 <script>
 (() => {
 // ========= CONFIG =========
@@ -3670,7 +3670,8 @@ const FIREBASE_CONFIG = {
   appId: "1:937684638424:web:9121ac74178ca9bb7d15ad",
   measurementId: "G-FTFWD6C0CM"
 };
-const FB_VER = "10.7.1";
+const FB_VER = "10.7.0";
+const FB_CDN = "https://cdnjs.cloudflare.com/ajax/libs/firebase/" + FB_VER;
 let firebaseAuth = null;
 let firebaseInitPromise = null;
 function initFirebaseAuth() {
@@ -3719,8 +3720,8 @@ function initFirebaseAuth() {
         s.onerror = () => rej(new Error("script"));
         (document.head || document.documentElement).appendChild(s);
       });
-    loadScript("https://www.gstatic.com/firebasejs/" + FB_VER + "/firebase-app-compat.min.js")
-      .then(() => loadScript("https://www.gstatic.com/firebasejs/" + FB_VER + "/firebase-auth-compat.min.js"))
+    loadScript(FB_CDN + "/firebase-app-compat.min.js")
+      .then(() => loadScript(FB_CDN + "/firebase-auth-compat.min.js"))
       .then(finish)
       .catch(() => resolve(null));
   });
