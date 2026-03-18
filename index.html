@@ -4649,6 +4649,8 @@ urls: [
 ]
 }
 };
+const EMBEDDED_TEMPLATE_MASK_SRC = (LABEL_TEMPLATE_OPTIONS.fullWrap && LABEL_TEMPLATE_OPTIONS.fullWrap.urls && LABEL_TEMPLATE_OPTIONS.fullWrap.urls[0]) || "";
+const EMBEDDED_HALF_TEMPLATE_MASK_SRC = (LABEL_TEMPLATE_OPTIONS.halfWrap && LABEL_TEMPLATE_OPTIONS.halfWrap.urls && LABEL_TEMPLATE_OPTIONS.halfWrap.urls[0]) || "";
 function getStickerUpcharge(){
 return getTemplateStickerUpcharge(currentLabelTemplate);
 }
