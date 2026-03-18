@@ -393,6 +393,12 @@ height:42px;
 0%,100%{ transform:scale(1.03); }
 50%{ transform:scale(1.08); }
 }
+.dockLogo{
+min-height:148px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 .dockLogoImg{
 height:148px;
 width:auto;
@@ -3231,9 +3237,6 @@ width:100%;
 <div class="priceShippingNote">Always Free Shipping</div>
 <div class="mobileSub"><span id="mobileSizeVal">12</span>″ • Custom Sticker</div>
 </div>
-<div class="mobileCta">
-<button class="btn primary glow" id="mobileAddBtn" type="button" disabled>Add to Cart</button>
-</div>
 </div>
 
 <!-- Mobile Sticky Preview (always visible on mobile) -->
@@ -3264,9 +3267,6 @@ width:100%;
 <div class="dockLogo" style="margin-top:12px;text-align:center;">
 <img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-16e7c32c-e3c3-4777-a6d9-2540cfe47b1a.png" alt="BADDEST BOTTLE" />
 </div>
-</div>
-<div class="dockCta">
-<button class="btn primary glow" id="dockAddBtn" type="button" disabled>Add to Cart</button>
 </div>
 <div class="selectedStickerSection" id="selectedStickerSection">
 <div class="selectedStickerLabel">Selected Stickers. Checkmarked stickers add $5.00 each. Always free shipping.</div>
@@ -3403,10 +3403,6 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 
-<!-- Mobile: Add download and cart buttons to each section -->
-<div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:none;" class="mobileSectionActions" data-step="1">
-<button class="btn primary glow" id="mobileAddBtnSection1" type="button" disabled style="width:100%;">Add to Cart</button>
-</div>
 </div>
 
 <div class="card" data-step="3">
@@ -3495,10 +3491,6 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 
-<!-- Mobile: Add download and cart buttons to each section -->
-<div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.1);display:none;" class="mobileSectionActions" data-step="3">
-<button class="btn primary glow" id="mobileAddBtnSection3" type="button" disabled style="width:100%;">Add to Cart</button>
-</div>
 </div>
 
 </div>
@@ -3523,7 +3515,6 @@ referrerpolicy="strict-origin-when-cross-origin"
 <div class="bottomBar">
 <div class="bottomBarInner">
 <div class="pill">Size: <span id="footerSize">12</span>″</div>
-<button class="btn primary glow ctaWide" id="footerContinue" type="button" disabled>Add to Cart</button>
 <div class="pill totalPill">Total: $<span id="footerTotal">59.00</span></div>
 </div>
 <div id="addToCartLoading" class="addToCartLoading" style="display:none;margin-top:10px;text-align:center;">
@@ -5436,11 +5427,10 @@ updateCartModalUI();
 }
 
 function enableCheckoutButtons(){
-// All choices must be made: photo and size (clock face is optional now)
 const ok = !!baseImg && !!chosenSize;
-dockAddBtn.disabled = !ok;
-footerContinue.disabled = !ok;
-mobileAddBtn.disabled = !ok;
+if(dockAddBtn) dockAddBtn.disabled = !ok;
+if(footerContinue) footerContinue.disabled = !ok;
+if(mobileAddBtn) mobileAddBtn.disabled = !ok;
 }
 
 function getOverlayList(){
@@ -9810,7 +9800,7 @@ lightboxTextFont.appendChild(o);
 const addToCartLoading = document.getElementById("addToCartLoading");
 const addToCartLoadingBar = document.getElementById("addToCartLoadingBar");
 function getAllAddToCartButtons(){
-const ids = ["footerContinue","dockAddBtn","mobileAddBtn","dockAddToCartT2","dockAddToCartT3","lightboxContinue"];
+const ids = ["dockAddToCartT2","dockAddToCartT3","lightboxContinue"];
 const buttons = ids.map(id => document.getElementById(id)).filter(Boolean);
 for(let i = 1; i <= 5; i++){
 const b = document.getElementById("mobileAddBtnSection" + i);
@@ -9976,10 +9966,9 @@ if(b) b.disabled = !ok;
 }
 }
 
-// Desktop buttons: Add to Cart sends to parent
-dockAddBtn.addEventListener("click", sendToParent);
-footerContinue.addEventListener("click", sendToParent);
-mobileAddBtn.addEventListener("click", sendToParent);
+if(dockAddBtn) dockAddBtn.addEventListener("click", sendToParent);
+if(footerContinue) footerContinue.addEventListener("click", sendToParent);
+if(mobileAddBtn) mobileAddBtn.addEventListener("click", sendToParent);
 
 // Add to Cart buttons under Text 2 and Text 3
 const dockAddToCartT2 = document.getElementById("dockAddToCartT2");
@@ -10319,14 +10308,7 @@ const nextStep = step + 1;
 console.log("Moving to step:", nextStep);
 updateMobileStep(nextStep);
 } else {
-// Last step - trigger add to cart if enabled
-if(footerContinue && !footerContinue.disabled) {
-footerContinue.click();
-} else if(dockAddBtn && !dockAddBtn.disabled) {
-dockAddBtn.click();
-} else if(mobileAddBtn && !mobileAddBtn.disabled) {
-mobileAddBtn.click();
-}
+if(baseImg && chosenSize) sendToParent();
 }
 });
 }
