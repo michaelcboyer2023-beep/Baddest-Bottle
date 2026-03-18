@@ -4434,6 +4434,17 @@ const fitScale = Math.min(fitW / iw, fitH / ih);
 const coverScale = Math.max(fitW / iw, fitH / ih);
 return Math.max(0.2, Math.min(3, fitScale / coverScale));
 }
+function getInitialPhotoScaleForTemplate(){
+if(!labelMaskCanvas) return 1;
+if(currentLabelTemplate === "fullWrap") return 0.92;
+if(currentLabelTemplate === "halfWrap") return 1.06;
+return 1;
+}
+function getMinPhotoScale(){
+if(!labelMaskCanvas) return 0.05;
+if(currentLabelTemplate === "fullWrap") return 0.82;
+return 0.95;
+}
 const imageBacklightPaletteCache = new WeakMap();
 function averageRgb(samples){
 if(!samples.length) return { r: 255, g: 122, b: 26 };
@@ -4563,7 +4574,7 @@ return Math.max(bounds.w / iw, bounds.h / ih) * 1.08;
 return Math.max(BASE / iw, BASE / ih);
 }
 function clampPhotoScale(){
-const minScale = labelMaskCanvas ? 0.95 : 0.05;
+const minScale = getMinPhotoScale();
 photoScale = clamp(photoScale, minScale, 3);
 }
 function clampPhotoOffsets(){
@@ -5015,6 +5026,27 @@ const url = urls[idx++];
 const img = new Image();
 img.onload = function(){
 try {
+if(currentLabelTemplate === "fullWrap" && url.includes("full-wrap-processed-mask.png")){
+loadedMaskUrl = url;
+maskAspect = { w: BASE, h: BASE };
+const processedMaskCanvas = document.createElement("canvas");
+processedMaskCanvas.width = BASE;
+processedMaskCanvas.height = BASE;
+const processedMaskCtx = processedMaskCanvas.getContext("2d");
+if(!processedMaskCtx) { tryNext(); return; }
+processedMaskCtx.clearRect(0, 0, BASE, BASE);
+processedMaskCtx.drawImage(img, 0, 0, BASE, BASE);
+labelMaskCanvas = processedMaskCanvas;
+labelTemplateOverlayCanvas = null;
+window._maskBounds = null;
+window._maskSafeBounds = FULL_WRAP_PROCESSED_SAFE_BOUNDS;
+applyMaskShapeToFrames();
+if (typeof renderAll === "function") renderAll();
+if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
+if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
+if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+return;
+}
 if((embeddedTemplateUrl && url === embeddedTemplateUrl) || (templateConfig.templateMatch && url.includes(templateConfig.templateMatch))){
 const templateResult = buildMaskFromTemplateImage(img);
 if(!templateResult) { tryNext(); return; }
@@ -5256,7 +5288,7 @@ baseImg = img;
 baseImgSourceUrl = title || url;
 photoOffsetX = 0;
 photoOffsetY = 0;
-photoScale = 1;
+photoScale = getInitialPhotoScaleForTemplate();
 clampPhotoScale();
 clampPhotoOffsets();
 const v = Math.round(photoScale * 100);
@@ -5284,7 +5316,7 @@ clearTimeout(timeoutId);
 baseImg = img2;
 baseImgSourceUrl = title || url;
 photoOffsetX = 0; photoOffsetY = 0;
-photoScale = 1;
+photoScale = getInitialPhotoScaleForTemplate();
 clampPhotoScale();
 clampPhotoOffsets();
 const v = Math.round(photoScale * 100);
