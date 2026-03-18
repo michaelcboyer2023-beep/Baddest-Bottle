@@ -3,8 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-03-18-firebase"/>
+<meta name="app-version" content="live-2026-03-18-firebase-v2"/>
 <title>Custom Sticker Designer</title>
+<link rel="preconnect" href="https://subnp.com" crossorigin/>
+<link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
 <!-- AI Image Generation: SubNP API via Cloudflare Worker proxy -->
 <!-- Setup required: Deploy cloudflare-worker-proxy.js to Cloudflare Workers (free tier) -->
 <!-- See CLOUDFLARE_WORKER_SETUP.md for one-time free setup instructions -->
@@ -3649,8 +3653,6 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.0/firebase-auth-compat.min.js" crossorigin="anonymous"></script>
 <script>
 (() => {
 // ========= CONFIG =========
@@ -3670,8 +3672,12 @@ const FIREBASE_CONFIG = {
   appId: "1:937684638424:web:9121ac74178ca9bb7d15ad",
   measurementId: "G-FTFWD6C0CM"
 };
-const FB_VER = "10.7.0";
-const FB_CDN = "https://cdnjs.cloudflare.com/ajax/libs/firebase/" + FB_VER;
+const FB_COMPAT_URLS = [
+"https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.0/firebase-compat.min.js",
+"https://cdn.jsdelivr.net/npm/firebase@10.7.1/firebase-compat.js",
+"https://unpkg.com/firebase@10.7.1/firebase-compat.js",
+"https://www.gstatic.com/firebasejs/10.7.1/firebase-compat.js"
+];
 let firebaseAuth = null;
 let firebaseInitPromise = null;
 function initFirebaseAuth() {
@@ -3682,48 +3688,48 @@ function initFirebaseAuth() {
     return firebaseInitPromise;
   }
   firebaseInitPromise = new Promise((resolve) => {
-    const finish = () => {
+    const finishOk = () => {
       try {
-        if (typeof firebase === "undefined") {
-          resolve(null);
-          return;
-        }
-        if (!firebase.apps || firebase.apps.length === 0) {
-          firebase.initializeApp(FIREBASE_CONFIG);
-        }
+        if (typeof firebase === "undefined") return false;
+        if (!firebase.apps || firebase.apps.length === 0) firebase.initializeApp(FIREBASE_CONFIG);
         firebaseAuth = firebase.auth();
         resolve(firebaseAuth);
+        return true;
       } catch (e) {
-        try {
-          if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length) {
+        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length) {
+          try {
             firebaseAuth = firebase.auth();
             resolve(firebaseAuth);
-          } else {
-            console.warn("Firebase init failed", e);
-            resolve(null);
-          }
-        } catch (_) {
-          resolve(null);
+            return true;
+          } catch (_) {}
         }
+        console.warn("Firebase init", e);
+        return false;
       }
     };
-    if (typeof firebase !== "undefined") {
-      finish();
-      return;
-    }
-    const loadScript = (src) =>
-      new Promise((res, rej) => {
-        const s = document.createElement("script");
-        s.src = src;
-        s.async = false;
-        s.onload = () => res();
-        s.onerror = () => rej(new Error("script"));
-        (document.head || document.documentElement).appendChild(s);
-      });
-    loadScript(FB_CDN + "/firebase-app-compat.min.js")
-      .then(() => loadScript(FB_CDN + "/firebase-auth-compat.min.js"))
-      .then(finish)
-      .catch(() => resolve(null));
+    if (typeof firebase !== "undefined" && finishOk()) return;
+    let i = 0;
+    const tryNext = () => {
+      if (i >= FB_COMPAT_URLS.length) {
+        resolve(null);
+        return;
+      }
+      const s = document.createElement("script");
+      s.src = FB_COMPAT_URLS[i];
+      s.crossOrigin = "anonymous";
+      s.async = false;
+      s.onload = () => {
+        if (finishOk()) return;
+        i++;
+        tryNext();
+      };
+      s.onerror = () => {
+        i++;
+        tryNext();
+      };
+      (document.head || document.documentElement).appendChild(s);
+    };
+    tryNext();
   });
   return firebaseInitPromise;
 }
@@ -4115,7 +4121,7 @@ setLoginError(msg);
 }
 function firebaseLoadFailedAlert(){
 hideLoginModal();
-alert("Could not load Firebase Auth.\n\nTry:\n• Open this page with http:// or https:// (use Live Server or your hosted URL — not file://).\n• Allow scripts from gstatic.com (disable ad blockers for this site).\n• Check your internet connection.");
+alert("Could not load Firebase Auth on this host.\n\nraw.githack.com sometimes blocks login scripts. Use instead:\n• GitHub Pages: enable Pages on your repo, open the github.io URL\n• Or localhost / your own domain\n\nAlso try: disable ad blockers, different browser, or Wi‑Fi.");
 }
 loginOptionButtons.forEach(btn => {
 btn.addEventListener("click", () => {
@@ -7475,7 +7481,7 @@ if(/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/i.test(window.location.origin)){
 throw new Error('Skipping direct SubNP request on localhost due to CORS');
 }
 const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 15000);
+const timeoutId = setTimeout(() => controller.abort(), 24000);
 try {
 const response = await fetch('https://subnp.com/api/free/generate', {
 method: 'POST',
