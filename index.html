@@ -5010,6 +5010,7 @@ return;
 const url = urls[idx++];
 const img = new Image();
 img.onload = function(){
+try {
 if((embeddedTemplateUrl && url === embeddedTemplateUrl) || (templateConfig.templateMatch && url.includes(templateConfig.templateMatch))){
 const templateResult = buildMaskFromTemplateImage(img);
 if(!templateResult) { tryNext(); return; }
@@ -5067,9 +5068,13 @@ if (typeof renderAll === "function") renderAll();
 if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
 if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
 if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+} catch (error) {
+console.warn("Failed to load label mask", url, error);
+tryNext();
+}
 };
 img.onerror = function(){ tryNext(); };
-if (url.startsWith("http")) img.crossOrigin = "anonymous";
+if (!url.startsWith("data:")) img.crossOrigin = "anonymous";
 img.src = url;
 }
 tryNext();
