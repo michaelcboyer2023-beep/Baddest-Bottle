@@ -21,6 +21,11 @@
 --red3:#ffaa66;
 --ok:#10b981;
 --r8:8px; --r12:12px; --r16:16px; --r999:999px;
+--tv-glow-L:255, 122, 26;
+--tv-glow-R:255, 122, 26;
+--tv-glow-T:255, 160, 102;
+--tv-glow-B:255, 90, 18;
+--tv-glow-P:255, 122, 26;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:#000000;color:var(--text);
@@ -860,11 +865,14 @@ opacity:0;
 transition:opacity .55s ease;
 will-change:transform,filter,opacity;
 background:
-radial-gradient(ellipse 52% 88% at -2% 48%, rgba(var(--tv-glow-L),0.72) 0%, rgba(var(--tv-glow-L),0.22) 38%, transparent 62%),
-radial-gradient(ellipse 52% 88% at 102% 52%, rgba(var(--tv-glow-R),0.72) 0%, rgba(var(--tv-glow-R),0.22) 38%, transparent 62%),
-radial-gradient(ellipse 85% 48% at 50% -3%, rgba(var(--tv-glow-T),0.58) 0%, rgba(var(--tv-glow-T),0.16) 42%, transparent 58%),
-radial-gradient(ellipse 85% 48% at 50% 103%, rgba(var(--tv-glow-B),0.48) 0%, rgba(var(--tv-glow-B),0.12) 42%, transparent 58%),
-radial-gradient(ellipse 72% 72% at 50% 50%, rgba(var(--tv-glow-P),0.35) 0%, transparent 58%);
+radial-gradient(ellipse 52% 88% at -2% 48%, rgba(var(--tv-glow-L, 255, 122, 26),0.72) 0%, rgba(var(--tv-glow-L, 255, 122, 26),0.22) 38%, transparent 62%),
+radial-gradient(ellipse 52% 88% at 102% 52%, rgba(var(--tv-glow-R, 255, 122, 26),0.72) 0%, rgba(var(--tv-glow-R, 255, 122, 26),0.22) 38%, transparent 62%),
+radial-gradient(ellipse 85% 48% at 50% -3%, rgba(var(--tv-glow-T, 255, 160, 102),0.58) 0%, rgba(var(--tv-glow-T, 255, 160, 102),0.16) 42%, transparent 58%),
+radial-gradient(ellipse 85% 48% at 50% 103%, rgba(var(--tv-glow-B, 255, 90, 18),0.48) 0%, rgba(var(--tv-glow-B, 255, 90, 18),0.12) 42%, transparent 58%),
+radial-gradient(ellipse 72% 72% at 50% 50%, rgba(var(--tv-glow-P, 255, 122, 26),0.35) 0%, transparent 58%);
+}
+#dockThumb .smartTvGlowHalo.hasGlow{
+opacity:1;
 }
 .smartTvGlowHalo.hasGlow{
 opacity:1;
@@ -3794,9 +3802,9 @@ const g = Math.min(255, Math.round((c.g || 0) * 1.12));
 const b = Math.min(255, Math.round((c.b || 0) * 1.2));
 return `${r},${g},${b}`;
 }
-const smartTvGlowDock = document.getElementById("smartTvGlowDock");
 function syncSmartTvGlow(){
-const halos = [smartTvGlowHalo, smartTvGlowDock].filter(Boolean);
+const smartTvGlowDockEl = document.getElementById("smartTvGlowDock");
+const halos = [smartTvGlowHalo, smartTvGlowDockEl].filter(Boolean);
 if(!halos.length) return;
 if(!baseImg || !baseImg.naturalWidth){
 halos.forEach(el => el.classList.remove("hasGlow"));
@@ -3822,7 +3830,8 @@ el.style.display = hasImage ? "block" : "none";
 });
 if(hasImage) syncSmartTvGlow();
 else {
-[smartTvGlowHalo, smartTvGlowDock].filter(Boolean).forEach(el => el.classList.remove("hasGlow"));
+const dockGlow = document.getElementById("smartTvGlowDock");
+[smartTvGlowHalo, dockGlow].filter(Boolean).forEach(el => el.classList.remove("hasGlow"));
 }
 }
 document.addEventListener("visibilitychange", () => {
