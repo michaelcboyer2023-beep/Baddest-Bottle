@@ -843,26 +843,19 @@ inset 0 0 30px rgba(0,0,0,.62),
 }
 }
 @keyframes smartTvHaloPulse{
-0%,100%{opacity:.68;filter:blur(20px) saturate(1.28) brightness(1.02);transform:translate(-50%,-50%) scale(1);}
-20%{opacity:.88;filter:blur(26px) saturate(1.48) brightness(1.08);transform:translate(-50%,-50%) scale(1.03) translateX(0.4%);}
-40%{opacity:.74;filter:blur(22px) saturate(1.32) brightness(1.04);transform:translate(-50%,-50%) scale(1.01) translateX(-0.3%);}
-60%{opacity:.92;filter:blur(28px) saturate(1.55) brightness(1.1);transform:translate(-50%,-50%) scale(1.04) translateY(-0.35%);}
-80%{opacity:.78;filter:blur(24px) saturate(1.38) brightness(1.05);transform:translate(-50%,-50%) scale(1.02) translateY(0.25%);}
-}
-.previewFrame.mainPreviewMirror{
-position:relative;
+0%,100%{opacity:.68;filter:blur(20px) saturate(1.28) brightness(1.02);transform:scale(1);}
+20%{opacity:.88;filter:blur(26px) saturate(1.48) brightness(1.08);transform:scale(1.03);}
+40%{opacity:.74;filter:blur(22px) saturate(1.32) brightness(1.04);transform:scale(1.01);}
+60%{opacity:.92;filter:blur(28px) saturate(1.55) brightness(1.1);transform:scale(1.04);}
+80%{opacity:.78;filter:blur(24px) saturate(1.38) brightness(1.05);transform:scale(1.02);}
 }
 .smartTvGlowHalo{
 position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-width:112%;
-height:118%;
-max-width:none;
+inset:0;
+width:100%;
+height:100%;
 z-index:0;
 pointer-events:none;
-border-radius:18px;
 opacity:0;
 transition:opacity .55s ease;
 will-change:transform,filter,opacity;
@@ -1026,6 +1019,7 @@ filter:none;
 width:100%;
 height:100%;
 object-fit:cover;
+z-index:1;
 }
 #shapeFrameTop.label .canvas{
 opacity:0;
@@ -1648,6 +1642,7 @@ text-shadow:0 0 14px rgba(255,150,68,.32), 0 0 28px rgba(255,102,0,.2);
 padding:12px;
 }
 .dockThumb{
+position:relative;
 width:100%;
 aspect-ratio:1;
 border-radius:18px;
@@ -1661,7 +1656,7 @@ box-shadow: inset 0 0 30px rgba(0,0,0,.65), 0 18px 40px rgba(0,0,0,.5);
 border-radius:12px;
 aspect-ratio:1000/633;
 }
-.dockThumb img{width:100%;height:100%;object-fit:cover;display:block}
+.dockThumb img{width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1}
 .dockTools{
 display:flex;gap:8px;flex-wrap:wrap;
 padding:10px 12px 12px;
@@ -3248,7 +3243,7 @@ width:100%;
 </div>
 </div>
 <div class="dockPreview">
-<div class="dockThumb" id="dockThumb"><img id="dockImg" alt="preview"/></div>
+<div class="dockThumb" id="dockThumb"><div class="smartTvGlowHalo" id="smartTvGlowDock" aria-hidden="true"></div><img id="dockImg" alt="preview"/></div>
 <div class="dockLogo" style="margin-top:12px;text-align:center;">
 <img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-16e7c32c-e3c3-4777-a6d9-2540cfe47b1a.png" alt="BADDEST BOTTLE" />
 </div>
@@ -3268,8 +3263,8 @@ width:100%;
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror">
 <div class="previewFrame mainPreviewMirror">
-<div class="smartTvGlowHalo" id="smartTvGlowHalo" aria-hidden="true"></div>
 <div class="dockThumb" id="shapeFrameTop">
+<div class="smartTvGlowHalo" id="smartTvGlowHalo" aria-hidden="true"></div>
 <img id="previewPhotoImg" class="previewPhotoImg" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"/>
 <canvas class="canvas" id="previewTop"></canvas>
 <div class="previewEmptyState" id="previewEmptyState">
@@ -3799,14 +3794,16 @@ const g = Math.min(255, Math.round((c.g || 0) * 1.12));
 const b = Math.min(255, Math.round((c.b || 0) * 1.2));
 return `${r},${g},${b}`;
 }
+const smartTvGlowDock = document.getElementById("smartTvGlowDock");
 function syncSmartTvGlow(){
-if(!smartTvGlowHalo) return;
+const halos = [smartTvGlowHalo, smartTvGlowDock].filter(Boolean);
+if(!halos.length) return;
 if(!baseImg || !baseImg.naturalWidth){
-smartTvGlowHalo.classList.remove("hasGlow");
+halos.forEach(el => el.classList.remove("hasGlow"));
 lastSmartTvGlowImg = null;
 return;
 }
-if(lastSmartTvGlowImg === baseImg && smartTvGlowHalo.classList.contains("hasGlow")) return;
+if(lastSmartTvGlowImg === baseImg && smartTvGlowHalo && smartTvGlowHalo.classList.contains("hasGlow")) return;
 lastSmartTvGlowImg = baseImg;
 const p = getImageBacklightPalette(baseImg);
 const root = document.documentElement;
@@ -3815,7 +3812,7 @@ root.style.setProperty("--tv-glow-R", tvGlowTrip(p.right));
 root.style.setProperty("--tv-glow-T", tvGlowTrip(p.top));
 root.style.setProperty("--tv-glow-B", tvGlowTrip(p.bottom));
 root.style.setProperty("--tv-glow-P", tvGlowTrip(p.primary));
-smartTvGlowHalo.classList.add("hasGlow");
+halos.forEach(el => el.classList.add("hasGlow"));
 }
 function updatePreviewBrandingState(){
 const hasImage = !!baseImg;
@@ -3824,7 +3821,9 @@ previewLabelLogos.forEach(el => {
 el.style.display = hasImage ? "block" : "none";
 });
 if(hasImage) syncSmartTvGlow();
-else if(smartTvGlowHalo) smartTvGlowHalo.classList.remove("hasGlow");
+else {
+[smartTvGlowHalo, smartTvGlowDock].filter(Boolean).forEach(el => el.classList.remove("hasGlow"));
+}
 }
 document.addEventListener("visibilitychange", () => {
 if(document.visibilityState === "visible") initPreviewVideos();
