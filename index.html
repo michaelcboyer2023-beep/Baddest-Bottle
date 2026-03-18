@@ -2677,6 +2677,12 @@ outline:none;
 border-color:rgba(255,140,84,.55);
 box-shadow:0 0 0 3px rgba(255,102,0,.12);
 }
+.loginAuthError{
+margin:0 0 8px;
+color:#f87171;
+font-size:12px;
+min-height:1.2em;
+}
 .loginEmailSubmit{
 margin-top:10px;
 width:100%;
@@ -3148,9 +3154,11 @@ width:100%;
 </button>
 </div>
 <div class="loginModalDivider">or use email</div>
+<p class="loginAuthError" id="loginAuthError" role="alert" aria-live="polite"></p>
 <input class="loginEmailField" id="loginEmailField" type="email" placeholder="Enter your email" autocomplete="email" />
+<input class="loginEmailField" id="loginPasswordField" type="password" placeholder="Password" autocomplete="current-password" style="margin-top:8px" />
 <button class="btn primary glow loginEmailSubmit" id="loginEmailSubmit" type="button">Continue with Email</button>
-<p class="loginModalFootnote">Auth UI only for now. Provider connections can be wired up later.</p>
+<p class="loginModalFootnote">New? Enter email and a password to create an account. By signing in you agree to use the app responsibly.</p>
 </div>
 </div>
 
@@ -3649,6 +3657,8 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.min.js"></script>
 <script>
 (() => {
 // ========= CONFIG =========
@@ -3658,6 +3668,73 @@ const BOTTLE_BASE_PRICE = 19.99;
 const FULL_WRAP_STICKER_UPCHARGE = 5;
 const HALF_WRAP_STICKER_UPCHARGE = 3;
 const SIZES = [10,12,15,18,24,30,36];
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDdi77qdxcQrsrUP29LHiiOUA4KOVFAE1s",
+  authDomain: "baddest-bottle.firebaseapp.com",
+  projectId: "baddest-bottle",
+  storageBucket: "baddest-bottle.firebasestorage.app",
+  messagingSenderId: "937684638424",
+  appId: "1:937684638424:web:9121ac74178ca9bb7d15ad",
+  measurementId: "G-FTFWD6C0CM"
+};
+const FB_VER = "10.7.1";
+let firebaseAuth = null;
+let firebaseInitPromise = null;
+function initFirebaseAuth() {
+  if (firebaseInitPromise) return firebaseInitPromise;
+  const cfgOk = FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "none";
+  if (!cfgOk) {
+    firebaseInitPromise = Promise.resolve(null);
+    return firebaseInitPromise;
+  }
+  firebaseInitPromise = new Promise((resolve) => {
+    const finish = () => {
+      try {
+        if (typeof firebase === "undefined") {
+          resolve(null);
+          return;
+        }
+        if (!firebase.apps || firebase.apps.length === 0) {
+          firebase.initializeApp(FIREBASE_CONFIG);
+        }
+        firebaseAuth = firebase.auth();
+        resolve(firebaseAuth);
+      } catch (e) {
+        try {
+          if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length) {
+            firebaseAuth = firebase.auth();
+            resolve(firebaseAuth);
+          } else {
+            console.warn("Firebase init failed", e);
+            resolve(null);
+          }
+        } catch (_) {
+          resolve(null);
+        }
+      }
+    };
+    if (typeof firebase !== "undefined") {
+      finish();
+      return;
+    }
+    const loadScript = (src) =>
+      new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = false;
+        s.onload = () => res();
+        s.onerror = () => rej(new Error("script"));
+        (document.head || document.documentElement).appendChild(s);
+      });
+    loadScript("https://www.gstatic.com/firebasejs/" + FB_VER + "/firebase-app-compat.min.js")
+      .then(() => loadScript("https://www.gstatic.com/firebasejs/" + FB_VER + "/firebase-auth-compat.min.js"))
+      .then(finish)
+      .catch(() => resolve(null));
+  });
+  return firebaseInitPromise;
+}
+initFirebaseAuth();
 
 const FONTS = [
 "Arial","Helvetica","Verdana","Trebuchet MS","Tahoma","Georgia","Times New Roman",
@@ -3849,7 +3926,9 @@ const siteHeaderCartBtn = document.getElementById("siteHeaderCartBtn");
 const loginModal = document.getElementById("loginModal");
 const loginModalClose = document.getElementById("loginModalClose");
 const loginEmailField = document.getElementById("loginEmailField");
+const loginPasswordField = document.getElementById("loginPasswordField");
 const loginEmailSubmit = document.getElementById("loginEmailSubmit");
+const loginAuthError = document.getElementById("loginAuthError");
 const loginOptionButtons = Array.from(document.querySelectorAll(".loginOptionBtn"));
 const socialModal = document.getElementById("socialModal");
 const socialModalClose = document.getElementById("socialModalClose");
@@ -3862,8 +3941,12 @@ const cartModalTotal = document.getElementById("cartModalTotal");
 const cartModalItemCount = document.getElementById("cartModalItemCount");
 const cartModalStickerCount = document.getElementById("cartModalStickerCount");
 const cartModalCheckoutBtn = document.getElementById("cartModalCheckoutBtn");
+function setLoginError(msg){
+if(loginAuthError){ loginAuthError.textContent = msg || ""; loginAuthError.style.display = msg ? "block" : "none"; }
+}
 function showLoginModal(){
 if(!loginModal) return;
+setLoginError("");
 loginModal.classList.add("active");
 loginModal.setAttribute("aria-hidden", "false");
 setTimeout(() => {
@@ -3963,6 +4046,10 @@ cartModal.setAttribute("aria-hidden", "true");
 if(siteHeaderLoginBtn){
 siteHeaderLoginBtn.addEventListener("click", (event) => {
 event.preventDefault();
+if(siteHeaderLoginBtn.dataset.signedIn === "true"){
+initFirebaseAuth().then((auth) => { if (auth) auth.signOut(); });
+return;
+}
 showLoginModal();
 });
 }
@@ -4024,19 +4111,71 @@ hideCartModal();
 }
 });
 }
+function handleAuthResult(promise){
+setLoginError("");
+promise
+.then(() => { setLoginError(""); hideLoginModal(); })
+.catch((err) => {
+const msg = (err && err.message) || "Sign-in failed.";
+setLoginError(msg);
+});
+}
+function firebaseLoadFailedAlert(){
+hideLoginModal();
+alert("Could not load Firebase Auth.\n\nTry:\n• Open this page with http:// or https:// (use Live Server or your hosted URL — not file://).\n• Allow scripts from gstatic.com (disable ad blockers for this site).\n• Check your internet connection.");
+}
 loginOptionButtons.forEach(btn => {
 btn.addEventListener("click", () => {
-hideLoginModal();
-alert(`${btn.textContent.trim()} is coming soon.`);
+initFirebaseAuth().then((auth) => {
+if(!auth){ firebaseLoadFailedAlert(); return; }
+if(btn.classList.contains("google")){
+handleAuthResult(auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()));
+}else if(btn.classList.contains("apple")){
+handleAuthResult(auth.signInWithPopup(new firebase.auth.OAuthProvider("apple.com")));
+}else if(btn.classList.contains("facebook")){
+handleAuthResult(auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()));
+}else{
+handleAuthResult(Promise.reject(new Error("Unknown provider")));
+}
+});
 });
 });
 if(loginEmailSubmit){
 loginEmailSubmit.addEventListener("click", () => {
-const emailValue = loginEmailField ? loginEmailField.value.trim() : "";
-hideLoginModal();
-alert(emailValue ? `Email login coming soon for ${emailValue}.` : "Email login is coming soon.");
+const email = loginEmailField ? loginEmailField.value.trim() : "";
+const password = loginPasswordField ? loginPasswordField.value : "";
+setLoginError("");
+if(!email){ setLoginError("Enter your email."); return; }
+if(!password){ setLoginError("Enter a password."); return; }
+initFirebaseAuth().then((auth) => {
+if(!auth){ firebaseLoadFailedAlert(); return; }
+const signIn = () => auth.signInWithEmailAndPassword(email, password);
+const signUp = () => auth.createUserWithEmailAndPassword(email, password);
+signIn().catch((err) => {
+if(err && err.code === "auth/user-not-found") return signUp();
+throw err;
+}).then(() => { setLoginError(""); hideLoginModal(); }).catch((err) => {
+setLoginError((err && err.message) || "Sign-in failed.");
+});
+});
 });
 }
+initFirebaseAuth().then((auth) => {
+if(!auth || !siteHeaderLoginBtn) return;
+auth.onAuthStateChanged((user) => {
+const lbl = siteHeaderLoginBtn.querySelector("span");
+if(!lbl) return;
+if(user){
+lbl.textContent = user.displayName ? `Hi, ${user.displayName.split(" ")[0]}` : (user.email || "Account");
+siteHeaderLoginBtn.setAttribute("aria-label", "Sign out");
+siteHeaderLoginBtn.dataset.signedIn = "true";
+}else{
+lbl.textContent = "Login";
+siteHeaderLoginBtn.removeAttribute("aria-label");
+siteHeaderLoginBtn.removeAttribute("data-signed-in");
+}
+});
+});
 if(cartModalCheckoutBtn){
 cartModalCheckoutBtn.addEventListener("click", () => {
 hideCartModal();
@@ -8585,15 +8724,19 @@ if(progressFill) progressFill.style.width = "30%";
 
 console.log("Submitting to SubNP:", subnpUrl);
 console.log("Enhanced prompt:", enhancedPrompt);
+console.time("ai-generate");
 
 let imageUrl = "";
 try {
 imageUrl = await tryDirectSubNPGenerate(enhancedPrompt, 'turbo', 576, 576);
+console.timeEnd("ai-generate");
 console.log('Direct SubNP image URL received:', imageUrl);
 if(progressFill) progressFill.style.width = "80%";
 } catch (directGenerateError) {
+console.timeEnd("ai-generate");
 console.warn('Direct SubNP generate failed, falling back to worker:', directGenerateError);
 const proxyUrl = AI_WORKER_URL;
+console.time("ai-generate-worker");
 
 const requestBody = {
 prompt: enhancedPrompt,
@@ -8644,6 +8787,7 @@ throw new Error(data.error + (data.details ? ': ' + data.details : ''));
 }
 
 imageUrl = data?.image || data?.images?.[0] || data?.imageUrl || data?.url;
+if(imageUrl) console.timeEnd("ai-generate");
 if(!imageUrl && data?.requestId) {
 console.log('Worker returned async requestId, polling for final image:', data.requestId);
 if(statusMessage) {
@@ -8651,10 +8795,12 @@ statusMessage.textContent = "Generating image...";
 statusMessage.style.display = "block";
 }
 imageUrl = await pollWorkerForImage(data.requestId, progressFill, statusMessage);
+console.timeEnd("ai-generate");
 }
 }
 
 if(!imageUrl) {
+console.timeEnd("ai-generate");
 throw new Error('No image URL received from AI generation.');
 }
 
