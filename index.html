@@ -7480,6 +7480,9 @@ async function tryDirectSubNPGenerate(prompt, model = 'turbo', width = 576, heig
 if(/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/i.test(window.location.origin)){
 throw new Error('Skipping direct SubNP request on localhost due to CORS');
 }
+if(/githack\.com|githubusercontent\.com/i.test(window.location.hostname || "")){
+throw new Error('Direct SubNP blocked on this host (CORS); using worker');
+}
 const controller = new AbortController();
 const timeoutId = setTimeout(() => controller.abort(), 24000);
 try {
@@ -8068,6 +8071,9 @@ if(!url || seen.has(url)) return;
 seen.add(url);
 candidates.push(url);
 };
+const workerMain = buildWorkerImageUrl(imageUrl, true);
+const useProxyFirst = /githack\.com/i.test(window.location.hostname || "");
+if(useProxyFirst) pushCandidate(workerMain);
 pushCandidate(imageUrl);
 const subnpMatch = imageUrl && imageUrl.match(/^https?:\/\/subnp\.com\/api\/image\/([a-f0-9-]+)/i);
 if(subnpMatch){
@@ -8076,7 +8082,7 @@ const directHttpCdnUrl = `http://free-cdn.mitraai.xyz/${imageId}.jpg`;
 pushCandidate(directHttpCdnUrl);
 pushCandidate(buildWorkerImageUrl(directHttpCdnUrl, true));
 }
-pushCandidate(buildWorkerImageUrl(imageUrl, true));
+if(!useProxyFirst) pushCandidate(workerMain);
 return candidates;
 }
 function getStickerProxyUrl(item){
@@ -8722,19 +8728,19 @@ if(progressFill) progressFill.style.width = "30%";
 
 console.log("Submitting to SubNP:", subnpUrl);
 console.log("Enhanced prompt:", enhancedPrompt);
-console.time("ai-generate");
+const aiGenTimer = "ai-generate-" + Date.now();
+console.time(aiGenTimer);
 
 let imageUrl = "";
 try {
 imageUrl = await tryDirectSubNPGenerate(enhancedPrompt, 'turbo', 576, 576);
-console.timeEnd("ai-generate");
+try { console.timeEnd(aiGenTimer); } catch(_) {}
 console.log('Direct SubNP image URL received:', imageUrl);
 if(progressFill) progressFill.style.width = "80%";
 } catch (directGenerateError) {
-console.timeEnd("ai-generate");
+try { console.timeEnd(aiGenTimer); } catch(_) {}
 console.warn('Direct SubNP generate failed, falling back to worker:', directGenerateError);
 const proxyUrl = AI_WORKER_URL;
-console.time("ai-generate-worker");
 
 const requestBody = {
 prompt: enhancedPrompt,
@@ -8785,7 +8791,6 @@ throw new Error(data.error + (data.details ? ': ' + data.details : ''));
 }
 
 imageUrl = data?.image || data?.images?.[0] || data?.imageUrl || data?.url;
-if(imageUrl) console.timeEnd("ai-generate");
 if(!imageUrl && data?.requestId) {
 console.log('Worker returned async requestId, polling for final image:', data.requestId);
 if(statusMessage) {
@@ -8793,12 +8798,10 @@ statusMessage.textContent = "Generating image...";
 statusMessage.style.display = "block";
 }
 imageUrl = await pollWorkerForImage(data.requestId, progressFill, statusMessage);
-console.timeEnd("ai-generate");
 }
 }
 
 if(!imageUrl) {
-console.timeEnd("ai-generate");
 throw new Error('No image URL received from AI generation.');
 }
 
