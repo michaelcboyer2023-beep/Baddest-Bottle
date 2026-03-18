@@ -334,6 +334,11 @@ opacity:1;
 position:relative;
 z-index:1;
 }
+.siteHeaderLoginAvatar{
+flex-shrink:0;
+position:relative;
+z-index:1;
+}
 .siteHeaderIconBtn svg,
 .siteHeaderLoginBtn svg{
 width:18px;
@@ -2640,7 +2645,6 @@ background:rgba(255,102,0,.10);
 box-shadow:0 0 22px rgba(255,102,0,.12);
 }
 .loginOptionBtn.google{ color:#fff; }
-.loginOptionBtn.apple{ color:#fff; }
 .loginOptionBtn.facebook{ color:#bcd1ff; }
 .loginOptionBtn.email{ color:#ffd3b4; }
 .loginOptionIcon{
@@ -3134,7 +3138,8 @@ width:100%;
 <span class="siteHeaderCartBadge" id="headerCartCount">1</span>
 </a>
 <a class="siteHeaderLoginBtn" href="#" id="siteHeaderLoginBtn" aria-label="Login">
-<svg viewBox="0 0 24 24" aria-hidden="true">
+<img class="siteHeaderLoginAvatar" id="siteHeaderLoginAvatar" alt="" style="display:none;width:26px;height:26px;border-radius:50%;object-fit:cover;" />
+<svg class="siteHeaderLoginIcon" viewBox="0 0 24 24" aria-hidden="true">
 <path d="M20 21a8 8 0 0 0-16 0"></path>
 <circle cx="12" cy="8" r="4"></circle>
 </svg>
@@ -3154,10 +3159,6 @@ width:100%;
 <button class="loginOptionBtn google" type="button">
 <span class="loginOptionIcon">G</span>
 <span>Continue with Google</span>
-</button>
-<button class="loginOptionBtn apple" type="button">
-<span class="loginOptionIcon">A</span>
-<span>Continue with Apple</span>
 </button>
 <button class="loginOptionBtn facebook" type="button">
 <span class="loginOptionIcon">f</span>
@@ -4128,11 +4129,15 @@ btn.addEventListener("click", () => {
 initFirebaseAuth().then((auth) => {
 if(!auth){ firebaseLoadFailedAlert(); return; }
 if(btn.classList.contains("google")){
-handleAuthResult(auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()));
-}else if(btn.classList.contains("apple")){
-handleAuthResult(auth.signInWithPopup(new firebase.auth.OAuthProvider("apple.com")));
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.addScope("profile");
+googleProvider.addScope("email");
+handleAuthResult(auth.signInWithPopup(googleProvider));
 }else if(btn.classList.contains("facebook")){
-handleAuthResult(auth.signInWithPopup(new firebase.auth.FacebookAuthProvider()));
+const fb = new firebase.auth.FacebookAuthProvider();
+fb.addScope("email");
+fb.addScope("public_profile");
+handleAuthResult(auth.signInWithPopup(fb));
 }else{
 handleAuthResult(Promise.reject(new Error("Unknown provider")));
 }
@@ -4159,16 +4164,48 @@ setLoginError((err && err.message) || "Sign-in failed.");
 });
 });
 }
+const siteHeaderLoginAvatar = document.getElementById("siteHeaderLoginAvatar");
+const siteHeaderLoginIcon = siteHeaderLoginBtn ? siteHeaderLoginBtn.querySelector(".siteHeaderLoginIcon") : null;
 initFirebaseAuth().then((auth) => {
 if(!auth || !siteHeaderLoginBtn) return;
 auth.onAuthStateChanged((user) => {
 const lbl = siteHeaderLoginBtn.querySelector("span");
 if(!lbl) return;
 if(user){
+let photoUrl = user.photoURL || (user.providerData && user.providerData[0] && user.providerData[0].photoURL) || null;
+if(photoUrl && /googleusercontent\.com|google\.com/i.test(photoUrl) && !photoUrl.includes("?")){
+photoUrl = photoUrl + "?sz=64";
+}
+let avatarEl = siteHeaderLoginAvatar;
+if(!avatarEl && siteHeaderLoginBtn){
+avatarEl = document.createElement("img");
+avatarEl.className = "siteHeaderLoginAvatar";
+avatarEl.id = "siteHeaderLoginAvatar";
+avatarEl.alt = "";
+avatarEl.setAttribute("style", "display:none;width:26px;height:26px;border-radius:50%;object-fit:cover;");
+siteHeaderLoginBtn.insertBefore(avatarEl, siteHeaderLoginBtn.firstChild);
+}
+if(avatarEl){
+if(photoUrl){
+avatarEl.src = photoUrl;
+avatarEl.alt = user.displayName || "Profile";
+avatarEl.style.display = "block";
+}else{
+avatarEl.removeAttribute("src");
+avatarEl.style.display = "none";
+}
+}
+const iconEl = siteHeaderLoginIcon || (siteHeaderLoginBtn && siteHeaderLoginBtn.querySelector("svg"));
+if(iconEl) iconEl.style.display = photoUrl ? "none" : "";
 lbl.textContent = user.displayName ? `Hi, ${user.displayName.split(" ")[0]}` : (user.email || "Account");
 siteHeaderLoginBtn.setAttribute("aria-label", "Sign out");
 siteHeaderLoginBtn.dataset.signedIn = "true";
 }else{
+const av = siteHeaderLoginAvatar || document.getElementById("siteHeaderLoginAvatar");
+if(av){ av.removeAttribute("src"); av.style.display = "none"; }
+if(siteHeaderLoginIcon) siteHeaderLoginIcon.style.display = "";
+const iconEl2 = siteHeaderLoginBtn && siteHeaderLoginBtn.querySelector("svg");
+if(iconEl2) iconEl2.style.display = "";
 lbl.textContent = "Login";
 siteHeaderLoginBtn.removeAttribute("aria-label");
 siteHeaderLoginBtn.removeAttribute("data-signed-in");
