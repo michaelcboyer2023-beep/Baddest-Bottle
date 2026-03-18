@@ -842,6 +842,48 @@ inset 0 0 30px rgba(0,0,0,.62),
 0 0 34px rgba(255,52,0,.28);
 }
 }
+@keyframes smartTvHaloPulse{
+0%,100%{opacity:.68;filter:blur(20px) saturate(1.28) brightness(1.02);transform:translate(-50%,-50%) scale(1);}
+20%{opacity:.88;filter:blur(26px) saturate(1.48) brightness(1.08);transform:translate(-50%,-50%) scale(1.03) translateX(0.4%);}
+40%{opacity:.74;filter:blur(22px) saturate(1.32) brightness(1.04);transform:translate(-50%,-50%) scale(1.01) translateX(-0.3%);}
+60%{opacity:.92;filter:blur(28px) saturate(1.55) brightness(1.1);transform:translate(-50%,-50%) scale(1.04) translateY(-0.35%);}
+80%{opacity:.78;filter:blur(24px) saturate(1.38) brightness(1.05);transform:translate(-50%,-50%) scale(1.02) translateY(0.25%);}
+}
+.previewFrame.mainPreviewMirror{
+position:relative;
+}
+.smartTvGlowHalo{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:112%;
+height:118%;
+max-width:none;
+z-index:0;
+pointer-events:none;
+border-radius:18px;
+opacity:0;
+transition:opacity .55s ease;
+will-change:transform,filter,opacity;
+background:
+radial-gradient(ellipse 52% 88% at -2% 48%, rgba(var(--tv-glow-L),0.72) 0%, rgba(var(--tv-glow-L),0.22) 38%, transparent 62%),
+radial-gradient(ellipse 52% 88% at 102% 52%, rgba(var(--tv-glow-R),0.72) 0%, rgba(var(--tv-glow-R),0.22) 38%, transparent 62%),
+radial-gradient(ellipse 85% 48% at 50% -3%, rgba(var(--tv-glow-T),0.58) 0%, rgba(var(--tv-glow-T),0.16) 42%, transparent 58%),
+radial-gradient(ellipse 85% 48% at 50% 103%, rgba(var(--tv-glow-B),0.48) 0%, rgba(var(--tv-glow-B),0.12) 42%, transparent 58%),
+radial-gradient(ellipse 72% 72% at 50% 50%, rgba(var(--tv-glow-P),0.35) 0%, transparent 58%);
+}
+.smartTvGlowHalo.hasGlow{
+opacity:1;
+animation:smartTvHaloPulse 4.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce){
+.smartTvGlowHalo.hasGlow{
+animation:none;
+opacity:.82;
+filter:blur(22px) saturate(1.25);
+}
+}
 .previewBlock.mainPreviewMirror{
 position:relative;
 background:
@@ -885,6 +927,7 @@ max-width:1120px;
 }
 .previewFrame.mainPreviewMirror #shapeFrameTop{
 position:relative;
+z-index:1;
 width:100%;
 aspect-ratio:1000 / 633 !important;
 flex:0 0 auto;
@@ -3225,6 +3268,7 @@ width:100%;
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror">
 <div class="previewFrame mainPreviewMirror">
+<div class="smartTvGlowHalo" id="smartTvGlowHalo" aria-hidden="true"></div>
 <div class="dockThumb" id="shapeFrameTop">
 <img id="previewPhotoImg" class="previewPhotoImg" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"/>
 <canvas class="canvas" id="previewTop"></canvas>
@@ -3747,12 +3791,40 @@ replacePreviewVideoWithFallback(video);
 kick();
 });
 }
+const smartTvGlowHalo = document.getElementById("smartTvGlowHalo");
+let lastSmartTvGlowImg = null;
+function tvGlowTrip(c){
+const r = Math.min(255, Math.round((c.r || 0) * 1.16));
+const g = Math.min(255, Math.round((c.g || 0) * 1.12));
+const b = Math.min(255, Math.round((c.b || 0) * 1.2));
+return `${r},${g},${b}`;
+}
+function syncSmartTvGlow(){
+if(!smartTvGlowHalo) return;
+if(!baseImg || !baseImg.naturalWidth){
+smartTvGlowHalo.classList.remove("hasGlow");
+lastSmartTvGlowImg = null;
+return;
+}
+if(lastSmartTvGlowImg === baseImg && smartTvGlowHalo.classList.contains("hasGlow")) return;
+lastSmartTvGlowImg = baseImg;
+const p = getImageBacklightPalette(baseImg);
+const root = document.documentElement;
+root.style.setProperty("--tv-glow-L", tvGlowTrip(p.left));
+root.style.setProperty("--tv-glow-R", tvGlowTrip(p.right));
+root.style.setProperty("--tv-glow-T", tvGlowTrip(p.top));
+root.style.setProperty("--tv-glow-B", tvGlowTrip(p.bottom));
+root.style.setProperty("--tv-glow-P", tvGlowTrip(p.primary));
+smartTvGlowHalo.classList.add("hasGlow");
+}
 function updatePreviewBrandingState(){
 const hasImage = !!baseImg;
 if(previewEmptyState) previewEmptyState.style.display = hasImage ? "none" : "flex";
 previewLabelLogos.forEach(el => {
 el.style.display = hasImage ? "block" : "none";
 });
+if(hasImage) syncSmartTvGlow();
+else if(smartTvGlowHalo) smartTvGlowHalo.classList.remove("hasGlow");
 }
 document.addEventListener("visibilitychange", () => {
 if(document.visibilityState === "visible") initPreviewVideos();
@@ -4106,6 +4178,42 @@ let photoAlpha = 1;
 let photoScale = 1;
 let photoOffsetX = 0;
 let photoOffsetY = 0;
+let templatePhotoState = Object.create(null);
+function getInitialPhotoScaleForTemplate(){
+if(!labelMaskCanvas) return 1;
+if(currentLabelTemplate === "fullWrap") return 1;
+if(currentLabelTemplate === "halfWrap") return 1.28;
+return 1;
+}
+function saveTemplatePhotoState(templateKey){
+if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
+templatePhotoState[templateKey] = { s: photoScale, x: photoOffsetX, y: photoOffsetY };
+}
+function restoreTemplatePhotoState(templateKey){
+if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
+const st = templatePhotoState[templateKey];
+if(st){
+photoScale = st.s;
+photoOffsetX = st.x;
+photoOffsetY = st.y;
+}else{
+photoScale = getInitialPhotoScaleForTemplate();
+photoOffsetX = 0;
+photoOffsetY = 0;
+}
+clampPhotoScale();
+clampPhotoOffsets();
+const v = Math.round(photoScale * 100);
+if(photoZoom) photoZoom.value = clamp(v, 20, 300);
+if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : String(v);
+}
+function onLabelMaskReady(){
+restoreTemplatePhotoState(currentLabelTemplate);
+if (typeof renderAll === "function") renderAll();
+if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
+if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
+if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+}
 
 // Initialize with empty overlayUrl - will be set in init() after maskShape is determined
 let overlayUrl = "";
@@ -4434,47 +4542,6 @@ const fitScale = Math.min(fitW / iw, fitH / ih);
 const coverScale = Math.max(fitW / iw, fitH / ih);
 return Math.max(0.2, Math.min(3, fitScale / coverScale));
 }
-function getInitialPhotoScaleForTemplate(){
-if(!labelMaskCanvas) return 1;
-if(currentLabelTemplate === "fullWrap") return 0.92;
-if(currentLabelTemplate === "halfWrap") return 1.28;
-return 1;
-}
-function getMinPhotoScale(){
-if(!labelMaskCanvas) return 0.05;
-if(currentLabelTemplate === "fullWrap") return 0.82;
-return 0.95;
-}
-let templatePhotoState = Object.create(null);
-function saveTemplatePhotoState(templateKey){
-if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
-templatePhotoState[templateKey] = { s: photoScale, x: photoOffsetX, y: photoOffsetY };
-}
-function restoreTemplatePhotoState(templateKey){
-if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
-const st = templatePhotoState[templateKey];
-if(st){
-photoScale = st.s;
-photoOffsetX = st.x;
-photoOffsetY = st.y;
-}else{
-photoScale = getInitialPhotoScaleForTemplate();
-photoOffsetX = 0;
-photoOffsetY = 0;
-}
-clampPhotoScale();
-clampPhotoOffsets();
-const v = Math.round(photoScale * 100);
-if(photoZoom) photoZoom.value = clamp(v, 20, 300);
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : String(v);
-}
-function onLabelMaskReady(){
-restoreTemplatePhotoState(currentLabelTemplate);
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
-}
 const imageBacklightPaletteCache = new WeakMap();
 function averageRgb(samples){
 if(!samples.length) return { r: 255, g: 122, b: 26 };
@@ -4521,7 +4588,20 @@ imageBacklightPaletteCache.set(img, fallback);
 return fallback;
 }
 sampleCtx.drawImage(img, 0, 0, sampleSize, sampleSize);
-const { data } = sampleCtx.getImageData(0, 0, sampleSize, sampleSize);
+let data;
+try{
+({ data } = sampleCtx.getImageData(0, 0, sampleSize, sampleSize));
+}catch(_e){
+const fb = {
+left: { r:255, g:122, b:26 },
+right: { r:255, g:122, b:26 },
+top: { r:255, g:160, b:102 },
+bottom: { r:255, g:90, b:18 },
+primary: { r:255, g:122, b:26 }
+};
+imageBacklightPaletteCache.set(img, fb);
+return fb;
+}
 const left = [], right = [], top = [], bottom = [], all = [];
 const pushPixel = (bucket, x, y) => {
 const index = ((y * sampleSize) + x) * 4;
@@ -4604,7 +4684,7 @@ return Math.max(bounds.w / iw, bounds.h / ih) * 1.08;
 return Math.max(BASE / iw, BASE / ih);
 }
 function clampPhotoScale(){
-const minScale = getMinPhotoScale();
+const minScale = labelMaskCanvas ? 0.95 : 0.05;
 photoScale = clamp(photoScale, minScale, 3);
 }
 function clampPhotoOffsets(){
