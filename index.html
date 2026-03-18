@@ -4437,13 +4437,43 @@ return Math.max(0.2, Math.min(3, fitScale / coverScale));
 function getInitialPhotoScaleForTemplate(){
 if(!labelMaskCanvas) return 1;
 if(currentLabelTemplate === "fullWrap") return 0.92;
-if(currentLabelTemplate === "halfWrap") return 1.14;
+if(currentLabelTemplate === "halfWrap") return 1.28;
 return 1;
 }
 function getMinPhotoScale(){
 if(!labelMaskCanvas) return 0.05;
 if(currentLabelTemplate === "fullWrap") return 0.82;
 return 0.95;
+}
+let templatePhotoState = Object.create(null);
+function saveTemplatePhotoState(templateKey){
+if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
+templatePhotoState[templateKey] = { s: photoScale, x: photoOffsetX, y: photoOffsetY };
+}
+function restoreTemplatePhotoState(templateKey){
+if(templateKey !== "fullWrap" && templateKey !== "halfWrap") return;
+const st = templatePhotoState[templateKey];
+if(st){
+photoScale = st.s;
+photoOffsetX = st.x;
+photoOffsetY = st.y;
+}else{
+photoScale = getInitialPhotoScaleForTemplate();
+photoOffsetX = 0;
+photoOffsetY = 0;
+}
+clampPhotoScale();
+clampPhotoOffsets();
+const v = Math.round(photoScale * 100);
+if(photoZoom) photoZoom.value = clamp(v, 20, 300);
+if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : String(v);
+}
+function onLabelMaskReady(){
+restoreTemplatePhotoState(currentLabelTemplate);
+if (typeof renderAll === "function") renderAll();
+if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
+if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
+if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
 }
 const imageBacklightPaletteCache = new WeakMap();
 function averageRgb(samples){
@@ -4987,10 +5017,7 @@ labelTemplateOverlayCanvas = null;
 maskAspect = halfWrapResult.aspect;
 window._maskBounds = null;
 applyMaskShapeToFrames();
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+onLabelMaskReady();
 return;
 }
 }
@@ -5016,10 +5043,7 @@ maskAspect = { w: LABEL_RECT.w, h: LABEL_RECT.h };
 window._maskBounds = null;
 window._maskSafeBounds = null;
 applyMaskShapeToFrames();
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+onLabelMaskReady();
 return;
 }
 const url = urls[idx++];
@@ -5041,10 +5065,7 @@ labelTemplateOverlayCanvas = null;
 window._maskBounds = null;
 window._maskSafeBounds = FULL_WRAP_PROCESSED_SAFE_BOUNDS;
 applyMaskShapeToFrames();
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+onLabelMaskReady();
 return;
 }
 if((embeddedTemplateUrl && url === embeddedTemplateUrl) || (templateConfig.templateMatch && url.includes(templateConfig.templateMatch))){
@@ -5056,10 +5077,7 @@ labelMaskCanvas = templateResult.maskCanvas;
 labelTemplateOverlayCanvas = templateResult.overlayCanvas;
 window._maskBounds = null;
 applyMaskShapeToFrames();
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+onLabelMaskReady();
 return;
 }
 loadedMaskUrl = url;
@@ -5100,10 +5118,7 @@ labelTemplateOverlayCanvas = null;
 window._maskBounds = null;
 window._maskSafeBounds = currentLabelTemplate === "fullWrap" ? FULL_WRAP_PROCESSED_SAFE_BOUNDS : null;
 applyMaskShapeToFrames();
-if (typeof renderAll === "function") renderAll();
-if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
-if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
-if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+onLabelMaskReady();
 } catch (error) {
 console.warn("Failed to load label mask", url, error);
 tryNext();
@@ -5286,6 +5301,7 @@ settled = true;
 clearTimeout(timeoutId);
 baseImg = img;
 baseImgSourceUrl = title || url;
+templatePhotoState = Object.create(null);
 photoOffsetX = 0;
 photoOffsetY = 0;
 photoScale = getInitialPhotoScaleForTemplate();
@@ -5315,6 +5331,7 @@ settled = true;
 clearTimeout(timeoutId);
 baseImg = img2;
 baseImgSourceUrl = title || url;
+templatePhotoState = Object.create(null);
 photoOffsetX = 0; photoOffsetY = 0;
 photoScale = getInitialPhotoScaleForTemplate();
 clampPhotoScale();
@@ -7160,14 +7177,10 @@ syncTemplateButtons();
 labelTemplateButtons.forEach(btn => btn.addEventListener("click", async ()=>{
 const nextTemplate = btn.dataset.templateKey || "fullWrap";
 if(nextTemplate === currentLabelTemplate) return;
+saveTemplatePhotoState(currentLabelTemplate);
 loadLabelMask(nextTemplate);
 setPriceUI();
 updateLightboxInfo();
-clampPhotoScale();
-clampPhotoOffsets();
-syncPreviewPhotoImg();
-await renderAll();
-scheduleMainPreviewSnapshot(0);
 }));
 }
 photoUpload.addEventListener("change", async (e)=>{
