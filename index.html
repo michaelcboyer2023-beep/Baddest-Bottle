@@ -54,6 +54,9 @@ overflow-y:auto;
 -webkit-overflow-scrolling:touch;}
 .siteHeader{
 display:none;
+background:linear-gradient(180deg, rgba(15,8,5,.97) 0%, rgba(9,7,10,.95) 100%);
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
 }
 .siteHeaderInner{
 width:min(100%, 1560px);
@@ -63,6 +66,7 @@ display:flex;
 align-items:center;
 justify-content:flex-start;
 gap:18px;
+background:transparent;
 }
 .siteHeaderBrand{
 display:flex;
@@ -135,15 +139,25 @@ align-items:center;
 justify-content:center;
 min-height:auto;
 padding:0;
+background:transparent !important;
 color:#ff7a1a;
 font-size:18px;
 font-weight:900;
 letter-spacing:.2em;
 text-transform:uppercase;
 white-space:nowrap;
-overflow:hidden;
+overflow:visible;
 text-shadow:0 0 14px rgba(255,122,26,.18), 0 0 28px rgba(255,102,0,.1);
-transition:transform .22s ease, color .22s ease, text-shadow .22s ease, filter .22s ease;
+transition:color .22s ease, text-shadow .22s ease;
+line-height:0;
+}
+.siteHeaderSloganWrap{
+position:relative;
+display:inline-block;
+background:transparent !important;
+will-change:transform;
+line-height:0;
+isolation:isolate;
 }
 .siteHeaderSlogan::before{
 content:"";
@@ -162,11 +176,34 @@ opacity:.9;
 position:relative;
 z-index:1;
 }
+.siteHeaderSloganImg{
+display:block;
+height:148px;
+width:auto;
+object-fit:contain;
+object-position:center;
+vertical-align:middle;
+background:none !important;
+background-color:transparent !important;
+filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+mix-blend-mode:lighten;
+-webkit-mask-image:url("projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png");
+mask-image:url("projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png");
+-webkit-mask-size:contain;
+mask-size:contain;
+-webkit-mask-repeat:no-repeat;
+mask-repeat:no-repeat;
+-webkit-mask-position:center;
+mask-position:center;
+-webkit-mask-mode:luminance;
+mask-mode:luminance;
+}
+.siteHeaderSlogan:hover .siteHeaderSloganImg{
+filter:drop-shadow(0 0 18px rgba(255,138,58,.34)) drop-shadow(0 0 34px rgba(255,102,0,.18)) brightness(1.06);
+}
 .siteHeaderSlogan:hover{
-transform:scale(1.06);
 color:#ff9a4a;
 text-shadow:0 0 18px rgba(255,138,58,.34), 0 0 34px rgba(255,102,0,.18);
-filter:brightness(1.06);
 animation:headerSloganPulse 1.2s ease-in-out infinite;
 }
 .siteHeaderSlogan:hover::before{
@@ -338,6 +375,115 @@ z-index:1;
 flex-shrink:0;
 position:relative;
 z-index:1;
+}
+.siteHeaderLoginWrap{
+position:relative;
+display:inline-block;
+}
+.siteHeaderLoginDropdown{
+display:none;
+position:absolute;
+top:100%;
+right:0;
+margin-top:6px;
+min-width:160px;
+padding:6px 0;
+border-radius:14px;
+border:1px solid rgba(255,140,84,.28);
+background:rgba(18,12,14,.98);
+box-shadow:0 12px 40px rgba(0,0,0,.5), 0 0 24px rgba(255,102,0,.08);
+z-index:100;
+}
+.siteHeaderLoginWrap.dropdownOpen .siteHeaderLoginDropdown{
+display:block;
+}
+.siteHeaderLoginDropdownItem{
+display:block;
+width:100%;
+padding:10px 18px;
+border:none;
+background:transparent;
+color:rgba(255,255,255,.9);
+font-size:13px;
+font-weight:700;
+text-align:left;
+cursor:pointer;
+transition:background .18s ease, color .18s ease;
+}
+.siteHeaderLoginDropdownItem:hover{
+background:rgba(255,102,0,.2);
+color:#fff;
+}
+.profileModal .loginModalCard{
+width:min(92vw, 400px);
+}
+.profileModalField{
+margin-bottom:14px;
+}
+.profileModalField label{
+display:block;
+margin-bottom:4px;
+font-size:12px;
+font-weight:700;
+color:rgba(255,255,255,.7);
+}
+.profileModalField input[type="text"],
+.profileModalField input[type="url"]{
+width:100%;
+padding:10px 12px;
+border-radius:10px;
+border:1px solid rgba(255,140,84,.25);
+background:rgba(0,0,0,.35);
+color:#fff;
+font-size:14px;
+box-sizing:border-box;
+}
+.profileModalField input:read-only{
+opacity:.8;
+cursor:default;
+}
+.profileModalActions{
+margin-top:20px;
+display:flex;
+gap:10px;
+justify-content:flex-end;
+}
+.profilePhotoUploadWrap{
+display:flex;
+align-items:center;
+gap:16px;
+margin-bottom:14px;
+}
+.profilePhotoPreview{
+width:72px;
+height:72px;
+border-radius:50%;
+background:rgba(255,255,255,.08);
+border:2px solid rgba(255,140,84,.3);
+object-fit:cover;
+flex-shrink:0;
+}
+.profilePhotoUploadBtn{
+padding:8px 14px;
+border-radius:10px;
+border:1px solid rgba(255,140,84,.4);
+background:rgba(255,102,0,.15);
+color:#ff9f5a;
+font-size:12px;
+font-weight:700;
+cursor:pointer;
+transition:background .18s ease, color .18s ease;
+}
+.profilePhotoUploadBtn:hover{
+background:rgba(255,102,0,.25);
+color:#fff;
+}
+.profilePhotoUploadWrap input[type="file"]{
+position:absolute;
+width:0;
+height:0;
+opacity:0;
+pointer-events:none;
 }
 .siteHeaderIconBtn svg,
 .siteHeaderLoginBtn svg{
@@ -925,6 +1071,13 @@ radial-gradient(78% 68% at 50% 52%, rgba(255,110,0,.16), rgba(255,110,0,0) 76%);
 filter:blur(28px);
 animation:mainPreviewGlowPulse 3.2s ease-in-out infinite;
 }
+/* YouTube empty state: stop animating huge blurred layer behind iframe (major chop source) */
+.previewBlock.mainPreviewMirror.mainPreviewVideoIdle::before{
+animation:none;
+opacity:.88;
+transform:none;
+filter:blur(14px);
+}
 .previewFrame{
 position:relative;
 width:min(100%,1280px);
@@ -987,6 +1140,17 @@ inset 0 0 30px rgba(0,0,0,.65),
 border-radius:12px;
 aspect-ratio:1000 / 633 !important;
 animation:mainPreviewEdgePulse 3.2s ease-in-out infinite;
+}
+/* Full wrap: no inset vignette or ::after wash — photo reads sharp to the mask edge */
+#shapeFrameTop.dockThumb.label.template-fullWrap{
+box-shadow:
+0 18px 40px rgba(0,0,0,.5),
+0 0 0 1px rgba(255,255,255,.16),
+0 0 0 2px rgba(255,68,0,.20),
+0 0 16px rgba(255,68,0,.14);
+}
+#shapeFrameTop.dockThumb.label.template-fullWrap::after{
+display:none;
 }
 @media (prefers-reduced-motion: reduce){
 .previewBlock.mainPreviewMirror::before,
@@ -1079,36 +1243,190 @@ left:1.55%;
 position:absolute;
 inset:0;
 z-index:2;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-gap:18px;
+display:block;
 pointer-events:none;
 background:#060606;
-padding:20px;
 overflow:hidden;
 border-radius:inherit;
 }
+/* Dedicated GPU layer: only the embed — marquee animations won’t invalidate this subtree */
+.previewEmptyStateVideoPlane{
+position:absolute;
+inset:0;
+z-index:1;
+pointer-events:none;
+overflow:hidden;
+border-radius:inherit;
+isolation:isolate;
+transform:translateZ(0);
+-webkit-transform:translateZ(0);
+backface-visibility:hidden;
+-webkit-backface-visibility:hidden;
+contain:strict;
+}
+/* Separate layer for all moving text — composited apart from the iframe */
+.previewEmptyStateMarqueePlane{
+position:absolute;
+inset:0;
+z-index:4;
+pointer-events:none;
+overflow:visible;
+isolation:isolate;
+transform:translateZ(0);
+-webkit-transform:translateZ(0);
+contain:layout style;
+}
+/* Pan/zoom on wrapper only — moderate zoom; origin slightly high trims bottom chrome without over-cropping. */
+.previewEmptyStateVideoKen{
+position:absolute;
+left:-16%;
+top:-17%;
+width:132%;
+height:134%;
+pointer-events:none;
+transform-origin:50% 40%;
+animation:previewEmptyKenPan 32s ease-in-out infinite alternate;
+}
+@keyframes previewEmptyKenPan{
+0%{ transform:scale(1.52) translateY(-2%); }
+100%{ transform:scale(1.52) translateY(14%); }
+}
 .previewEmptyStateArt{
 position:absolute;
-inset:-14%;
-width:128%;
-max-width:none;
-height:128%;
-display:block;
-object-fit:cover;
+inset:0;
+width:100%;
+height:100%;
 border:0;
 border-radius:0;
+display:block;
 pointer-events:none;
-filter:none;
-transform:scale(1.42);
+opacity:1;
+}
+.previewEmptyStateMarquee{
+position:absolute;
+top:0;
+bottom:0;
+width:clamp(64px, 12vw, 104px);
+z-index:4;
+overflow:hidden;
+pointer-events:none;
+}
+.previewEmptyStateMarquee--left{
+left:0;
+background:linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.22) 72%, transparent 100%);
+}
+.previewEmptyStateMarquee--right{
+right:0;
+left:auto;
+background:linear-gradient(-90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.22) 72%, transparent 100%);
+}
+.previewEmptyStateMarqueeSpin{
+position:absolute;
+left:50%;
+top:50%;
+width:180vh;
+height:100%;
+max-height:min(180vw, 1400px);
+margin-left:-90vh;
+transform:translateY(-50%) rotate(-90deg);
 transform-origin:center center;
-opacity:.9;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:flex-start;
+}
+.previewEmptyStateMarquee--right .previewEmptyStateMarqueeSpin{
+transform:translateY(-50%) rotate(90deg);
+margin-left:-90vh;
+}
+.previewEmptyStateMarqueeHoriz{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+width:max-content;
+animation:previewSideMarqueeDown 88s linear infinite;
+}
+.previewEmptyStateMarquee--right .previewEmptyStateMarqueeHoriz{
+animation:previewSideMarqueeUp 98s linear infinite;
+}
+@keyframes previewSideMarqueeDown{
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+}
+@keyframes previewSideMarqueeUp{
+0%{ transform:translateX(-50%); }
+100%{ transform:translateX(0); }
+}
+.previewEmptyStateMarqueeDup{
+flex-shrink:0;
+padding:0 .55em;
+font-size:clamp(20px, 4.2vw, 40px);
+font-weight:950;
+letter-spacing:.32em;
+text-transform:uppercase;
+white-space:nowrap;
+color:rgba(255,200,150,.48);
+line-height:1.15;
+text-shadow:
+0 0 2px rgba(255,255,255,.1),
+0 0 18px rgba(255,140,84,.45),
+0 0 36px rgba(255,102,0,.22),
+-2px 0 12px rgba(255,90,40,.2),
+2px 0 12px rgba(255,200,120,.18);
+animation:previewMarqueeGlowFade 14s ease-in-out infinite, previewMarqueeTextGlitch 4.5s steps(1,end) infinite;
+}
+.previewEmptyStateMarqueeDup--reuse{
+color:rgba(255,188,130,.44);
+text-shadow:
+0 0 2px rgba(255,245,220,.08),
+0 0 18px rgba(255,120,60,.42),
+0 0 36px rgba(255,85,0,.2),
+-2px 0 12px rgba(255,70,20,.18),
+2px 0 12px rgba(255,190,100,.16);
+animation:previewMarqueeGlowFade 14s ease-in-out infinite reverse, previewMarqueeTextGlitchB 5s steps(1,end) infinite;
+}
+@keyframes previewMarqueeGlowFade{
+0%,100%{ opacity:.2; }
+50%{ opacity:.88; }
+}
+/* Jitter uses transform only — never filter — so GPU isn’t thrashing next to the iframe */
+@keyframes previewMarqueeTextGlitch{
+0%,94%,100%{ transform:translate(0,0); }
+95%{ transform:translate(-2px,0); }
+96%{ transform:translate(3px,0); }
+97%{ transform:translate(-1px,0); }
+}
+@keyframes previewMarqueeTextGlitchB{
+0%,93%,100%{ transform:translate(0,0); }
+94%{ transform:translate(2px,0); }
+95%{ transform:translate(-3px,0); }
+96%{ transform:translate(1px,0); }
+}
+@media (prefers-reduced-motion: reduce){
+.previewEmptyStateMarqueeHoriz,
+.previewEmptyStateMarqueeDup,
+.previewEmptyStateMarqueeDup--reuse{
+animation:none !important;
+}
+.previewEmptyStateVideoKen{
+animation:none;
+transform:scale(1.52) translateY(6%);
+}
+}
+@media (max-width:640px){
+.previewEmptyStateMarquee{ width:clamp(52px, 14vw, 76px); }
+.previewEmptyStateMarqueeDup,
+.previewEmptyStateMarqueeDup--reuse{ font-size:clamp(15px, 5.5vw, 26px); letter-spacing:.22em; }
+.previewEmptyStateLabel{ max-width:calc(100% - 120px); }
 }
 .previewEmptyStateLabel{
-position:relative;
-z-index:1;
+position:absolute;
+left:50%;
+bottom:12px;
+transform:translateX(-50%);
+z-index:5;
+margin:0;
+max-width:calc(100% - 220px);
 color:rgba(255,188,150,.96);
 font-size:11px;
 font-weight:900;
@@ -1883,6 +2201,14 @@ stroke-width:2;
 stroke-linecap:round;
 stroke-linejoin:round;
 }
+.selectedStickerShareToFeedBtn{
+margin-top:12px;
+width:100%;
+font-size:12px;
+font-weight:800;
+letter-spacing:.12em;
+text-transform:uppercase;
+}
 
 /* ======= Mobile top sticky bar ======= */
 .mobileBar{
@@ -2601,7 +2927,6 @@ font-weight:1000;
 line-height:1.05;
 text-shadow:0 0 14px rgba(255,102,0,.14);
 }
-#socialModalTitle,
 #aboutModalTitle{
 font-size:42px;
 font-weight:1000;
@@ -2610,6 +2935,790 @@ letter-spacing:.01em;
 text-transform:uppercase;
 color:#fff6eb;
 text-shadow:0 0 18px rgba(255,140,84,.22), 0 0 34px rgba(255,102,0,.14);
+}
+@keyframes socialHeroPulse{
+0%,100%{ opacity:.85; filter:brightness(1); }
+50%{ opacity:1; filter:brightness(1.15); }
+}
+@keyframes socialMeshShift{
+0%{ background-position:0% 50%; }
+100%{ background-position:100% 50%; }
+}
+.socialPageModal.active{
+align-items:center;
+padding:16px;
+background:rgba(0,0,0,.72);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+}
+.socialPageCard{
+width:100%;
+max-width:1320px;
+max-height:92vh;
+display:flex;
+flex-direction:column;
+border-radius:28px;
+border:1px solid rgba(255,140,84,.35);
+background:
+radial-gradient(120% 80% at 10% 0%, rgba(255,102,0,.22) 0%, transparent 45%),
+radial-gradient(90% 60% at 95% 20%, rgba(255,60,0,.12) 0%, transparent 40%),
+linear-gradient(165deg, rgba(28,16,22,.97) 0%, rgba(8,5,10,.98) 55%, rgba(12,8,14,.99) 100%);
+box-shadow:
+0 0 0 1px rgba(255,255,255,.06) inset,
+0 32px 100px rgba(0,0,0,.65),
+0 0 80px rgba(255,102,0,.12),
+0 0 140px rgba(255,80,0,.06);
+overflow:hidden;
+position:relative;
+}
+.socialPageCard::before{
+content:"";
+position:absolute;
+inset:0;
+pointer-events:none;
+background:linear-gradient(105deg, transparent 40%, rgba(255,120,40,.04) 50%, transparent 60%);
+background-size:200% 100%;
+animation:socialMeshShift 12s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce){
+.socialPageCard::before{ animation:none; }
+}
+.socialPageCard > .loginModalClose{
+z-index:20;
+background:rgba(0,0,0,.45);
+border:1px solid rgba(255,255,255,.1);
+}
+.socialHero{
+position:relative;
+z-index:1;
+padding:20px 24px 16px;
+border-bottom:1px solid rgba(255,255,255,.08);
+background:linear-gradient(180deg, rgba(255,102,0,.06), transparent);
+}
+.socialHeroTop{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+margin-bottom:10px;
+}
+.socialHeroBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+font-size:10px;
+font-weight:900;
+letter-spacing:.22em;
+color:var(--red2);
+text-transform:uppercase;
+}
+.socialHeroBadge::before{
+content:"";
+width:8px;
+height:8px;
+border-radius:50%;
+background:var(--ok);
+box-shadow:0 0 12px var(--ok);
+animation:socialHeroPulse 2.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce){
+.socialHeroBadge::before{ animation:none; }
+}
+.socialHeroStats{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+.socialHeroStat{
+font-size:10px;
+font-weight:800;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:rgba(255,255,255,.45);
+padding:6px 12px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(0,0,0,.25);
+}
+.socialHeroStat strong{
+color:#fff;
+font-weight:900;
+margin-left:6px;
+letter-spacing:0;
+}
+.socialHeroTitle{
+margin:0;
+font-size:clamp(26px, 4vw, 38px);
+font-weight:1000;
+line-height:1.02;
+letter-spacing:.04em;
+text-transform:uppercase;
+color:#fff;
+text-shadow:0 0 24px rgba(255,102,0,.25), 0 0 60px rgba(255,80,0,.12);
+}
+.socialHeroTagline{
+margin:8px 0 0;
+max-width:640px;
+font-size:14px;
+line-height:1.5;
+color:rgba(255,255,255,.62);
+font-weight:600;
+}
+.socialChallengeStrip{
+margin-top:16px;
+padding:14px 16px;
+border-radius:16px;
+border:1px solid rgba(255,140,84,.28);
+background:linear-gradient(135deg, rgba(255,102,0,.14), rgba(40,12,24,.5));
+box-shadow:0 8px 32px rgba(0,0,0,.35);
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+}
+.socialChallengeLabel{
+display:block;
+font-size:9px;
+font-weight:900;
+letter-spacing:.2em;
+color:var(--red2);
+margin-bottom:4px;
+}
+.socialChallengeText{
+margin:0;
+font-size:13px;
+font-weight:700;
+color:rgba(255,255,255,.92);
+line-height:1.45;
+max-width:520px;
+}
+.socialChallengeText code{
+font-family:inherit;
+font-weight:900;
+color:#ffb366;
+}
+.socialCopyChallengeBtn{
+flex-shrink:0;
+padding:10px 18px;
+border-radius:999px;
+border:1px solid rgba(255,200,160,.45);
+background:rgba(0,0,0,.4);
+color:var(--red2);
+font-size:11px;
+font-weight:900;
+letter-spacing:.14em;
+text-transform:uppercase;
+cursor:pointer;
+transition:background .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+.socialCopyChallengeBtn:hover{
+background:rgba(255,102,0,.2);
+color:#fff;
+box-shadow:0 0 20px rgba(255,102,0,.25);
+transform:translateY(-1px);
+}
+.socialLayout{ display:flex; flex:1; min-height:0; position:relative; z-index:1; }
+.socialSidebar{
+width:220px;
+flex-shrink:0;
+border-right:1px solid rgba(255,255,255,.1);
+display:flex;
+flex-direction:column;
+background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.12));
+}
+.socialSidebarHead{
+padding:14px 16px 8px;
+font-size:9px;
+font-weight:900;
+letter-spacing:.2em;
+color:rgba(255,255,255,.4);
+text-transform:uppercase;
+}
+.socialSidebarTitle{
+padding:0 16px 8px;
+font-size:11px;
+font-weight:900;
+letter-spacing:.18em;
+color:var(--red2);
+text-transform:uppercase;
+}
+.socialSidebarHint{
+margin:0 16px 10px;
+font-size:10px;
+line-height:1.4;
+color:rgba(255,255,255,.4);
+font-weight:600;
+}
+.socialSidebarDivider{
+height:1px;
+margin:12px 12px;
+background:linear-gradient(90deg, transparent, rgba(255,140,84,.25), transparent);
+}
+.socialChannelList{
+padding:0 8px 8px;
+display:flex;
+flex-direction:column;
+gap:5px;
+max-height:min(42vh, 380px);
+overflow:auto;
+}
+.socialRoomRow{
+display:flex;
+align-items:center;
+gap:6px;
+padding:4px 0;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+.socialRoomRow:last-child{ border-bottom:none; }
+.socialRoomRowMain{
+flex:1;
+min-width:0;
+display:flex;
+flex-direction:column;
+gap:2px;
+}
+.socialRoomSummary{
+margin:0;
+padding:0 10px 2px;
+font-size:9px;
+line-height:1.35;
+color:rgba(255,255,255,.36);
+font-weight:600;
+max-height:2.7em;
+overflow:hidden;
+display:-webkit-box;
+-webkit-line-clamp:2;
+-webkit-box-orient:vertical;
+}
+.socialRoomFilter{
+flex:1;
+min-width:0;
+display:flex;
+align-items:center;
+gap:8px;
+padding:8px 10px;
+border-radius:10px;
+border:1px solid transparent;
+background:rgba(255,255,255,.03);
+color:rgba(255,255,255,.88);
+font-size:11px;
+font-weight:800;
+letter-spacing:.04em;
+text-transform:capitalize;
+cursor:pointer;
+text-align:left;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialRoomFilter:hover{
+background:rgba(255,255,255,.06);
+border-color:rgba(255,255,255,.08);
+}
+.socialRoomFilter.is-feed-active{
+border-color:rgba(255,140,84,.4);
+background:rgba(255,102,0,.1);
+}
+.socialRoomDot{
+width:8px;
+height:8px;
+border-radius:50%;
+flex-shrink:0;
+}
+.socialRoomDot--t0{ background:#ff6600; box-shadow:0 0 8px rgba(255,102,0,.5); }
+.socialRoomDot--t1{ background:#a78bfa; box-shadow:0 0 8px rgba(167,139,250,.4); }
+.socialRoomDot--t2{ background:#22d3ee; box-shadow:0 0 8px rgba(34,211,238,.4); }
+.socialRoomDot--t3{ background:#f472b6; box-shadow:0 0 8px rgba(244,114,182,.4); }
+.socialRoomDot--t4{ background:#c084fc; box-shadow:0 0 8px rgba(192,132,252,.4); }
+.socialRoomDot--t5{ background:#ef4444; box-shadow:0 0 8px rgba(239,68,68,.4); }
+.socialRoomDot--t6{ background:#eab308; box-shadow:0 0 8px rgba(234,179,8,.4); }
+.socialRoomDot--t7{ background:#34d399; box-shadow:0 0 8px rgba(52,211,153,.4); }
+.socialRoomJoinBtn{
+flex-shrink:0;
+padding:6px 10px;
+border-radius:8px;
+border:1px solid rgba(255,140,84,.35);
+background:rgba(0,0,0,.35);
+color:var(--red2);
+font-size:9px;
+font-weight:900;
+letter-spacing:.1em;
+text-transform:uppercase;
+cursor:pointer;
+transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.socialRoomJoinBtn:hover{
+background:rgba(255,102,0,.2);
+color:#fff;
+}
+.socialRoomJoinBtn.is-joined{
+background:rgba(255,102,0,.35);
+border-color:rgba(255,200,160,.5);
+color:#1a0f08;
+}
+.socialRoomAllBtn{
+width:100%;
+padding:10px 12px;
+margin-bottom:6px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,.12);
+background:rgba(0,0,0,.3);
+color:rgba(255,255,255,.85);
+font-size:10px;
+font-weight:900;
+letter-spacing:.14em;
+text-transform:uppercase;
+cursor:pointer;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialRoomAllBtn:hover{ background:rgba(255,255,255,.06); }
+.socialRoomAllBtn.is-feed-active{
+border-color:rgba(255,140,84,.45);
+background:rgba(255,102,0,.12);
+}
+.socialOnlineList{ flex:1; overflow:auto; padding:4px 8px 12px; min-height:0; }
+.socialOnlineUser{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px 12px;
+cursor:pointer;
+border:none;
+background:transparent;
+width:100%;
+text-align:left;
+color:rgba(255,255,255,.92);
+font-size:13px;
+font-weight:800;
+transition:background .18s ease, box-shadow .18s ease;
+border-radius:12px;
+margin-bottom:4px;
+}
+.socialOnlineUser:hover{
+background:rgba(255,102,0,.1);
+box-shadow:0 0 0 1px rgba(255,102,0,.15);
+}
+.socialOnlineUser.active{
+background:rgba(255,102,0,.2);
+color:#fff;
+box-shadow:0 0 24px rgba(255,102,0,.15);
+}
+.socialOnlineAvatar{ width:40px; height:40px; border-radius:50%; object-fit:cover; background:linear-gradient(135deg, rgba(255,102,0,.4), rgba(80,20,40,.6)); flex-shrink:0; border:2px solid rgba(255,140,84,.25); }
+.socialOnlineDot{ width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; margin-left:auto; box-shadow:0 0 8px rgba(16,185,129,.6); }
+.socialMain{
+flex:1;
+overflow:auto;
+padding:18px 20px 24px;
+display:flex;
+flex-direction:column;
+gap:18px;
+min-width:0;
+background:rgba(0,0,0,.08);
+}
+.socialFeedHead{
+display:flex;
+flex-wrap:wrap;
+align-items:flex-end;
+justify-content:space-between;
+gap:10px;
+}
+.socialFeedTitle{
+margin:0;
+font-size:11px;
+font-weight:900;
+letter-spacing:.2em;
+color:rgba(255,255,255,.45);
+text-transform:uppercase;
+}
+.socialFeedTitle span{
+display:block;
+margin-top:4px;
+font-size:18px;
+letter-spacing:.06em;
+color:#fff;
+text-shadow:0 0 20px rgba(255,102,0,.2);
+}
+.socialFeedChips{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+.socialFeedChip{
+font-size:9px;
+font-weight:800;
+letter-spacing:.1em;
+text-transform:uppercase;
+padding:5px 10px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.12);
+color:rgba(255,255,255,.5);
+background:rgba(255,255,255,.03);
+}
+.socialFeedChip.hot{
+border-color:rgba(255,102,0,.35);
+color:var(--red2);
+background:rgba(255,102,0,.08);
+}
+.socialComposeHead{
+font-size:10px;
+font-weight:900;
+letter-spacing:.18em;
+color:var(--red2);
+text-transform:uppercase;
+margin-bottom:8px;
+}
+.socialCompose{
+border-radius:18px;
+border:1px solid rgba(255,140,84,.22);
+background:rgba(255,255,255,.04);
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:12px;
+box-shadow:0 12px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.socialComposeRow{ display:flex; gap:14px; align-items:flex-start; }
+.socialSharePreviewWrap{ position:relative; width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-radius:14px; background:rgba(0,0,0,.4); border:1px dashed rgba(255,140,84,.4); }
+.socialSharePreviewWrap .socialSharePreviewSmall{ width:100%; height:100%; object-fit:cover; border-radius:14px; position:absolute; inset:0; }
+.socialShareUploadBtn{ position:relative; z-index:1; font-size:10px; font-weight:900; letter-spacing:.12em; color:var(--red2); cursor:pointer; padding:8px 10px; border-radius:10px; background:rgba(255,102,0,.18); border:1px solid rgba(255,140,84,.35); transition:background .2s ease, color .2s ease; }
+.socialShareUploadBtn:hover{ background:rgba(255,102,0,.32); color:#fff; }
+.socialSharePreviewWrap:has(.socialSharePreviewSmall[src]:not([src=""])) .socialShareUploadBtn{ opacity:0; pointer-events:none; }
+.socialSharePreviewSmall{ width:80px; height:80px; border-radius:14px; object-fit:cover; background:rgba(0,0,0,.3); flex-shrink:0; }
+.socialShareCaptionSmall{
+flex:1;
+padding:12px 14px;
+border-radius:14px;
+border:1px solid rgba(255,140,84,.28);
+background:rgba(0,0,0,.45);
+color:#fff;
+font-size:14px;
+min-height:80px;
+resize:none;
+box-sizing:border-box;
+line-height:1.45;
+}
+.socialShareCaptionSmall::placeholder{ color:rgba(255,255,255,.38); }
+.socialComposeActions{ display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
+.socialFeed{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:14px;
+align-items:start;
+}
+@media (max-width:1100px){
+.socialFeed{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width:640px){
+.socialFeed{ grid-template-columns:1fr; }
+}
+.socialPostGridCard{
+border-radius:16px;
+border:1px solid rgba(255,255,255,.1);
+background:linear-gradient(165deg, rgba(255,255,255,.07), rgba(0,0,0,.2));
+overflow:hidden;
+transition:transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+box-shadow:0 6px 24px rgba(0,0,0,.28);
+display:flex;
+flex-direction:column;
+}
+.socialPostGridCard:hover{
+transform:translateY(-3px);
+border-color:rgba(255,140,84,.35);
+box-shadow:0 14px 40px rgba(0,0,0,.4), 0 0 32px rgba(255,102,0,.1);
+}
+.socialPostGridCard.socialPostFeatured{
+border-color:rgba(255,140,84,.5);
+box-shadow:0 0 0 1px rgba(255,102,0,.2), 0 10px 36px rgba(255,80,0,.15);
+}
+.socialPostGridCard.is-thread-open .socialPostThread{
+max-height:320px;
+opacity:1;
+padding:10px 12px 12px;
+border-top:1px solid rgba(255,255,255,.08);
+}
+.socialPostThumb{
+position:relative;
+width:100%;
+aspect-ratio:4 / 5;
+max-height:min(220px, 32vw);
+height:auto;
+min-height:120px;
+margin:0 auto;
+background:radial-gradient(ellipse at 30% 20%, rgba(255,102,0,.18), rgba(10,8,12,.95));
+overflow:hidden;
+cursor:pointer;
+flex-shrink:0;
+}
+.socialPostThumb img{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.socialPostThumbOpen{
+position:absolute;
+top:6px;
+right:6px;
+z-index:2;
+padding:5px 8px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,.25);
+background:rgba(0,0,0,.55);
+backdrop-filter:blur(6px);
+color:#fff;
+font-size:9px;
+font-weight:900;
+letter-spacing:.08em;
+text-transform:uppercase;
+cursor:pointer;
+pointer-events:auto;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialPostThumbOpen:hover{
+background:rgba(255,102,0,.4);
+border-color:rgba(255,200,160,.5);
+}
+.socialPostThumbPlaceholder{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:1000;
+color:rgba(255,255,255,.1);
+letter-spacing:.08em;
+}
+.socialPostLightbox{
+position:absolute;
+inset:0;
+z-index:50;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(0,0,0,.75);
+backdrop-filter:blur(8px);
+}
+.socialPostLightbox.is-open{ display:flex; }
+.socialPostLightboxInner{
+max-width:min(92vw, 520px);
+max-height:min(88vh, 720px);
+width:100%;
+display:flex;
+flex-direction:column;
+border-radius:20px;
+border:1px solid rgba(255,140,84,.35);
+background:linear-gradient(180deg, rgba(22,14,18,.98), rgba(10,8,12,.99));
+box-shadow:0 24px 80px rgba(0,0,0,.6);
+overflow:hidden;
+}
+.socialPostLightboxClose{
+position:absolute;
+top:16px;
+right:16px;
+z-index:55;
+width:40px;
+height:40px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(0,0,0,.5);
+color:#fff;
+font-size:22px;
+cursor:pointer;
+line-height:1;
+}
+.socialPostLightboxImgWrap{
+width:100%;
+max-height:min(50vh, 360px);
+background:#000;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.socialPostLightboxImgWrap img{
+max-width:100%;
+max-height:min(50vh, 360px);
+object-fit:contain;
+}
+.socialPostLightboxBody{
+padding:16px 18px 20px;
+overflow:auto;
+max-height:40vh;
+}
+.socialPostLightboxAuthor{
+font-size:13px;
+font-weight:900;
+color:#fff;
+margin-bottom:8px;
+}
+.socialPostLightboxCaption{
+margin:0 0 14px;
+font-size:14px;
+line-height:1.5;
+color:rgba(255,255,255,.78);
+}
+.socialPostLightboxActions{
+display:flex;
+gap:10px;
+margin-bottom:12px;
+}
+.socialPostGridMeta{
+padding:10px 12px 8px;
+}
+.socialPostGridTop{
+display:flex;
+align-items:center;
+gap:8px;
+margin-bottom:6px;
+}
+.socialPostAvatar{
+width:28px;
+height:28px;
+border-radius:50%;
+object-fit:cover;
+background:linear-gradient(135deg, rgba(255,102,0,.4), rgba(60,20,40,.6));
+border:1px solid rgba(255,140,84,.25);
+flex-shrink:0;
+}
+.socialPostAuthor{ font-weight:900; font-size:12px; color:#fff; letter-spacing:.02em; }
+.socialPostTime{ font-size:10px; color:rgba(255,255,255,.4); margin-left:auto; font-weight:700; }
+.socialPostChannelPill{
+font-size:8px;
+font-weight:900;
+letter-spacing:.12em;
+text-transform:uppercase;
+padding:3px 8px;
+border-radius:999px;
+background:rgba(255,102,0,.15);
+color:var(--red2);
+border:1px solid rgba(255,140,84,.25);
+margin-bottom:6px;
+display:inline-block;
+}
+.socialPostCaptionGrid{
+font-size:12px;
+line-height:1.45;
+color:rgba(255,255,255,.78);
+font-weight:600;
+display:-webkit-box;
+-webkit-line-clamp:3;
+-webkit-box-orient:vertical;
+overflow:hidden;
+margin:0;
+}
+.socialPostGridFooter{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px;
+flex-wrap:wrap;
+padding:8px 12px 10px;
+border-top:1px solid rgba(255,255,255,.06);
+background:rgba(0,0,0,.2);
+}
+.socialPostGridFooterActions{
+display:flex;
+align-items:center;
+gap:6px;
+flex-wrap:wrap;
+pointer-events:auto;
+}
+.socialPostStat{
+font-size:11px;
+font-weight:800;
+color:rgba(255,255,255,.55);
+letter-spacing:.02em;
+}
+.socialPostStat strong{ color:var(--red2); margin-right:4px; }
+.socialThreadToggle{
+font-size:10px;
+font-weight:900;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:var(--red2);
+background:transparent;
+border:none;
+cursor:pointer;
+padding:4px 8px;
+border-radius:8px;
+transition:background .18s ease;
+}
+.socialThreadToggle:hover{ background:rgba(255,102,0,.15); }
+.socialPostThread{
+max-height:0;
+opacity:0;
+overflow:hidden;
+transition:max-height .35s ease, opacity .25s ease, padding .25s ease;
+padding:0 12px;
+background:rgba(0,0,0,.25);
+}
+.socialComment{ display:flex; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:11px; }
+.socialCommentAuthor{ font-weight:800; color:var(--red2); flex-shrink:0; }
+.socialCommentText{ color:rgba(255,255,255,.8); }
+.socialCommentInputWrap{ display:flex; gap:6px; padding:8px 0 0; }
+.socialCommentInput{
+flex:1;
+padding:8px 10px;
+border-radius:10px;
+border:1px solid rgba(255,140,84,.25);
+background:rgba(0,0,0,.45);
+color:#fff;
+font-size:12px;
+}
+.socialCommentInput::placeholder{ color:rgba(255,255,255,.35); }
+.socialPostAction{ display:inline-flex; align-items:center; gap:4px; padding:6px 10px; border:none; background:rgba(255,255,255,.06); color:rgba(255,255,255,.7); font-size:11px; font-weight:800; cursor:pointer; border-radius:8px; transition:color .2s ease, background .2s ease; }
+.socialPostAction:hover{ color:var(--red2); background:rgba(255,102,0,.12); }
+.socialPostAction.liked{ color:#ff6688; background:rgba(255,68,102,.12); }
+.socialChatSide{
+width:300px;
+flex-shrink:0;
+border-left:1px solid rgba(255,255,255,.1);
+display:flex;
+flex-direction:column;
+background:linear-gradient(180deg, rgba(0,0,0,.4), rgba(8,6,12,.85));
+}
+.socialChatSideHeader{
+padding:14px 16px;
+border-bottom:1px solid rgba(255,255,255,.1);
+font-size:11px;
+font-weight:900;
+letter-spacing:.14em;
+text-transform:uppercase;
+color:rgba(255,255,255,.85);
+background:rgba(0,0,0,.2);
+}
+.socialChatMessages{ flex:1; overflow:auto; padding:14px; display:flex; flex-direction:column; gap:12px; min-height:200px; }
+.socialChatMsg{ display:flex; gap:10px; max-width:94%; }
+.socialChatMsg.own{ align-self:flex-end; flex-direction:row-reverse; }
+.socialChatMsgBubble{
+padding:10px 14px;
+border-radius:16px;
+font-size:13px;
+line-height:1.45;
+box-shadow:0 4px 16px rgba(0,0,0,.2);
+}
+.socialChatMsg:not(.own) .socialChatMsgBubble{ background:rgba(255,255,255,.1); color:#fff; border-radius:16px 16px 16px 4px; border:1px solid rgba(255,255,255,.08); }
+.socialChatMsg.own .socialChatMsgBubble{ background:linear-gradient(135deg, rgba(255,120,50,.35), rgba(255,80,0,.22)); color:#fff; border-radius:16px 16px 4px 16px; border:1px solid rgba(255,160,100,.25); }
+.socialChatMsgAuthor{ font-size:10px; font-weight:800; color:var(--red2); margin-bottom:3px; letter-spacing:.06em; text-transform:uppercase; }
+.socialChatInputWrap{ display:flex; gap:8px; padding:12px 14px; border-top:1px solid rgba(255,255,255,.1); background:rgba(0,0,0,.25); }
+.socialChatInput{ flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,140,84,.28); background:rgba(0,0,0,.45); color:#fff; font-size:13px; }
+.socialChatEmpty{ padding:28px 20px; text-align:center; font-size:13px; color:rgba(255,255,255,.45); line-height:1.55; font-weight:600; }
+.socialShareForm{ display:flex; flex-direction:column; gap:12px; }
+.socialSharePreview{ width:100%; max-width:200px; aspect-ratio:1; object-fit:cover; border-radius:12px; background:rgba(0,0,0,.3); align-self:center; }
+.socialShareCaption{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,140,84,.25); background:rgba(0,0,0,.35); color:#fff; font-size:13px; min-height:70px; resize:vertical; box-sizing:border-box; }
+.socialPageModal .socialPageCard{ margin:auto; max-height:92vh; }
+@media (max-width: 980px){
+.socialLayout{ flex-direction:column; }
+.socialSidebar{ width:100%; border-right:none; border-bottom:1px solid rgba(255,255,255,.1); max-height:160px; }
+.socialOnlineList{ display:flex; flex-wrap:wrap; gap:6px; padding:8px 12px; }
+.socialOnlineUser{ width:auto; flex:1 1 auto; min-width:140px; margin-bottom:0; }
+.socialChatSide{ width:100%; border-left:none; border-top:1px solid rgba(255,255,255,.1); min-height:220px; }
+.socialHeroTop{ flex-direction:column; align-items:flex-start; }
 }
 .loginModalText{
 margin:10px 0 18px;
@@ -3090,7 +4199,11 @@ width:100%;
 <a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderAboutLink"><span>About</span></a>
 </nav>
-<div class="siteHeaderSlogan"><span>GRAB LIFE BY THE BOTTLES</span></div>
+<div class="siteHeaderSlogan" id="siteHeaderSlogan">
+<div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
+<img class="siteHeaderSloganImg" src="projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png" alt="GRAB LIFE BY THE BOTTLES"/>
+</div>
+</div>
 <div class="siteHeaderActions">
 <div class="siteHeaderSocials" aria-label="Social Media">
 <a class="siteHeaderSocialBtn instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" data-label="Instagram">
@@ -3137,6 +4250,7 @@ width:100%;
 </svg>
 <span class="siteHeaderCartBadge" id="headerCartCount">1</span>
 </a>
+<div class="siteHeaderLoginWrap" id="siteHeaderLoginWrap">
 <a class="siteHeaderLoginBtn" href="#" id="siteHeaderLoginBtn" aria-label="Login">
 <img class="siteHeaderLoginAvatar" id="siteHeaderLoginAvatar" alt="" style="display:none;width:26px;height:26px;border-radius:50%;object-fit:cover;" />
 <svg class="siteHeaderLoginIcon" viewBox="0 0 24 24" aria-hidden="true">
@@ -3145,6 +4259,11 @@ width:100%;
 </svg>
 <span>Login</span>
 </a>
+<div class="siteHeaderLoginDropdown" id="siteHeaderLoginDropdown" aria-hidden="true">
+<button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownProfile">Profile</button>
+<button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownLogout">Log out</button>
+</div>
+</div>
 </div>
 </div>
 </header>
@@ -3197,12 +4316,126 @@ width:100%;
 </div>
 </div>
 
-<div class="loginModal" id="socialModal" aria-hidden="true">
-<div class="loginModalCard" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
-<button class="loginModalClose" id="socialModalClose" type="button" aria-label="Close social popup">×</button>
-<div class="loginModalEyebrow">Social Community</div>
-<h3 class="loginModalTitle" id="socialModalTitle">Show us what you got.</h3>
-<p class="loginModalText">The BADDEST BOTTLE social community is coming soon. This is where your style, your grip, and your way turn into a full creator-driven platform built around custom bottles and sticker culture.</p>
+<div class="loginModal profileModal" id="profileModal" aria-hidden="true">
+<div class="loginModalCard" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+<button class="loginModalClose" id="profileModalClose" type="button" aria-label="Close profile">×</button>
+<div class="loginModalEyebrow">Your account</div>
+<h3 class="loginModalTitle" id="profileModalTitle">Edit profile</h3>
+<p class="loginModalText">Update your display name and photo for the community.</p>
+<div class="profileModalField">
+<label for="profileDisplayName">Display name</label>
+<input type="text" id="profileDisplayName" placeholder="Your name" maxlength="50" />
+</div>
+<div class="profileModalField">
+<label>Profile photo</label>
+<div class="profilePhotoUploadWrap">
+<img id="profilePhotoPreview" class="profilePhotoPreview" src="" alt="Profile" style="display:none;" />
+<img id="profilePhotoPreviewPlaceholder" class="profilePhotoPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff9f5a' stroke-width='1.5'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3C/svg%3E" alt="" style="background:rgba(255,255,255,.05);" />
+<input type="file" id="profilePhotoFile" accept="image/jpeg,image/png,image/webp,image/gif" />
+<button type="button" class="profilePhotoUploadBtn" id="profilePhotoUploadBtn">Upload photo</button>
+</div>
+</div>
+<div class="profileModalField">
+<label for="profilePhotoURL">Or paste photo URL (optional)</label>
+<input type="url" id="profilePhotoURL" placeholder="https://..." />
+</div>
+<div class="profileModalField">
+<label>Email</label>
+<input type="text" id="profileEmail" readonly />
+</div>
+<p class="loginAuthError" id="profileModalError" role="alert" style="margin-top:8px;display:none;"></p>
+<div class="profileModalActions">
+<button class="btn ghost" type="button" id="profileModalCancel">Cancel</button>
+<button class="btn primary glow" type="button" id="profileModalSave">Save</button>
+</div>
+</div>
+</div>
+
+<div class="loginModal socialPageModal" id="socialModal" aria-hidden="true">
+<div class="socialPageCard" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
+<button class="loginModalClose" id="socialModalClose" type="button" aria-label="Close social">×</button>
+<header class="socialHero">
+<div class="socialHeroTop">
+<span class="socialHeroBadge">BADDEST community</span>
+<div class="socialHeroStats">
+<span class="socialHeroStat">live <strong id="socialStatOnline">3</strong></span>
+<span class="socialHeroStat">drops <strong id="socialStatPosts">0</strong></span>
+<span class="socialHeroStat">vibe <strong>action · street · stickers</strong></span>
+</div>
+</div>
+<h2 class="socialHeroTitle" id="socialModalTitle">The drop</h2>
+<p class="socialHeroTagline">Custom stickers, bottle culture, and people doing cool shit with a BADDEST BOTTLE in hand. Post your grip—when others see it, they want in.</p>
+<div class="socialChallengeStrip">
+<div>
+<span class="socialChallengeLabel">TikTok-ready challenge</span>
+<p class="socialChallengeText">Film your bottle in the wild. Show the grip. Tag <code>#BaddestBottleChallenge</code> — flash your colors.</p>
+</div>
+<button type="button" class="socialCopyChallengeBtn" id="socialCopyChallengeBtn" title="Copy hashtag">Copy tag</button>
+</div>
+</header>
+<div class="socialLayout">
+<aside class="socialSidebar">
+<div class="socialSidebarHead">BADDEST squad</div>
+<div class="socialSidebarTitle">Chat rooms</div>
+<p class="socialSidebarHint">Pick a vibe—same energy as sticker categories.</p>
+<div class="socialChannelList" id="socialChannelList"></div>
+<div class="socialSidebarDivider"></div>
+<div class="socialSidebarTitle">Online · DMs</div>
+<div class="socialOnlineList" id="socialOnlineList"></div>
+</aside>
+<main class="socialMain">
+<div class="socialFeedHead">
+<h3 class="socialFeedTitle">The feed <span>Show your bottle</span></h3>
+<div class="socialFeedChips" aria-hidden="true">
+<span class="socialFeedChip hot">sticker drops</span>
+<span class="socialFeedChip">action sports</span>
+<span class="socialFeedChip">street</span>
+<span class="socialFeedChip">UGC</span>
+</div>
+</div>
+<div class="socialCompose">
+<div class="socialComposeHead">Drop to the feed</div>
+<div class="socialComposeRow">
+<div class="socialSharePreviewWrap">
+<img id="socialSharePreview" class="socialSharePreviewSmall" alt="Preview" style="display:none;" />
+<label class="socialShareUploadBtn" for="socialSharePhotoUpload" title="Upload a photo of your bottle">+ Photo</label>
+<input type="file" id="socialSharePhotoUpload" accept="image/*" style="position:absolute;width:0;height:0;opacity:0;" />
+</div>
+<textarea id="socialShareCaption" class="socialShareCaptionSmall" placeholder="Caption your bottle or sticker flex—what are you repping?" maxlength="300"></textarea>
+</div>
+<div class="socialComposeActions">
+<button type="button" class="btn ghost" id="socialShareClearPhoto" style="display:none;">Remove photo</button>
+<button type="button" class="btn primary glow" id="socialSharePostBtn">Post to feed</button>
+</div>
+</div>
+<div class="socialFeed" id="socialFeed"></div>
+</main>
+<aside class="socialChatSide">
+<div class="socialChatSideHeader" id="socialChatSideHeader">Messages</div>
+<div class="socialChatMessages" id="socialChatMessages"></div>
+<div id="socialChatEmpty" class="socialChatEmpty">Choose a <strong>room</strong> or an <strong>online</strong> name to chat.</div>
+<div class="socialChatInputWrap" id="socialChatInputWrap" style="display:none;">
+<input type="text" id="socialChatInput" class="socialChatInput" placeholder="Type a message..." maxlength="500" />
+<button type="button" class="btn primary" id="socialChatSend">Send</button>
+</div>
+</aside>
+</div>
+<div class="socialPostLightbox" id="socialPostLightbox" aria-hidden="true">
+<button type="button" class="socialPostLightboxClose" id="socialPostLightboxClose" aria-label="Close">×</button>
+<div class="socialPostLightboxInner">
+<div class="socialPostLightboxImgWrap" id="socialPostLightboxImgWrap"></div>
+<div class="socialPostLightboxBody">
+<div class="socialPostLightboxAuthor" id="socialPostLightboxAuthor"></div>
+<p class="socialPostLightboxCaption" id="socialPostLightboxCaption"></p>
+<div class="socialPostLightboxActions" id="socialPostLightboxActions"></div>
+<div id="socialPostLightboxComments"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div style="display:none;">
+<p class="loginModalText" style="display:none;">The BADDEST BOTTLE social community is coming soon. This is where your style, your grip, and your way turn into a full creator-driven platform built around custom bottles and sticker culture.</p>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">What’s Coming</h4>
 <div class="infoFeatureList">
@@ -3216,12 +4449,16 @@ width:100%;
 <p class="infoModalFootnote">Grab it. Use it. Own it. Then share it.</p>
 </div>
 </div>
+</div>
 
 <div class="loginModal" id="aboutModal" aria-hidden="true">
 <div class="loginModalCard" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
 <button class="loginModalClose" id="aboutModalClose" type="button" aria-label="Close about popup">×</button>
 <div class="loginModalEyebrow">About The Brand</div>
 <h3 class="loginModalTitle" id="aboutModalTitle">Grip it. Sip it. Reuse it.</h3>
+<p class="loginModalText"><strong>*END SINGLE SERVE PLASTIC USE*</strong> and do it with the BADDEST BOTTLE in your hand. Our Patented Finger Holes Bottle Design makes drinking cool, functional, and safe. Whether you like drinking while taking your final exam, while flying loops in your helicopter, or taking a chug while bombing down the street on your skateboard, you will never have to worry about container slippage while grabbing the BADDEST BOTTLE. Chaos Is Optional—Grip Is Guaranteed.</p>
+<p class="loginModalText" style="margin-top:12px;font-weight:800;color:var(--red2);">GRIP IT. SIP IT. REUSE IT and GRAB LIFE BY THE BOTTLES.</p>
+<hr style="border:0;height:1px;background:rgba(255,255,255,.12);margin:18px 0;"/>
 <p class="loginModalText">BADDEST BOTTLE is built to turn hydration into identity. We make bottles that feel bold, personal, and worth carrying everywhere, so what is in your hands actually matches your energy.</p>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">Our Vibe</h4>
@@ -3276,6 +4513,7 @@ width:100%;
 <div class="selectedStickerSection" id="selectedStickerSection">
 <div class="selectedStickerLabel">Selected Stickers. Checkmarked stickers add $5.00 each. Always free shipping.</div>
 <div class="selectedStickerGrid" id="selectedStickerGrid"></div>
+<button type="button" class="btn primary glow selectedStickerShareToFeedBtn" id="shareBottleToFeedBtn">Share my bottle to feed</button>
 </div>
 </div>
 </div>
@@ -3283,20 +4521,40 @@ width:100%;
 <div class="wrap">
 <div class="grid">
 <div class="previewShell">
-<div class="previewBlock mainPreviewMirror">
+<div class="previewBlock mainPreviewMirror mainPreviewVideoIdle">
 <div class="previewFrame mainPreviewMirror">
 <div class="dockThumb" id="shapeFrameTop">
 <div class="smartTvGlowHalo" id="smartTvGlowHalo" aria-hidden="true"></div>
 <img id="previewPhotoImg" class="previewPhotoImg" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"/>
 <canvas class="canvas" id="previewTop"></canvas>
 <div class="previewEmptyState" id="previewEmptyState">
+<div class="previewEmptyStateMarquee previewEmptyStateMarquee--left" aria-hidden="true">
+<div class="previewEmptyStateMarqueeSpin">
+<div class="previewEmptyStateMarqueeHoriz">
+<span class="previewEmptyStateMarqueeDup">GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · </span>
+<span class="previewEmptyStateMarqueeDup">GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · GRIP IT · SIP IT · </span>
+</div>
+</div>
+</div>
+<div class="previewEmptyStateMarquee previewEmptyStateMarquee--right" aria-hidden="true">
+<div class="previewEmptyStateMarqueeSpin">
+<div class="previewEmptyStateMarqueeHoriz">
+<span class="previewEmptyStateMarqueeDup previewEmptyStateMarqueeDup--reuse">RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · </span>
+<span class="previewEmptyStateMarqueeDup previewEmptyStateMarqueeDup--reuse">RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · RE-USE IT · </span>
+</div>
+</div>
+</div>
+<div class="previewEmptyStateVideoPlane">
+<div class="previewEmptyStateVideoKen">
 <iframe
 class="previewEmptyStateArt"
-src="https://www.youtube.com/embed/9EX9T0UyEF0?autoplay=1&mute=1&loop=1&playlist=9EX9T0UyEF0&controls=0&modestbranding=1&playsinline=1&rel=0"
+src="https://www.youtube.com/embed/9EX9T0UyEF0?autoplay=1&mute=1&loop=1&playlist=9EX9T0UyEF0&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3"
 title="Bottle preview animation"
 allow="autoplay; encrypted-media; picture-in-picture"
 referrerpolicy="strict-origin-when-cross-origin"
 ></iframe>
+</div>
+</div>
 <div class="previewEmptyStateLabel">Upload Or Generate Images Below</div>
 </div>
 <img class="previewLabelLogo previewLabelLogoLeft" alt="BADDEST BOTTLE logo"/>
@@ -3822,6 +5080,7 @@ const mobileThumbImg = document.getElementById("mobileThumbImg");
 const previewEmptyState = document.getElementById("previewEmptyState");
 const previewLabelLogos = Array.from(document.querySelectorAll(".previewLabelLogo"));
 const siteHeaderLogo = document.querySelector(".siteHeaderLogo");
+const siteHeaderSloganWrap = document.getElementById("siteHeaderSloganWrap");
 const headerCartCount = document.getElementById("headerCartCount");
 const dockLogoImg = document.querySelector(".dockLogoImg");
 const dockThumb = document.getElementById("dockThumb");
@@ -3901,7 +5160,12 @@ halos.forEach(el => el.classList.add("hasGlow"));
 }
 function updatePreviewBrandingState(){
 const hasImage = !!baseImg;
-if(previewEmptyState) previewEmptyState.style.display = hasImage ? "none" : "flex";
+if(previewEmptyState) previewEmptyState.style.display = hasImage ? "none" : "block";
+const previewMainBlock = document.querySelector(".previewBlock.mainPreviewMirror");
+if(previewMainBlock){
+if(hasImage) previewMainBlock.classList.remove("mainPreviewVideoIdle");
+else previewMainBlock.classList.add("mainPreviewVideoIdle");
+}
 previewLabelLogos.forEach(el => {
 el.style.display = hasImage ? "block" : "none";
 });
@@ -3915,6 +5179,35 @@ document.addEventListener("visibilitychange", () => {
 if(document.visibilityState === "visible") initPreviewVideos();
 });
 window.addEventListener("pointerdown", () => initPreviewVideos(), { passive:true, once:true });
+(function initSloganCursorFollow(){
+if(!siteHeaderSloganWrap) return;
+const panRange = 14;
+const scaleRange = 0.06;
+let targetX = 0, targetY = 0, targetS = 1;
+let currentX = 0, currentY = 0, currentS = 1;
+const ease = 0.08;
+function setTransform(){
+siteHeaderSloganWrap.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentS})`;
+}
+function tick(){
+currentX += (targetX - currentX) * ease;
+currentY += (targetY - currentY) * ease;
+currentS += (targetS - currentS) * ease;
+setTransform();
+requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+document.addEventListener("mousemove", (e) => {
+const x = e.clientX / window.innerWidth;
+const y = e.clientY / window.innerHeight;
+targetX = (x - 0.5) * 2 * panRange;
+targetY = (y - 0.5) * 2 * panRange;
+const dx = x - 0.5, dy = y - 0.5;
+const dist = Math.min(1, Math.hypot(dx, dy) * 2);
+targetS = 1 + (1 - dist) * scaleRange;
+});
+document.addEventListener("mouseleave", () => { targetX = 0; targetY = 0; targetS = 1; });
+})();
 if(siteHeaderHomeLink){
 siteHeaderHomeLink.addEventListener("click", (event) => {
 event.preventDefault();
@@ -3941,6 +5234,26 @@ const cartModalTotal = document.getElementById("cartModalTotal");
 const cartModalItemCount = document.getElementById("cartModalItemCount");
 const cartModalStickerCount = document.getElementById("cartModalStickerCount");
 const cartModalCheckoutBtn = document.getElementById("cartModalCheckoutBtn");
+const siteHeaderLoginWrap = document.getElementById("siteHeaderLoginWrap");
+const siteHeaderLoginDropdown = document.getElementById("siteHeaderLoginDropdown");
+const loginDropdownProfile = document.getElementById("loginDropdownProfile");
+const loginDropdownLogout = document.getElementById("loginDropdownLogout");
+const profileModal = document.getElementById("profileModal");
+const profileModalClose = document.getElementById("profileModalClose");
+const profileDisplayName = document.getElementById("profileDisplayName");
+const profilePhotoURL = document.getElementById("profilePhotoURL");
+const profileEmail = document.getElementById("profileEmail");
+const profileModalCancel = document.getElementById("profileModalCancel");
+const profileModalSave = document.getElementById("profileModalSave");
+const profileModalError = document.getElementById("profileModalError");
+const profilePhotoPreview = document.getElementById("profilePhotoPreview");
+const profilePhotoPreviewPlaceholder = document.getElementById("profilePhotoPreviewPlaceholder");
+const profilePhotoFile = document.getElementById("profilePhotoFile");
+const profilePhotoUploadBtn = document.getElementById("profilePhotoUploadBtn");
+let profilePhotoUploadDataUrl = null;
+function setProfileError(msg){
+if(profileModalError){ profileModalError.textContent = msg || ""; profileModalError.style.display = msg ? "block" : "none"; }
+}
 function setLoginError(msg){
 if(loginAuthError){ loginAuthError.textContent = msg || ""; loginAuthError.style.display = msg ? "block" : "none"; }
 }
@@ -3958,16 +5271,6 @@ if(!loginModal) return;
 loginModal.classList.remove("active");
 loginModal.setAttribute("aria-hidden", "true");
 }
-function showSocialModal(){
-if(!socialModal) return;
-socialModal.classList.add("active");
-socialModal.setAttribute("aria-hidden", "false");
-}
-function hideSocialModal(){
-if(!socialModal) return;
-socialModal.classList.remove("active");
-socialModal.setAttribute("aria-hidden", "true");
-}
 function showAboutModal(){
 if(!aboutModal) return;
 aboutModal.classList.add("active");
@@ -3977,6 +5280,39 @@ function hideAboutModal(){
 if(!aboutModal) return;
 aboutModal.classList.remove("active");
 aboutModal.setAttribute("aria-hidden", "true");
+}
+function hideProfileModal(){
+if(!profileModal) return;
+profileModal.classList.remove("active");
+profileModal.setAttribute("aria-hidden", "true");
+}
+function showProfileModal(){
+if(!profileModal) return;
+setProfileError("");
+profilePhotoUploadDataUrl = null;
+const user = firebaseAuth && firebaseAuth.currentUser;
+if(!user){ hideProfileModal(); return; }
+if(profileDisplayName) profileDisplayName.value = user.displayName || "";
+if(profilePhotoURL) profilePhotoURL.value = user.photoURL || "";
+if(profileEmail) profileEmail.value = user.email || "";
+if(profilePhotoPreview && profilePhotoPreviewPlaceholder){
+profilePhotoPreview.style.display = "none";
+profilePhotoPreview.removeAttribute("src");
+profilePhotoPreviewPlaceholder.style.display = "";
+if(user.photoURL){
+profilePhotoPreview.src = user.photoURL;
+profilePhotoPreview.style.display = "";
+profilePhotoPreviewPlaceholder.style.display = "none";
+}
+}
+if(profilePhotoFile) profilePhotoFile.value = "";
+profileModal.classList.add("active");
+profileModal.setAttribute("aria-hidden", "false");
+setTimeout(() => { if(profileDisplayName) profileDisplayName.focus(); }, 40);
+}
+function closeLoginDropdown(){
+if(siteHeaderLoginWrap) siteHeaderLoginWrap.classList.remove("dropdownOpen");
+if(siteHeaderLoginDropdown) siteHeaderLoginDropdown.setAttribute("aria-hidden", "true");
 }
 function getTemplateStickerUpcharge(templateKey){
 return templateKey === "halfWrap" ? HALF_WRAP_STICKER_UPCHARGE : FULL_WRAP_STICKER_UPCHARGE;
@@ -4047,17 +5383,612 @@ if(siteHeaderLoginBtn){
 siteHeaderLoginBtn.addEventListener("click", (event) => {
 event.preventDefault();
 if(siteHeaderLoginBtn.dataset.signedIn === "true"){
-initFirebaseAuth().then((auth) => { if (auth) auth.signOut(); });
+if(siteHeaderLoginWrap){
+siteHeaderLoginWrap.classList.toggle("dropdownOpen");
+siteHeaderLoginDropdown.setAttribute("aria-hidden", siteHeaderLoginWrap.classList.contains("dropdownOpen") ? "false" : "true");
+}
 return;
 }
 showLoginModal();
 });
+}
+document.addEventListener("click", (event) => {
+if(siteHeaderLoginWrap && siteHeaderLoginWrap.classList.contains("dropdownOpen") && !siteHeaderLoginWrap.contains(event.target)){
+closeLoginDropdown();
+}
+});
+if(loginDropdownLogout){
+loginDropdownLogout.addEventListener("click", () => {
+initFirebaseAuth().then((auth) => { if(auth) auth.signOut(); });
+closeLoginDropdown();
+});
+}
+if(loginDropdownProfile){
+loginDropdownProfile.addEventListener("click", () => {
+closeLoginDropdown();
+showProfileModal();
+});
+}
+if(profileModalClose){
+profileModalClose.addEventListener("click", hideProfileModal);
+}
+if(profileModalCancel){
+profileModalCancel.addEventListener("click", hideProfileModal);
+}
+if(profileModal){
+profileModal.addEventListener("click", (event) => {
+if(event.target === profileModal) hideProfileModal();
+});
+}
+if(profilePhotoUploadBtn && profilePhotoFile){
+profilePhotoUploadBtn.addEventListener("click", () => { profilePhotoFile.click(); });
+}
+if(profilePhotoFile){
+profilePhotoFile.addEventListener("change", () => {
+const file = profilePhotoFile.files && profilePhotoFile.files[0];
+if(!file || !file.type.startsWith("image/")) return;
+const reader = new FileReader();
+reader.onload = () => {
+const dataUrl = reader.result;
+const img = new Image();
+img.onload = () => {
+const max = 256;
+let w = img.width, h = img.height;
+if(w > max || h > max){
+if(w > h){ h = Math.round(h * max / w); w = max; }
+else{ w = Math.round(w * max / h); h = max; }
+}
+const canvas = document.createElement("canvas");
+canvas.width = w;
+canvas.height = h;
+const ctx = canvas.getContext("2d");
+if(!ctx){ profilePhotoUploadDataUrl = dataUrl; updateProfilePhotoPreview(dataUrl); return; }
+ctx.drawImage(img, 0, 0, w, h);
+try {
+profilePhotoUploadDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+} catch(e) {
+profilePhotoUploadDataUrl = dataUrl;
+}
+updateProfilePhotoPreview(profilePhotoUploadDataUrl);
+};
+img.onerror = () => { profilePhotoUploadDataUrl = dataUrl; updateProfilePhotoPreview(dataUrl); };
+img.src = dataUrl;
+};
+reader.readAsDataURL(file);
+});
+}
+function updateProfilePhotoPreview(src){
+if(!src){ profilePhotoPreviewPlaceholder.style.display = ""; profilePhotoPreview.style.display = "none"; return; }
+if(profilePhotoPreview){ profilePhotoPreview.src = src; profilePhotoPreview.style.display = ""; }
+if(profilePhotoPreviewPlaceholder) profilePhotoPreviewPlaceholder.style.display = "none";
+if(profilePhotoURL) profilePhotoURL.value = "";
+}
+if(profileModalSave){
+profileModalSave.addEventListener("click", () => {
+const user = firebaseAuth && firebaseAuth.currentUser;
+if(!user) return;
+const displayName = profileDisplayName ? profileDisplayName.value.trim() : "";
+const urlField = profilePhotoURL ? profilePhotoURL.value.trim() : "";
+function applyProfile(photoURL){
+profilePhotoUploadDataUrl = null;
+const lbl = siteHeaderLoginBtn && siteHeaderLoginBtn.querySelector("span");
+if(lbl) lbl.textContent = displayName ? `Hi, ${displayName.split(" ")[0]}` : (user.email || "Account");
+const av = siteHeaderLoginAvatar || (siteHeaderLoginBtn && siteHeaderLoginBtn.querySelector(".siteHeaderLoginAvatar"));
+if(av){
+if(photoURL){ av.src = photoURL; av.alt = displayName || "Profile"; av.style.display = "block"; }
+else{ av.removeAttribute("src"); av.style.display = "none"; }
+}
+const iconEl = siteHeaderLoginBtn && siteHeaderLoginBtn.querySelector("svg");
+if(iconEl) iconEl.style.display = photoURL ? "none" : "";
+hideProfileModal();
+}
+function doUpdate(photoURL){
+user.updateProfile({ displayName: displayName || null, photoURL: photoURL || null }).then(() => applyProfile(photoURL)).catch((err) => { setProfileError((err && err.message) || "Profile update failed."); });
+}
+if(profilePhotoUploadDataUrl){
+function uploadThenUpdate(){
+if(typeof firebase === "undefined" || !firebase.storage){
+setProfileError("Photo upload needs Firebase Storage. Use the photo URL field with an image link (e.g. imgur.com) instead.");
+return;
+}
+fetch(profilePhotoUploadDataUrl).then((r) => r.blob()).then((blob) => {
+const ref = firebase.storage().ref("profilePhotos/" + user.uid + "/avatar.jpg");
+return ref.put(blob, { contentType: "image/jpeg" }).then(() => ref.getDownloadURL());
+}).then((photoURL) => doUpdate(photoURL)).catch((err) => { setProfileError((err && err.message) || "Upload failed. Use the photo URL field with an image link instead."); });
+}
+if(typeof firebase !== "undefined" && firebase.storage){
+uploadThenUpdate();
+} else {
+const s = document.createElement("script");
+s.src = "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js";
+s.crossOrigin = "anonymous";
+s.onload = () => { uploadThenUpdate(); };
+s.onerror = () => { setProfileError("Photo upload unavailable. Use the photo URL field with an image link (e.g. imgur.com) instead."); };
+(document.head || document.documentElement).appendChild(s);
+}
+} else {
+doUpdate(urlField || null);
+}
+});
+}
+let socialPosts = [
+{ id: "1", author: "BADDEST", avatar: "", channel: "skateboarding", imageUrl: "projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png", caption: "First drop. Custom bottle design season is here.", time: "2h ago", likes: 12, liked: false, featured: true, badge: "Official", vibe: "Sticker culture", comments: [{ author: "Creator", text: "So fire." }] },
+{ id: "2", author: "StickerHead", avatar: "", channel: "street art", imageUrl: "projects/Users-michaelcboyer-cursor/assets/sdfsfd-429a2c21-a865-42cc-af90-e9aea818d2aa.png", caption: "Half wrap sticker concept. Thoughts?", time: "5h ago", likes: 8, liked: false, badge: "Community", vibe: "Street flex", comments: [{ author: "BADDEST", text: "Clean." }] },
+{ id: "3", author: "GripCity", avatar: "", channel: "parkour", imageUrl: "", caption: "Session at the park—bottle never slipped. Grip is guaranteed. Who’s filming their #BaddestBottleChallenge next?", time: "1d ago", likes: 24, liked: false, badge: "Action", vibe: "Skate · park", comments: [] }
+];
+let socialFeedFilterChannel = null;
+let socialJoinedRoomId = null;
+let socialRoomMessages = {};
+let socialOnlineUsers = [
+{ id: "u1", name: "BADDEST", avatar: "" },
+{ id: "u2", name: "StickerHead", avatar: "" },
+{ id: "u3", name: "Creator", avatar: "" }
+];
+let socialDMs = {};
+let currentChatUserId = null;
+function ensureDmThread(userId){
+if(!socialDMs[userId]) socialDMs[userId] = [
+{ author: socialOnlineUsers.find((u) => u.id === userId) ? socialOnlineUsers.find((u) => u.id === userId).name : "User", text: "Hey! Message me here.", own: false }
+];
+return socialDMs[userId];
+}
+function updateSocialStats(){
+const onlineEl = document.getElementById("socialStatOnline");
+const postsEl = document.getElementById("socialStatPosts");
+if(onlineEl && typeof socialOnlineUsers !== "undefined") onlineEl.textContent = String(socialOnlineUsers.length);
+if(postsEl) postsEl.textContent = String(socialPosts.length);
+}
+function humanizeSocialChannel(key){
+if(!key) return "";
+return String(key).split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
+function getSocialAiCategoryKeys(){
+try {
+if(typeof AI_CATEGORIES !== "undefined" && AI_CATEGORIES && typeof AI_CATEGORIES === "object"){
+return Object.keys(AI_CATEGORIES).sort((a, b) => a.localeCompare(b));
+}
+} catch(_) {}
+return [];
+}
+function ensureSocialRoomThread(roomId){
+if(!socialRoomMessages[roomId]){
+socialRoomMessages[roomId] = [
+{ author: "Room", text: "You’re in " + humanizeSocialChannel(roomId) + ". Drop links, talk stickers.", own: false }
+];
+}
+return socialRoomMessages[roomId];
+}
+function closeSocialPostLightbox(){
+const box = document.getElementById("socialPostLightbox");
+if(!box) return;
+box.classList.remove("is-open");
+box.setAttribute("aria-hidden", "true");
+}
+function openSocialPostLightbox(postId){
+const post = socialPosts.find((p) => p.id === postId);
+const box = document.getElementById("socialPostLightbox");
+if(!post || !box) return;
+box.dataset.postId = postId;
+box.classList.add("is-open");
+box.setAttribute("aria-hidden", "false");
+const wrap = document.getElementById("socialPostLightboxImgWrap");
+wrap.innerHTML = "";
+if(post.imageUrl){
+const img = document.createElement("img");
+img.src = post.imageUrl;
+img.alt = "";
+wrap.appendChild(img);
+} else {
+const ph = document.createElement("div");
+ph.className = "socialPostThumbPlaceholder";
+ph.style.cssText = "min-height:160px;position:relative;";
+ph.textContent = "Bb";
+wrap.appendChild(ph);
+}
+const authEl = document.getElementById("socialPostLightboxAuthor");
+if(authEl) authEl.textContent = post.author + " · " + post.time;
+const capEl = document.getElementById("socialPostLightboxCaption");
+if(capEl) capEl.textContent = post.caption || "";
+const actEl = document.getElementById("socialPostLightboxActions");
+if(actEl){
+actEl.innerHTML = "<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-lb-like=\"" + post.id + "\">♥ " + post.likes + " Like</button>";
+}
+const comWrap = document.getElementById("socialPostLightboxComments");
+if(comWrap){
+const lines = (post.comments || []).map((c) => "<div class=\"socialComment\"><span class=\"socialCommentAuthor\">" + escapeHtml(c.author) + "</span><span class=\"socialCommentText\">" + escapeHtml(c.text) + "</span></div>").join("");
+comWrap.innerHTML = lines + "<div class=\"socialCommentInputWrap\"><input type=\"text\" class=\"socialCommentInput\" id=\"socialLbCommentInput\" placeholder=\"Add a comment…\" /><button type=\"button\" class=\"btn ghost\" data-lb-comment=\"" + post.id + "\">Post</button></div>";
+}
+}
+function initSocialPostLightbox(){
+const lb = document.getElementById("socialPostLightbox");
+const closeBtn = document.getElementById("socialPostLightboxClose");
+if(!lb || lb.__socialLbInit) return;
+lb.__socialLbInit = true;
+if(closeBtn) closeBtn.addEventListener("click", closeSocialPostLightbox);
+lb.addEventListener("click", (e) => { if(e.target === lb) closeSocialPostLightbox(); });
+const inner = lb.querySelector(".socialPostLightboxInner");
+if(inner) inner.addEventListener("click", (e) => e.stopPropagation());
+lb.addEventListener("click", (e) => {
+const likeBtn = e.target.closest("[data-lb-like]");
+if(likeBtn){
+const id = likeBtn.getAttribute("data-lb-like");
+const p = socialPosts.find((x) => x.id === id);
+if(p){
+p.liked = !p.liked;
+p.likes += p.liked ? 1 : -1;
+openSocialPostLightbox(id);
+renderSocialFeed();
+}
+return;
+}
+const cBtn = e.target.closest("[data-lb-comment]");
+if(cBtn){
+const id = cBtn.getAttribute("data-lb-comment");
+const inp = document.getElementById("socialLbCommentInput");
+const text = inp && inp.value.trim();
+if(!text || !id) return;
+const p = socialPosts.find((x) => x.id === id);
+if(!p) return;
+p.comments = p.comments || [];
+p.comments.push({ author: firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "Guest", text: text });
+if(inp) inp.value = "";
+openSocialPostLightbox(id);
+renderSocialFeed();
+}
+});
+}
+initSocialPostLightbox();
+function renderSocialChannels(){
+const list = document.getElementById("socialChannelList");
+if(!list) return;
+list.innerHTML = "";
+const allBtn = document.createElement("button");
+allBtn.type = "button";
+allBtn.className = "socialRoomAllBtn" + (socialFeedFilterChannel === null ? " is-feed-active" : "");
+allBtn.textContent = "All posts";
+allBtn.addEventListener("click", () => {
+socialFeedFilterChannel = null;
+renderSocialChannels();
+renderSocialFeed();
+});
+list.appendChild(allBtn);
+const keys = getSocialAiCategoryKeys();
+keys.forEach((key, idx) => {
+const row = document.createElement("div");
+row.className = "socialRoomRow";
+const main = document.createElement("div");
+main.className = "socialRoomRowMain";
+const filterBtn = document.createElement("button");
+filterBtn.type = "button";
+filterBtn.className = "socialRoomFilter" + (socialFeedFilterChannel === key ? " is-feed-active" : "");
+const dotN = idx % 8;
+filterBtn.innerHTML = "<span class=\"socialRoomDot socialRoomDot--t" + dotN + "\"></span><span>" + escapeHtml(humanizeSocialChannel(key)) + "</span>";
+filterBtn.addEventListener("click", () => {
+socialFeedFilterChannel = key;
+renderSocialChannels();
+renderSocialFeed();
+});
+main.appendChild(filterBtn);
+const prompts = typeof AI_CATEGORIES !== "undefined" && AI_CATEGORIES[key] ? AI_CATEGORIES[key] : [];
+const sum = Array.isArray(prompts) && prompts[0] ? String(prompts[0]) : "";
+if(sum){
+const sm = document.createElement("p");
+sm.className = "socialRoomSummary";
+sm.textContent = sum.length > 96 ? sum.slice(0, 94) + "…" : sum;
+main.appendChild(sm);
+}
+const joinBtn = document.createElement("button");
+joinBtn.type = "button";
+joinBtn.className = "socialRoomJoinBtn" + (socialJoinedRoomId === key ? " is-joined" : "");
+joinBtn.textContent = socialJoinedRoomId === key ? "Joined" : "Join";
+joinBtn.addEventListener("click", (ev) => {
+ev.stopPropagation();
+if(socialJoinedRoomId === key){
+socialJoinedRoomId = null;
+} else {
+socialJoinedRoomId = key;
+currentChatUserId = null;
+ensureSocialRoomThread(key);
+}
+renderSocialChannels();
+renderSocialOnlineList();
+renderSocialChat();
+});
+row.appendChild(main);
+row.appendChild(joinBtn);
+list.appendChild(row);
+});
+}
+function renderSocialFeed(){
+const feed = document.getElementById("socialFeed");
+if(!feed) return;
+feed.innerHTML = "";
+const filtered = socialFeedFilterChannel
+? socialPosts.filter((p) => (p.channel || "") === socialFeedFilterChannel)
+: socialPosts.slice();
+filtered.forEach((post) => {
+const postEl = document.createElement("div");
+postEl.className = "socialPostGridCard" + (post.featured ? " socialPostFeatured" : "");
+postEl.dataset.postId = post.id;
+const avatarSrc = post.avatar || "";
+const channelPill = post.channel ? "<span class=\"socialPostChannelPill\">" + escapeHtml(humanizeSocialChannel(post.channel)) + "</span>" : "";
+const thumb = post.imageUrl
+? "<div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><img src=\"" + post.imageUrl + "\" alt=\"\" loading=\"lazy\" /><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>"
+: "<div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><div class=\"socialPostThumbPlaceholder\">Bb</div><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>";
+postEl.innerHTML =
+thumb +
+"<div class=\"socialPostGridMeta\">" +
+channelPill +
+"<div class=\"socialPostGridTop\">" +
+"<img class=\"socialPostAvatar\" src=\"" + avatarSrc + "\" alt=\"\" onerror=\"this.style.display='none'\" />" +
+"<span class=\"socialPostAuthor\">" + escapeHtml(post.author) + "</span>" +
+"<span class=\"socialPostTime\">" + escapeHtml(post.time) + "</span>" +
+"</div>" +
+"<p class=\"socialPostCaptionGrid\">" + escapeHtml(post.caption || "") + "</p>" +
+"</div>" +
+"<div class=\"socialPostGridFooter\">" +
+"<span class=\"socialPostStat\"><strong>" + post.likes + "</strong> likes</span>" +
+"<div class=\"socialPostGridFooterActions\">" +
+"<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-action=\"like\" data-post-id=\"" + post.id + "\">♥ Like</button>" +
+"<button type=\"button\" class=\"socialPostAction\" data-action=\"comment\" data-post-id=\"" + post.id + "\">💬 Comment</button>" +
+"</div>" +
+"</div>" +
+"<div class=\"socialPostThread\" data-post-id=\"" + post.id + "\">" +
+(post.comments || []).map((c) => "<div class=\"socialComment\"><span class=\"socialCommentAuthor\">" + escapeHtml(c.author) + "</span><span class=\"socialCommentText\">" + escapeHtml(c.text) + "</span></div>").join("") +
+"<div class=\"socialCommentInputWrap\">" +
+"<input type=\"text\" class=\"socialCommentInput\" placeholder=\"Add a comment…\" data-post-id=\"" + post.id + "\" />" +
+"<button type=\"button\" class=\"btn ghost socialCommentSubmit\" data-post-id=\"" + post.id + "\">Post</button>" +
+"</div>" +
+"</div>";
+feed.appendChild(postEl);
+});
+updateSocialStats();
+feed.querySelectorAll("[data-action=\"like\"]").forEach((btn) => {
+btn.addEventListener("click", (e) => {
+e.stopPropagation();
+const post = socialPosts.find((p) => p.id === btn.dataset.postId);
+if(!post) return;
+post.liked = !post.liked;
+post.likes += post.liked ? 1 : -1;
+renderSocialFeed();
+const lb = document.getElementById("socialPostLightbox");
+if(lb && lb.classList.contains("is-open") && lb.dataset.postId === post.id) openSocialPostLightbox(post.id);
+});
+});
+feed.querySelectorAll("[data-action=\"comment\"]").forEach((btn) => {
+btn.addEventListener("click", (e) => {
+e.stopPropagation();
+const card = btn.closest(".socialPostGridCard");
+if(card) card.classList.toggle("is-thread-open");
+});
+});
+feed.querySelectorAll(".socialCommentSubmit").forEach((btn) => {
+btn.addEventListener("click", (e) => {
+e.stopPropagation();
+const postId = btn.dataset.postId;
+const input = feed.querySelector(".socialCommentInput[data-post-id=\"" + postId + "\"]");
+if(!input || !input.value.trim()) return;
+const post = socialPosts.find((p) => p.id === postId);
+if(!post) return;
+post.comments = post.comments || [];
+post.comments.push({ author: firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "Guest", text: input.value.trim() });
+input.value = "";
+renderSocialFeed();
+const card = feed.querySelector(".socialPostGridCard[data-post-id=\"" + postId + "\"]");
+if(card) card.classList.add("is-thread-open");
+const lb = document.getElementById("socialPostLightbox");
+if(lb && lb.classList.contains("is-open") && lb.dataset.postId === postId) openSocialPostLightbox(postId);
+});
+});
+}
+function setupSocialFeedThumbDelegation(){
+const feed = document.getElementById("socialFeed");
+if(!feed || feed.__thumbDelegation) return;
+feed.__thumbDelegation = true;
+feed.addEventListener("click", (e) => {
+const t = e.target.closest(".socialPostThumb");
+if(!t || e.target.closest(".socialCommentInputWrap")) return;
+if(e.target.closest(".socialPostAction")) return;
+const id = t.getAttribute("data-post-id");
+if(id) openSocialPostLightbox(id);
+});
+feed.addEventListener("keydown", (e) => {
+if(e.key !== "Enter" && e.key !== " ") return;
+const t = e.target.closest(".socialPostThumb");
+if(!t) return;
+e.preventDefault();
+const id = t.getAttribute("data-post-id");
+if(id) openSocialPostLightbox(id);
+});
+}
+setupSocialFeedThumbDelegation();
+function escapeHtml(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+function renderSocialOnlineList(){
+const list = document.getElementById("socialOnlineList");
+if(!list) return;
+list.innerHTML = "";
+socialOnlineUsers.forEach((u) => {
+const btn = document.createElement("button");
+btn.type = "button";
+btn.className = "socialOnlineUser" + (currentChatUserId === u.id ? " active" : "");
+btn.dataset.userId = u.id;
+btn.innerHTML = `<img class="socialOnlineAvatar" src="${u.avatar || ""}" alt="" onerror="this.style.display='none'" /><span class="socialOnlineName">${escapeHtml(u.name)}</span><span class="socialOnlineDot"></span>`;
+btn.addEventListener("click", () => {
+currentChatUserId = u.id;
+ensureDmThread(u.id);
+renderSocialOnlineList();
+renderSocialChat();
+});
+list.appendChild(btn);
+});
+}
+function renderSocialChat(){
+const container = document.getElementById("socialChatMessages");
+const emptyEl = document.getElementById("socialChatEmpty");
+const inputWrap = document.getElementById("socialChatInputWrap");
+const headerEl = document.getElementById("socialChatSideHeader");
+if(!container) return;
+container.innerHTML = "";
+if(!currentChatUserId){
+if(emptyEl) emptyEl.style.display = "block";
+if(inputWrap) inputWrap.style.display = "none";
+if(headerEl) headerEl.textContent = "Chat";
+return;
+}
+if(emptyEl) emptyEl.style.display = "none";
+if(inputWrap) inputWrap.style.display = "flex";
+const user = socialOnlineUsers.find((u) => u.id === currentChatUserId);
+if(headerEl) headerEl.textContent = user ? user.name : "Chat";
+const messages = ensureDmThread(currentChatUserId);
+messages.forEach((msg) => {
+const div = document.createElement("div");
+div.className = "socialChatMsg" + (msg.own ? " own" : "");
+div.innerHTML = `<div><span class="socialChatMsgAuthor">${escapeHtml(msg.author)}</span><div class="socialChatMsgBubble">${escapeHtml(msg.text)}</div></div>`;
+container.appendChild(div);
+});
+container.scrollTop = container.scrollHeight;
+}
+function showSocialModal(){
+if(!socialModal) return;
+socialModal.classList.add("active");
+socialModal.setAttribute("aria-hidden", "false");
+socialModal.classList.add("socialPage");
+const spc = document.querySelector(".socialPageCard");
+if(spc) spc.style.maxHeight = "";
+currentChatUserId = null;
+socialUploadedPhotoUrl = "";
+renderSocialFeed();
+renderSocialOnlineList();
+renderSocialChat();
+let url = "";
+if(typeof baseImg !== "undefined" && baseImg && baseImg.src) url = baseImg.src;
+else if(typeof previewTop !== "undefined" && previewTop && previewTop.toDataURL) url = previewTop.toDataURL("image/png");
+if(typeof setSocialPreview === "function") setSocialPreview(url);
+else {
+const sp = document.getElementById("socialSharePreview");
+if(sp){ sp.src = url; sp.style.display = url ? "block" : "none"; }
+}
+}
+function hideSocialModal(){
+if(!socialModal) return;
+socialModal.classList.remove("active");
+socialModal.classList.remove("socialPage");
+socialModal.setAttribute("aria-hidden", "true");
 }
 if(siteHeaderSocialLink){
 siteHeaderSocialLink.addEventListener("click", (event) => {
 event.preventDefault();
 showSocialModal();
 });
+}
+const shareBottleToFeedBtn = document.getElementById("shareBottleToFeedBtn");
+if(shareBottleToFeedBtn){
+shareBottleToFeedBtn.addEventListener("click", (event) => {
+event.preventDefault();
+showSocialModal();
+});
+}
+const socialCopyChallengeBtn = document.getElementById("socialCopyChallengeBtn");
+if(socialCopyChallengeBtn){
+const challengeTag = "#BaddestBottleChallenge";
+socialCopyChallengeBtn.addEventListener("click", () => {
+const text = challengeTag + " — Show your grip. BADDEST BOTTLE.";
+if(navigator.clipboard && navigator.clipboard.writeText){
+navigator.clipboard.writeText(text).then(() => {
+socialCopyChallengeBtn.textContent = "Copied!";
+setTimeout(() => { socialCopyChallengeBtn.textContent = "Copy tag"; }, 2000);
+}).catch(() => {
+try {
+const ta = document.createElement("textarea");
+ta.value = text;
+document.body.appendChild(ta);
+ta.select();
+document.execCommand("copy");
+document.body.removeChild(ta);
+socialCopyChallengeBtn.textContent = "Copied!";
+setTimeout(() => { socialCopyChallengeBtn.textContent = "Copy tag"; }, 2000);
+} catch(_) {}
+});
+} else {
+try {
+const ta = document.createElement("textarea");
+ta.value = text;
+document.body.appendChild(ta);
+ta.select();
+document.execCommand("copy");
+document.body.removeChild(ta);
+socialCopyChallengeBtn.textContent = "Copied!";
+setTimeout(() => { socialCopyChallengeBtn.textContent = "Copy tag"; }, 2000);
+} catch(_) {}
+}
+});
+}
+const socialSharePreview = document.getElementById("socialSharePreview");
+const socialShareCaption = document.getElementById("socialShareCaption");
+const socialSharePostBtn = document.getElementById("socialSharePostBtn");
+const socialSharePhotoUpload = document.getElementById("socialSharePhotoUpload");
+const socialShareClearPhoto = document.getElementById("socialShareClearPhoto");
+const socialChatInput = document.getElementById("socialChatInput");
+const socialChatSend = document.getElementById("socialChatSend");
+let socialUploadedPhotoUrl = "";
+function setSocialPreview(url){
+if(socialSharePreview){
+socialSharePreview.src = url || "";
+socialSharePreview.style.display = url ? "block" : "none";
+}
+if(socialShareClearPhoto) socialShareClearPhoto.style.display = socialUploadedPhotoUrl ? "block" : "none";
+}
+if(socialSharePhotoUpload){
+socialSharePhotoUpload.addEventListener("change", () => {
+const file = socialSharePhotoUpload.files && socialSharePhotoUpload.files[0];
+if(!file || !file.type.startsWith("image/")) return;
+const reader = new FileReader();
+reader.onload = () => {
+socialUploadedPhotoUrl = reader.result;
+setSocialPreview(socialUploadedPhotoUrl);
+};
+reader.readAsDataURL(file);
+socialSharePhotoUpload.value = "";
+});
+}
+if(socialShareClearPhoto){
+socialShareClearPhoto.addEventListener("click", () => {
+socialUploadedPhotoUrl = "";
+setSocialPreview("");
+let url = "";
+if(typeof baseImg !== "undefined" && baseImg && baseImg.src) url = baseImg.src;
+else if(typeof previewTop !== "undefined" && previewTop && previewTop.toDataURL) url = previewTop.toDataURL("image/png");
+if(url){ socialSharePreview.src = url; socialSharePreview.style.display = "block"; socialShareClearPhoto.style.display = "block"; }
+});
+}
+if(socialSharePostBtn){
+socialSharePostBtn.addEventListener("click", () => {
+let imageUrl = socialUploadedPhotoUrl || "";
+if(!imageUrl && baseImg && baseImg.src) imageUrl = baseImg.src;
+if(!imageUrl && previewTop && previewTop.toDataURL) imageUrl = previewTop.toDataURL("image/png");
+setSocialPreview(imageUrl);
+const caption = socialShareCaption ? socialShareCaption.value.trim() : "";
+const author = firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "Guest";
+socialPosts.unshift({ id: "p" + Date.now(), author: author, avatar: (firebaseAuth && firebaseAuth.currentUser && firebaseAuth.currentUser.photoURL) || "", imageUrl: imageUrl, caption: caption || "Shared a design.", time: "Just now", likes: 0, liked: false, badge: "New drop", vibe: "Your flex", comments: [] });
+if(socialShareCaption) socialShareCaption.value = "";
+socialUploadedPhotoUrl = "";
+let defaultUrl = "";
+if(typeof baseImg !== "undefined" && baseImg && baseImg.src) defaultUrl = baseImg.src;
+else if(typeof previewTop !== "undefined" && previewTop && previewTop.toDataURL) defaultUrl = previewTop.toDataURL("image/png");
+setSocialPreview(defaultUrl);
+renderSocialFeed();
+});
+}
+if(socialChatSend && socialChatInput){
+socialChatSend.addEventListener("click", () => {
+const text = socialChatInput.value.trim();
+if(!text || !currentChatUserId) return;
+ensureDmThread(currentChatUserId);
+socialDMs[currentChatUserId].push({ author: firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "You", text: text, own: true });
+socialChatInput.value = "";
+renderSocialChat();
+});
+socialChatInput.addEventListener("keydown", (e) => { if(e.key === "Enter") socialChatSend.click(); });
 }
 if(siteHeaderAboutLink){
 siteHeaderAboutLink.addEventListener("click", (event) => {
@@ -4201,6 +6132,8 @@ lbl.textContent = user.displayName ? `Hi, ${user.displayName.split(" ")[0]}` : (
 siteHeaderLoginBtn.setAttribute("aria-label", "Sign out");
 siteHeaderLoginBtn.dataset.signedIn = "true";
 }else{
+closeLoginDropdown();
+hideProfileModal();
 const av = siteHeaderLoginAvatar || document.getElementById("siteHeaderLoginAvatar");
 if(av){ av.removeAttribute("src"); av.style.display = "none"; }
 if(siteHeaderLoginIcon) siteHeaderLoginIcon.style.display = "";
@@ -4220,6 +6153,8 @@ if(baseImg) sendToParent();
 }
 document.addEventListener("keydown", (event) => {
 if(event.key === "Escape"){
+if(profileModal && profileModal.classList.contains("active")){ hideProfileModal(); return; }
+closeLoginDropdown();
 if(loginModal && loginModal.classList.contains("active")) hideLoginModal();
 if(socialModal && socialModal.classList.contains("active")) hideSocialModal();
 if(aboutModal && aboutModal.classList.contains("active")) hideAboutModal();
@@ -4365,7 +6300,7 @@ let templatePhotoState = Object.create(null);
 function getInitialPhotoScaleForTemplate(){
 if(!labelMaskCanvas) return 1;
 if(currentLabelTemplate === "fullWrap") return 1;
-if(currentLabelTemplate === "halfWrap") return 1.28;
+if(currentLabelTemplate === "halfWrap") return 1.12;
 return 1;
 }
 function saveTemplatePhotoState(templateKey){
@@ -4862,12 +6797,13 @@ const iw = img.naturalWidth;
 const ih = img.naturalHeight;
 if(labelMaskCanvas){
 const bounds = getMaskSafeBounds();
-return Math.max(bounds.w / iw, bounds.h / ih) * 1.08;
+const cover = Math.max(bounds.w / iw, bounds.h / ih);
+return cover * (currentLabelTemplate === "fullWrap" ? 1 : 0.90);
 }
-return Math.max(BASE / iw, BASE / ih);
+return Math.max(BASE / iw, BASE / ih) * 0.90;
 }
 function clampPhotoScale(){
-const minScale = labelMaskCanvas ? 0.95 : 0.05;
+const minScale = labelMaskCanvas ? 0.72 : 0.05;
 photoScale = clamp(photoScale, minScale, 3);
 }
 function clampPhotoOffsets(){
@@ -5195,6 +7131,7 @@ const topAspect = currentLabelTemplate === "fullWrap" ? "1000 / 633" : aspectVal
 el.style.aspectRatio = el === shapeFrameTop ? topAspect : aspectVal;
 if(el === shapeFrameTop){
 el.classList.toggle("template-halfWrap", currentLabelTemplate === "halfWrap");
+el.classList.toggle("template-fullWrap", currentLabelTemplate === "fullWrap");
 }
 el.style.maskImage = maskStyle;
 el.style.webkitMaskImage = maskStyle;
@@ -5242,6 +7179,7 @@ el.style.webkitMaskImage = "";
 el.style.maskSize = "";
 el.style.webkitMaskSize = "";
 el.classList.remove("label");
+el.classList.remove("template-fullWrap");
 }
 });
 previewImgs.forEach(img => {
@@ -5419,7 +7357,7 @@ ctx.rect(0, 0, BASE, BASE);
 ctx.clip();
 }
 function ensureFrames(){
-if(shapeFrameTop) { shapeFrameTop.classList.remove("square", "label"); }
+if(shapeFrameTop) { shapeFrameTop.classList.remove("square", "label", "template-fullWrap", "template-halfWrap"); }
 if(shapeFrameBottom) { shapeFrameBottom.classList.remove("square", "label"); }
 if(shapeFrameMobileBottom) { shapeFrameMobileBottom.classList.remove("square", "label"); }
 if(shapeFrameHandsBottom) { shapeFrameHandsBottom.classList.remove("square", "label"); }
@@ -6314,6 +8252,9 @@ async function render(ctx, includeHands, includeText, forExport, includeBackligh
 if(includeText === undefined) includeText = true;
 if(forExport === undefined) forExport = false;
 if(includeBacklight === undefined) includeBacklight = !forExport;
+if(!forExport && labelMaskCanvas && currentLabelTemplate === "fullWrap"){
+includeBacklight = false;
+}
 if(!ctx) {
 console.warn("Render called with null context");
 return;
@@ -7850,6 +9791,42 @@ skiing: [
 "clockwork machine with gears and steam, retro futurist sticker art, high contrast, punchy colors",
 "steampunk airship over city skyline, weird vintage sci-fi sticker, bold outlines, shareable design",
 "mechanical skull with brass pipes, steampunk pop art, eye-catching sticker, dramatic glow"
+],
+"anime": [
+"anime character portrait, big eyes, bold outlines, pop art sticker, viral design, eye-catching",
+"anime mecha robot, dynamic pose, sticker art, punchy colors, high contrast, shareable",
+"anime girl with flowing hair, vibrant colors, viral sticker, bold graphic, sticker design",
+"anime style mascot character, cute and bold, pop art sticker, punchy colors, eye-catching"
+],
+"goth": [
+"gothic portrait, dark makeup, bold blacks and purples, pop art sticker, viral design",
+"goth cathedral and bats, sticker art, dramatic contrast, punchy colors, shareable aesthetic",
+"skull with roses, gothic sticker style, bold outlines, high contrast, eye-catching",
+"goth fashion portrait, lace and leather, pop art sticker, dark moody colors, viral design"
+],
+"punk rock": [
+"punk rocker with mohawk, bold spikes and leather, pop art sticker, viral design, eye-catching",
+"electric guitar smash, punk sticker art, high contrast, punchy colors, shareable design",
+"punk band logo style, bold typography, sticker art, rebellious graphic, viral sticker",
+"punk safety pin and studs, edgy pop art sticker, bold black and red, punchy colors"
+],
+"heavy metal": [
+"heavy metal demon mascot, horns and flames, pop art sticker, bold red and black, viral design",
+"metal guitar shredding, lightning and smoke, sticker art, high contrast, punchy colors",
+"skull with metal horns, bold graphic sticker, shareable design, eye-catching",
+"metal band logo style, gothic typography, pop art sticker, dramatic contrast"
+],
+"gangsta": [
+"street style portrait, bold chains and hat, pop art sticker, viral design, eye-catching",
+"lowrider car with flames, urban sticker art, punchy colors, high contrast, shareable",
+"stacks of cash and diamonds, bold graphic sticker, pop art style, punchy colors",
+"gold grill and bandana, street culture pop art sticker, viral design, bold outlines"
+],
+"bling": [
+"diamond-encrusted crown, bold sparkle, pop art sticker, viral design, eye-catching",
+"gold chains and jewelry, luxury sticker art, punchy yellows, high contrast, shareable",
+"blinged-out dollar sign, glitter effect, pop art sticker, bold graphic, punchy colors",
+"luxury watch and rings, shiny metallic sticker art, viral design, eye-catching"
 ]
 };
 
