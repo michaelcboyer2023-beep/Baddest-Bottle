@@ -159,18 +159,9 @@ will-change:transform;
 line-height:0;
 isolation:isolate;
 }
+/* Orange sweep underline removed; logo still uses cursor parallax on .siteHeaderSloganWrap */
 .siteHeaderSlogan::before{
-content:"";
-position:absolute;
-left:-10%;
-right:-10%;
-bottom:-4px;
-height:2px;
-background:linear-gradient(90deg, rgba(255,102,0,0), rgba(255,160,102,.7), rgba(255,102,0,0));
-transform:translateX(-120%);
-transition:transform .45s ease;
-pointer-events:none;
-opacity:.9;
+display:none;
 }
 .siteHeaderSlogan span{
 position:relative;
@@ -205,9 +196,6 @@ filter:drop-shadow(0 0 18px rgba(255,138,58,.34)) drop-shadow(0 0 34px rgba(255,
 color:#ff9a4a;
 text-shadow:0 0 18px rgba(255,138,58,.34), 0 0 34px rgba(255,102,0,.18);
 animation:headerSloganPulse 1.2s ease-in-out infinite;
-}
-.siteHeaderSlogan:hover::before{
-transform:translateX(120%);
 }
 .siteHeaderActions{
 display:flex;
@@ -1402,11 +1390,63 @@ animation:previewMarqueeGlowFade 14s ease-in-out infinite reverse, previewMarque
 95%{ transform:translate(-3px,0); }
 96%{ transform:translate(1px,0); }
 }
+/* Bottom strip: white copy, horizontal mask 0% (edges) → 100% (center) → 0% */
+.previewEmptyStateMarquee--bottom{
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+top:auto;
+height:clamp(34px, 7.5vw, 50px);
+width:100%;
+z-index:4;
+overflow:hidden;
+pointer-events:none;
+display:flex;
+align-items:center;
+-webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+-webkit-mask-size:100% 100%;
+mask-size:100% 100%;
+-webkit-mask-repeat:no-repeat;
+mask-repeat:no-repeat;
+}
+.previewEmptyStateMarqueeBottomTrack{
+width:100%;
+overflow:hidden;
+}
+.previewEmptyStateMarqueeBottomHoriz{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+width:max-content;
+animation:previewBottomMarqueeScroll 62s linear infinite;
+}
+@keyframes previewBottomMarqueeScroll{
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+}
+.previewEmptyStateMarqueeBottomDup{
+flex-shrink:0;
+padding:0 2em;
+font-size:clamp(10px, 2vw, 14px);
+font-weight:800;
+letter-spacing:.34em;
+text-transform:uppercase;
+white-space:nowrap;
+color:rgba(255,255,255,.98);
+line-height:1.2;
+text-shadow:0 0 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.45);
+}
 @media (prefers-reduced-motion: reduce){
 .previewEmptyStateMarqueeHoriz,
 .previewEmptyStateMarqueeDup,
 .previewEmptyStateMarqueeDup--reuse{
 animation:none !important;
+}
+.previewEmptyStateMarqueeBottomHoriz{
+animation:none !important;
+transform:translateX(-25%);
 }
 .previewEmptyStateVideoKen{
 animation:none;
@@ -1417,13 +1457,15 @@ transform:scale(1.52) translateY(6%);
 .previewEmptyStateMarquee{ width:clamp(52px, 14vw, 76px); }
 .previewEmptyStateMarqueeDup,
 .previewEmptyStateMarqueeDup--reuse{ font-size:clamp(15px, 5.5vw, 26px); letter-spacing:.22em; }
+.previewEmptyStateMarqueeBottomDup{ font-size:clamp(9px, 2.6vw, 12px); letter-spacing:.22em; padding:0 1.2em; }
 .previewEmptyStateLabel{ max-width:calc(100% - 120px); }
 }
 .previewEmptyStateLabel{
 position:absolute;
 left:50%;
-bottom:12px;
-transform:translateX(-50%);
+top:50%;
+bottom:auto;
+transform:translate(-50%,-50%);
 z-index:5;
 margin:0;
 max-width:calc(100% - 220px);
@@ -2047,7 +2089,7 @@ gap:10px;
 }
 .selectedStickerItem{
 position:relative;
-aspect-ratio:1000 / 633;
+aspect-ratio:var(--label-thumb-aspect, 1000 / 633);
 border-radius:10px;
 overflow:hidden;
 border:1px solid rgba(255,102,0,.45);
@@ -2058,6 +2100,14 @@ cursor:pointer;
 position:absolute;
 inset:0;
 background:transparent;
+-webkit-mask-image:var(--label-mask-url, none);
+-webkit-mask-size:contain;
+-webkit-mask-repeat:no-repeat;
+-webkit-mask-position:center;
+mask-image:var(--label-mask-url, none);
+mask-size:contain;
+mask-repeat:no-repeat;
+mask-position:center;
 }
 .selectedStickerMedia img{
 width:100%;
@@ -3002,6 +3052,90 @@ align-items:center;
 justify-content:space-between;
 gap:12px;
 margin-bottom:10px;
+}
+.socialAccountBar{
+padding:10px 0 14px;
+margin-bottom:4px;
+border-bottom:1px solid rgba(255,255,255,.07);
+}
+.socialAccountBarInner{
+display:flex;
+align-items:center;
+justify-content:flex-end;
+gap:12px;
+min-height:44px;
+}
+.socialAccountLoggedIn{
+display:flex;
+align-items:center;
+gap:12px;
+width:100%;
+justify-content:space-between;
+flex-wrap:wrap;
+}
+.socialAccountAvatar{
+width:44px;
+height:44px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+border:2px solid rgba(255,140,84,.45);
+box-shadow:0 0 20px rgba(255,102,0,.2);
+background:linear-gradient(135deg, rgba(255,102,0,.35), rgba(40,12,24,.5));
+}
+.socialAccountMeta{
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+gap:4px;
+min-width:0;
+flex:1;
+}
+.socialAccountName{
+font-size:14px;
+font-weight:900;
+color:#fff;
+letter-spacing:.02em;
+max-width:100%;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.socialAccountEditBtn{
+padding:6px 12px;
+border-radius:999px;
+border:1px solid rgba(255,200,160,.35);
+background:rgba(0,0,0,.35);
+color:var(--red2);
+font-size:10px;
+font-weight:900;
+letter-spacing:.12em;
+text-transform:uppercase;
+cursor:pointer;
+}
+.socialAccountEditBtn:hover{
+background:rgba(255,102,0,.12);
+border-color:rgba(255,160,102,.5);
+}
+.socialLoginBarBtn{
+padding:10px 22px !important;
+font-size:12px !important;
+letter-spacing:.14em !important;
+}
+.socialChatSideHeader{
+display:flex;
+align-items:center;
+gap:10px;
+min-height:44px;
+}
+.socialChatHeaderAvatar{
+width:36px;
+height:36px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+border:2px solid rgba(255,140,84,.35);
+background:linear-gradient(135deg, rgba(255,102,0,.3), rgba(40,12,24,.5));
 }
 .socialHeroBadge{
 display:inline-flex;
@@ -4363,6 +4497,9 @@ width:100%;
 <span class="socialHeroStat">vibe <strong>action · street · stickers</strong></span>
 </div>
 </div>
+<div class="socialAccountBar" id="socialAccountBar" aria-label="Your account">
+<div class="socialAccountBarInner" id="socialAccountBarInner"></div>
+</div>
 <h2 class="socialHeroTitle" id="socialModalTitle">The drop</h2>
 <p class="socialHeroTagline">Custom stickers, bottle culture, and people doing cool shit with a BADDEST BOTTLE in hand. Post your grip—when others see it, they want in.</p>
 <div class="socialChallengeStrip">
@@ -4377,7 +4514,7 @@ width:100%;
 <aside class="socialSidebar">
 <div class="socialSidebarHead">BADDEST squad</div>
 <div class="socialSidebarTitle">Chat rooms</div>
-<p class="socialSidebarHint">Pick a vibe—same energy as sticker categories.</p>
+<p class="socialSidebarHint">Vibe channels match AI sticker categories: extreme sports, anime, pop art, street, music, cosmic, weird horror &amp; more. Tap a room to filter the feed or join chat.</p>
 <div class="socialChannelList" id="socialChannelList"></div>
 <div class="socialSidebarDivider"></div>
 <div class="socialSidebarTitle">Online · DMs</div>
@@ -4553,6 +4690,14 @@ title="Bottle preview animation"
 allow="autoplay; encrypted-media; picture-in-picture"
 referrerpolicy="strict-origin-when-cross-origin"
 ></iframe>
+</div>
+</div>
+<div class="previewEmptyStateMarquee previewEmptyStateMarquee--bottom" aria-hidden="true">
+<div class="previewEmptyStateMarqueeBottomTrack">
+<div class="previewEmptyStateMarqueeBottomHoriz">
+<span class="previewEmptyStateMarqueeBottomDup">END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · </span>
+<span class="previewEmptyStateMarqueeBottomDup">END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · END SINGLE SERVE PLASTIC USE · </span>
+</div>
 </div>
 </div>
 <div class="previewEmptyStateLabel">Upload Or Generate Images Below</div>
@@ -5542,10 +5687,38 @@ function humanizeSocialChannel(key){
 if(!key) return "";
 return String(key).split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 }
+/* Deterministic avatar art for DMs / placeholders (no quality change to AI output) */
+function getSocialPlaceholderAvatar(seed){
+const s = encodeURIComponent(String(seed || "guest").replace(/\s+/g, "-").slice(0, 48));
+return "https://api.dicebear.com/7.x/notionists/svg?seed=" + s;
+}
 function getSocialAiCategoryKeys(){
 try {
 if(typeof AI_CATEGORIES !== "undefined" && AI_CATEGORIES && typeof AI_CATEGORIES === "object"){
-return Object.keys(AI_CATEGORIES).sort((a, b) => a.localeCompare(b));
+const all = Object.keys(AI_CATEGORIES);
+const priority = [
+"skateboarding","bmx","surfing","snowboarding","motocross","climbing","parkour","wingsuit","mountain biking","skiing","wakeboarding","rock climbing","longboarding","scuba diving","paragliding","trail running",
+"anime","pop art","street art","music","fashion","abstract","retro",
+"cosmic","space","aliens","cyberpunk","glitch","robots","steampunk",
+"animals","food","nature","emoji","memes",
+"dinosaurs","dragons","goth","punk rock","heavy metal","gangsta",
+"zombies","cryptids","monsters","mutants","apocalypse","paranormal","demons"
+];
+const seen = new Set();
+const out = [];
+priority.forEach((k) => {
+if(all.indexOf(k) >= 0 && !seen.has(k)){
+seen.add(k);
+out.push(k);
+}
+});
+all.sort((a, b) => a.localeCompare(b)).forEach((k) => {
+if(!seen.has(k)){
+seen.add(k);
+out.push(k);
+}
+});
+return out;
 }
 } catch(_) {}
 return [];
@@ -5812,7 +5985,24 @@ const btn = document.createElement("button");
 btn.type = "button";
 btn.className = "socialOnlineUser" + (currentChatUserId === u.id ? " active" : "");
 btn.dataset.userId = u.id;
-btn.innerHTML = `<img class="socialOnlineAvatar" src="${u.avatar || ""}" alt="" onerror="this.style.display='none'" /><span class="socialOnlineName">${escapeHtml(u.name)}</span><span class="socialOnlineDot"></span>`;
+const avSrc = (u.avatar && String(u.avatar).trim()) || getSocialPlaceholderAvatar(u.id || u.name);
+const fbSrc = getSocialPlaceholderAvatar(u.id || u.name);
+const imgEl = document.createElement("img");
+imgEl.className = "socialOnlineAvatar";
+imgEl.alt = "";
+imgEl.src = avSrc;
+imgEl.addEventListener("error", function(){
+if(this.src !== fbSrc) this.src = fbSrc;
+else this.style.opacity = "0.35";
+});
+const nameSpan = document.createElement("span");
+nameSpan.className = "socialOnlineName";
+nameSpan.textContent = u.name;
+const dot = document.createElement("span");
+dot.className = "socialOnlineDot";
+btn.appendChild(imgEl);
+btn.appendChild(nameSpan);
+btn.appendChild(dot);
 btn.addEventListener("click", () => {
 currentChatUserId = u.id;
 ensureDmThread(u.id);
@@ -5832,13 +6022,39 @@ container.innerHTML = "";
 if(!currentChatUserId){
 if(emptyEl) emptyEl.style.display = "block";
 if(inputWrap) inputWrap.style.display = "none";
-if(headerEl) headerEl.textContent = "Chat";
+if(headerEl){
+headerEl.textContent = "";
+headerEl.classList.remove("socialChatSideHeader--peer");
+const t = document.createElement("span");
+t.textContent = "Messages";
+headerEl.appendChild(t);
+}
 return;
 }
 if(emptyEl) emptyEl.style.display = "none";
 if(inputWrap) inputWrap.style.display = "flex";
 const user = socialOnlineUsers.find((u) => u.id === currentChatUserId);
-if(headerEl) headerEl.textContent = user ? user.name : "Chat";
+if(headerEl){
+headerEl.textContent = "";
+headerEl.classList.add("socialChatSideHeader--peer");
+if(user){
+const av = document.createElement("img");
+av.className = "socialChatHeaderAvatar";
+av.alt = "";
+av.src = (user.avatar && String(user.avatar).trim()) || getSocialPlaceholderAvatar(user.id || user.name);
+av.addEventListener("error", function(){
+this.src = getSocialPlaceholderAvatar(user.id || user.name);
+});
+const lab = document.createElement("span");
+lab.textContent = user.name;
+headerEl.appendChild(av);
+headerEl.appendChild(lab);
+}else{
+const t = document.createElement("span");
+t.textContent = "Chat";
+headerEl.appendChild(t);
+}
+}
 const messages = ensureDmThread(currentChatUserId);
 messages.forEach((msg) => {
 const div = document.createElement("div");
@@ -5847,6 +6063,50 @@ div.innerHTML = `<div><span class="socialChatMsgAuthor">${escapeHtml(msg.author)
 container.appendChild(div);
 });
 container.scrollTop = container.scrollHeight;
+}
+function updateSocialAccountBar(user){
+const inner = document.getElementById("socialAccountBarInner");
+if(!inner) return;
+const u = user !== undefined && user !== null ? user : (typeof firebaseAuth !== "undefined" && firebaseAuth && firebaseAuth.currentUser);
+inner.innerHTML = "";
+if(u){
+const wrap = document.createElement("div");
+wrap.className = "socialAccountLoggedIn";
+let photoUrl = u.photoURL || (u.providerData && u.providerData[0] && u.providerData[0].photoURL) || "";
+if(photoUrl && /googleusercontent\.com|google\.com/i.test(photoUrl) && !photoUrl.includes("?")){
+photoUrl = photoUrl + "?sz=96";
+}
+const avatar = document.createElement("img");
+avatar.className = "socialAccountAvatar";
+avatar.alt = "";
+const seed = u.uid || u.email || u.displayName || "user";
+avatar.src = photoUrl || getSocialPlaceholderAvatar(seed);
+avatar.addEventListener("error", function(){
+if(photoUrl) this.src = getSocialPlaceholderAvatar(seed);
+});
+const meta = document.createElement("div");
+meta.className = "socialAccountMeta";
+const nameEl = document.createElement("div");
+nameEl.className = "socialAccountName";
+nameEl.textContent = u.displayName || (u.email ? u.email.split("@")[0] : "Signed in");
+const edit = document.createElement("button");
+edit.type = "button";
+edit.className = "socialAccountEditBtn";
+edit.textContent = "Edit profile";
+edit.addEventListener("click", () => { if(typeof showProfileModal === "function") showProfileModal(); });
+wrap.appendChild(avatar);
+meta.appendChild(nameEl);
+meta.appendChild(edit);
+wrap.appendChild(meta);
+inner.appendChild(wrap);
+}else{
+const btn = document.createElement("button");
+btn.type = "button";
+btn.className = "btn primary glow socialLoginBarBtn";
+btn.textContent = "Log in";
+btn.addEventListener("click", () => { if(typeof showLoginModal === "function") showLoginModal(); });
+inner.appendChild(btn);
+}
 }
 function showSocialModal(){
 if(!socialModal) return;
@@ -5857,6 +6117,8 @@ const spc = document.querySelector(".socialPageCard");
 if(spc) spc.style.maxHeight = "";
 currentChatUserId = null;
 socialUploadedPhotoUrl = "";
+updateSocialAccountBar();
+renderSocialChannels();
 renderSocialFeed();
 renderSocialOnlineList();
 renderSocialChat();
@@ -6131,6 +6393,7 @@ if(iconEl) iconEl.style.display = photoUrl ? "none" : "";
 lbl.textContent = user.displayName ? `Hi, ${user.displayName.split(" ")[0]}` : (user.email || "Account");
 siteHeaderLoginBtn.setAttribute("aria-label", "Sign out");
 siteHeaderLoginBtn.dataset.signedIn = "true";
+if(typeof updateSocialAccountBar === "function") updateSocialAccountBar(user);
 }else{
 closeLoginDropdown();
 hideProfileModal();
@@ -6142,6 +6405,7 @@ if(iconEl2) iconEl2.style.display = "";
 lbl.textContent = "Login";
 siteHeaderLoginBtn.removeAttribute("aria-label");
 siteHeaderLoginBtn.removeAttribute("data-signed-in");
+if(typeof updateSocialAccountBar === "function") updateSocialAccountBar(null);
 }
 });
 });
@@ -6300,7 +6564,7 @@ let templatePhotoState = Object.create(null);
 function getInitialPhotoScaleForTemplate(){
 if(!labelMaskCanvas) return 1;
 if(currentLabelTemplate === "fullWrap") return 1;
-if(currentLabelTemplate === "halfWrap") return 1.12;
+if(currentLabelTemplate === "halfWrap") return 1.18;
 return 1;
 }
 function saveTemplatePhotoState(templateKey){
@@ -6325,12 +6589,26 @@ const v = Math.round(photoScale * 100);
 if(photoZoom) photoZoom.value = clamp(v, 20, 300);
 if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : String(v);
 }
+function syncSelectedStickersToCurrentTemplate(){
+const key = currentLabelTemplate;
+const charge = getTemplateStickerUpcharge(key);
+selectedStickerUrls.forEach(url => {
+selectedStickerPricing.set(url, { templateKey: key, upcharge: charge });
+});
+}
 function onLabelMaskReady(){
+syncSelectedStickersToCurrentTemplate();
 restoreTemplatePhotoState(currentLabelTemplate);
 if (typeof renderAll === "function") renderAll();
 if (typeof syncPreviewPhotoImg === "function") syncPreviewPhotoImg();
 if (typeof scheduleMainPreviewRender === "function") scheduleMainPreviewRender();
 if (typeof scheduleMainPreviewSnapshot === "function") scheduleMainPreviewSnapshot(0);
+if (typeof updateStickerPricingCopy === "function") updateStickerPricingCopy();
+if (typeof updateSelectedStickerDock === "function") updateSelectedStickerDock();
+if (typeof updateImageHistoryGallery === "function") updateImageHistoryGallery();
+if (typeof updateMobileNoticeThumbnails === "function") updateMobileNoticeThumbnails();
+if (typeof updateMobileStickyThumbnails === "function") updateMobileStickyThumbnails();
+if (typeof setPriceUI === "function") setPriceUI();
 }
 
 // Initialize with empty overlayUrl - will be set in init() after maskShape is determined
@@ -6798,7 +7076,10 @@ const ih = img.naturalHeight;
 if(labelMaskCanvas){
 const bounds = getMaskSafeBounds();
 const cover = Math.max(bounds.w / iw, bounds.h / ih);
-return cover * (currentLabelTemplate === "fullWrap" ? 1 : 0.90);
+/* fullWrap: cover bbox. halfWrap: same cover (0.90 left grey side bars); tiny fudge clears mask/AA gaps */
+if(currentLabelTemplate === "fullWrap") return cover;
+if(currentLabelTemplate === "halfWrap") return cover * 1.035;
+return cover * 0.90;
 }
 return Math.max(BASE / iw, BASE / ih) * 0.90;
 }
@@ -7125,6 +7406,7 @@ const maskStyle = "url(" + maskSrc + ") center / contain no-repeat";
 document.documentElement.style.setProperty("--label-mask-url", "url(" + maskSrc + ")");
 const w = maskAspect ? maskAspect.w : 1, h = maskAspect ? maskAspect.h : 1;
 const aspectVal = (w >= h) ? (w + " / " + h) : "1 / 1";
+document.documentElement.style.setProperty("--label-thumb-aspect", currentLabelTemplate === "fullWrap" ? "1000 / 633" : aspectVal);
 frames.forEach(el => {
 if (el) {
 const topAspect = currentLabelTemplate === "fullWrap" ? "1000 / 633" : aspectVal;
@@ -7171,6 +7453,7 @@ window._maskBounds = null;
 window._maskSafeBounds = null;
 labelTemplateOverlayCanvas = null;
 document.documentElement.style.removeProperty("--label-mask-url");
+document.documentElement.style.removeProperty("--label-thumb-aspect");
 frames.forEach(el => {
 if (el) {
 el.style.aspectRatio = "";
@@ -9423,8 +9706,10 @@ return `$${getStickerUpcharge().toFixed(2)}`;
 function updateStickerPricingCopy(){
 const selectedStickerLabel = document.querySelector(".selectedStickerLabel");
 const stickerSelectHint = document.querySelector(".stickerSelectHint");
-if(selectedStickerLabel) selectedStickerLabel.textContent = `Selected Stickers. Full Wrap adds $5.00, Half Wrap adds $3.00. Always free shipping.`;
-if(stickerSelectHint) stickerSelectHint.textContent = `Tap the checkmark on any sticker you want to add. Full Wrap adds $5.00 and Half Wrap adds $3.00.`;
+const wrapName = currentLabelTemplate === "halfWrap" ? "Half Moon" : "Full Wrap";
+const wrapAmt = getTemplateStickerUpcharge(currentLabelTemplate).toFixed(2);
+if(selectedStickerLabel) selectedStickerLabel.textContent = `Selected Stickers. Each checkmarked sticker adds $${wrapAmt} (${wrapName}). Always free shipping.`;
+if(stickerSelectHint) stickerSelectHint.textContent = `Tap the checkmark on any sticker you want to add. Each adds $${wrapAmt} for ${wrapName}.`;
 }
 function normalizeCategoryPrompt(prompt, category){
 const compactParts = (prompt || `${category} action scene`)
@@ -9500,9 +9785,9 @@ clearTimeout(timeoutId);
 }
 }
 async function pollWorkerForImage(requestId, progressFill, statusMessage){
-const maxAttempts = 50;
+const maxAttempts = 68;
 for(let attempt = 0; attempt < maxAttempts; attempt++){
-await delay(900);
+await delay(attempt === 0 ? 400 : 650);
 const pollResponse = await fetch(`${AI_WORKER_URL}?requestId=${encodeURIComponent(requestId)}`, {
 method: 'GET',
 cache: 'no-store'
