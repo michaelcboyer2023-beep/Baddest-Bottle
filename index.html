@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-02-12-sticker-feed"/>
+<meta name="app-version" content="live-2026-02-12-githack-marquee"/>
+<!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Full fixed header + marquees need viewport width ≥980px. -->
 <title>Custom Sticker Designer</title>
 <link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
@@ -659,8 +660,8 @@ pointer-events:none;
 z-index:1;
 animation:none !important; /* Disable animation on mobile */
 }
-/* Disable all animations on mobile for better performance */
-* {
+/* Mobile: drop heavy animations — exclude site header tickers so they stay “live” when header is visible */
+*:not(.siteHeaderMarquee):not(.siteHeaderMarqueeTrack):not(.siteHeaderMarqueeHoriz):not(.siteHeaderMarqueeDup):not(.siteHeaderStickerFeed):not(.siteHeaderStickerFeedViewport):not(.siteHeaderStickerFeedTrack):not(.headerStickerFeedRow):not(.headerStickerCard):not(.headerStickerCardThumb):not(.headerStickerCardInfo):not(.headerStickerCardName):not(.headerStickerCardLike){
 animation:none !important;
 -webkit-animation:none !important;
 }
@@ -1085,9 +1086,6 @@ flex-wrap:nowrap;
 width:max-content;
 will-change:transform;
 animation:headerStickerFeedMarquee 85s linear infinite;
-}
-@media (prefers-reduced-motion: reduce){
-.siteHeaderStickerFeedTrack{animation:none;}
 }
 @keyframes headerStickerFeedMarquee{
 0%{transform:translateX(0);}
@@ -1806,8 +1804,11 @@ animation:none !important;
 transform:translateX(-25%);
 }
 .siteHeaderMarqueeHoriz{
-animation:none !important;
-transform:translateX(-22%);
+animation:siteHeaderMarqueeScroll 220s linear infinite !important;
+transform:none;
+}
+.siteHeaderStickerFeedTrack:not(.is-empty){
+animation:headerStickerFeedMarquee 220s linear infinite !important;
 }
 .previewEmptyStateVideoKen{
 animation:none;
