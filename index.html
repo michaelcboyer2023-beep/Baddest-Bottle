@@ -71,7 +71,7 @@ background:transparent;
 .siteHeaderBrand{
 display:flex;
 align-items:center;
-gap:14px;
+gap:10px;
 flex:0 0 auto;
 }
 .siteHeaderLogo{
@@ -90,6 +90,38 @@ gap:10px;
 flex:1 1 auto;
 min-width:0;
 margin-left:18px;
+}
+.siteHeaderNav--rail{
+gap:0;
+padding:4px 6px;
+margin-left:14px;
+border-radius:999px;
+border:1px solid rgba(255,140,84,.38);
+background:linear-gradient(165deg, rgba(255,102,0,.16), rgba(12,6,10,.72));
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,.08),
+0 6px 22px rgba(0,0,0,.4);
+backdrop-filter:blur(10px);
+-webkit-backdrop-filter:blur(10px);
+}
+.siteHeaderNavSep{
+width:1px;
+height:24px;
+flex-shrink:0;
+margin:0 2px;
+background:linear-gradient(180deg, transparent, rgba(255,200,160,.55), transparent);
+opacity:.9;
+}
+.siteHeaderNav--rail .siteHeaderNavLink{
+border:none;
+background:transparent;
+box-shadow:none;
+min-height:38px;
+padding:0 15px;
+}
+.siteHeaderNav--rail .siteHeaderNavLink:hover{
+background:rgba(255,102,0,.22);
+border-color:transparent;
 }
 .siteHeaderNavLink{
 position:relative;
@@ -138,7 +170,9 @@ display:inline-flex;
 align-items:center;
 justify-content:center;
 min-height:auto;
-padding:0;
+padding:0 6px;
+flex:0 1 auto;
+max-width:min(100%, 920px);
 background:transparent !important;
 color:#ff7a1a;
 font-size:18px;
@@ -169,7 +203,8 @@ z-index:1;
 }
 .siteHeaderSloganImg{
 display:block;
-height:148px;
+height:clamp(188px, 21vw, 272px);
+max-height:min(272px, 32vh);
 width:auto;
 object-fit:contain;
 object-position:center;
@@ -516,12 +551,21 @@ letter-spacing:.12em;
 padding:0 14px 0 12px;
 }
 .siteHeaderLogo{
-height:124px;
-top:4px;
+height:clamp(92px, 11vw, 118px);
+top:2px;
 }
 .siteHeaderSlogan{
 font-size:15px;
 letter-spacing:.16em;
+}
+.siteHeaderSloganImg{
+height:clamp(144px, 17.5vw, 208px);
+max-height:26vh;
+}
+.siteHeaderNav--rail .siteHeaderNavLink{
+padding:0 12px;
+min-height:34px;
+font-size:10px;
 }
 .siteHeaderSocials{
 gap:10px;
@@ -832,26 +876,339 @@ max-width:100% !important;
 
 /* Keep sticky preview from blocking main content on desktop */
 @media (min-width: 980px){
+/* Stack under safe-area; JS measures real bottom (parallax). Fallback = big row + marquee + buffer — no preview overlap */
+:root{
+--site-header-stack:calc(2px + max(148px, min(268px, 34vh)) + 42px + clamp(20px, 2.6vw, 28px) + 46px);
+}
+html{
+scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
+}
 body{
-padding-top:64px;
+padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
 }
 .siteHeader{
 display:flex;
-align-items:center;
+flex-direction:column;
+align-items:stretch;
+align-content:stretch;
+gap:0;
 position:fixed;
 top:0;
 left:0;
 right:0;
-height:72px;
+height:auto;
+min-height:0;
 z-index:120;
 background:linear-gradient(180deg, rgba(9,7,10,.96), rgba(9,7,10,.88));
 border-bottom:1px solid rgba(255,102,0,.18);
 backdrop-filter:blur(12px);
-box-shadow:0 10px 30px rgba(0,0,0,.28);
+box-shadow:0 8px 26px rgba(0,0,0,.26);
+}
+/* Full-size row + marquee directly under (minimal vertical padding) */
+.siteHeaderInner{
+display:flex;
+flex-wrap:nowrap;
+align-items:center;
+justify-content:flex-start;
+gap:14px;
+min-height:0;
+padding:2px 22px 0;
+margin:0 auto;
+width:100%;
+max-width:1560px;
+box-sizing:border-box;
+}
+.siteHeaderLogo{
+height:clamp(118px, 14vw, 148px);
+width:auto;
+top:0;
+}
+.siteHeaderNav{
+flex:0 0 auto;
+margin-left:10px;
+}
+.siteHeaderNav--rail{
+margin-left:0;
+padding:4px 6px;
+}
+.siteHeaderNav--rail .siteHeaderNavLink{
+min-height:40px;
+padding:0 15px;
+font-size:11px;
+letter-spacing:.13em;
+}
+.siteHeaderNavSep{
+height:24px;
+}
+.siteHeaderSlogan{
+flex:1 1 auto;
+min-width:0;
+max-width:min(100%, 920px);
+padding:0 8px;
+justify-content:center;
+}
+.siteHeaderSloganImg{
+height:clamp(175px, 20vw, 268px);
+max-height:min(268px, 34vh);
+width:auto;
+}
+.siteHeaderActions{
+flex:0 0 auto;
+margin-left:auto;
+align-self:center;
+padding-top:0;
+gap:10px;
+}
+.siteHeaderSocials{
+margin-left:14px;
+margin-right:18px;
+gap:10px;
+}
+.siteHeaderSocialBtn{
+width:44px;
+height:44px;
+}
+.siteHeaderIconBtn,
+.siteHeaderLoginBtn{
+min-height:44px;
+}
+.siteHeaderIconBtn{
+width:44px;
+}
+.siteHeaderLoginBtn{
+padding:0 16px 0 14px;
+font-size:12px;
+letter-spacing:.12em;
+}
+.siteHeaderMarquee{
+width:100%;
+flex:0 0 auto;
+margin-top:-12px;
+height:clamp(20px, 2.6vw, 28px);
+overflow:hidden;
+display:flex;
+align-items:center;
+pointer-events:none;
+border-top:1px solid rgba(255,102,0,.16);
+background:rgba(0,0,0,.22);
+-webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+-webkit-mask-size:100% 100%;
+mask-size:100% 100%;
+-webkit-mask-repeat:no-repeat;
+mask-repeat:no-repeat;
+}
+.siteHeaderMarqueeTrack{width:100%;overflow:hidden;}
+.siteHeaderMarqueeHoriz{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+width:max-content;
+animation:siteHeaderMarqueeScroll 72s linear infinite;
+}
+@keyframes siteHeaderMarqueeScroll{
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+}
+.siteHeaderMarqueeDup{
+flex-shrink:0;
+padding:0 2em;
+font-size:clamp(8px, 0.98vw, 11px);
+font-weight:800;
+letter-spacing:.3em;
+text-transform:uppercase;
+white-space:nowrap;
+color:rgba(255,255,255,.98);
+line-height:1;
+text-shadow:0 0 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.45);
+}
+/* Live worldwide sticker ticker (between nav row and text marquee) */
+.siteHeaderStickerFeed{
+display:flex;
+align-items:stretch;
+flex:0 0 auto;
+min-height:0;
+margin-top:-6px;
+height:42px;
+background:rgba(0,0,0,.2);
+border-top:1px solid rgba(255,102,0,.14);
+border-bottom:1px solid rgba(255,102,0,.08);
+position:relative;
+z-index:1;
+}
+.siteHeaderStickerFeedLive{
+flex:0 0 auto;
+align-self:stretch;
+margin:0;
+padding:0 10px 0 14px;
+border:none;
+border-right:1px solid rgba(255,102,0,.2);
+background:linear-gradient(180deg, rgba(255,68,0,.22), rgba(180,40,0,.12));
+color:#fff;
+font-size:9px;
+font-weight:1000;
+letter-spacing:.2em;
+cursor:pointer;
+transition:background .2s, color .2s;
+}
+.siteHeaderStickerFeedLive:hover,
+.siteHeaderStickerFeedLive:focus-visible{
+background:linear-gradient(180deg, rgba(255,102,0,.4), rgba(200,60,0,.2));
+outline:none;
+}
+.siteHeaderStickerFeedLive::after{
+content:"";
+display:inline-block;
+width:6px;
+height:6px;
+margin-left:6px;
+border-radius:50%;
+background:#3dff7a;
+box-shadow:0 0 8px #3dff7a;
+animation:headerStickerLivePulse 1.4s ease-in-out infinite;
+}
+@keyframes headerStickerLivePulse{
+0%,100%{opacity:1;transform:scale(1);}
+50%{opacity:.65;transform:scale(.85);}
+}
+.siteHeaderStickerFeedViewport{
+flex:1 1 auto;
+min-width:0;
+overflow:hidden;
+-webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 2%, #000 98%, transparent 100%);
+mask-image:linear-gradient(90deg, transparent 0%, #000 2%, #000 98%, transparent 100%);
+}
+.siteHeaderStickerFeedTrack{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+width:max-content;
+will-change:transform;
+animation:headerStickerFeedMarquee 85s linear infinite;
+}
+@media (prefers-reduced-motion: reduce){
+.siteHeaderStickerFeedTrack{animation:none;}
+}
+@keyframes headerStickerFeedMarquee{
+0%{transform:translateX(0);}
+100%{transform:translateX(-50%);}
+}
+.siteHeaderStickerFeedTrack.is-empty{
+animation:none !important;
+transform:none !important;
+width:100%;
+min-width:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.headerStickerFeedRow{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+align-items:center;
+gap:8px;
+padding:0 12px;
+box-sizing:border-box;
+}
+.headerStickerCard{
+flex:0 0 auto;
+display:flex;
+flex-direction:row;
+align-items:center;
+gap:8px;
+max-width:200px;
+padding:4px 10px 4px 4px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.05);
+cursor:pointer;
+transition:border-color .18s, background .18s, transform .18s;
+}
+.headerStickerCard:hover,
+.headerStickerCard:focus-visible{
+border-color:rgba(255,140,84,.45);
+background:rgba(255,102,0,.1);
+transform:translateY(-1px);
+outline:none;
+}
+.headerStickerCardThumb{
+flex:0 0 auto;
+width:32px;
+height:32px;
+border-radius:10px;
+overflow:hidden;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(255,102,0,.25);
+}
+.headerStickerCardThumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.headerStickerCardInfo{
+flex:1 1 auto;
+min-width:0;
+display:flex;
+flex-direction:column;
+align-items:flex-start;
+gap:2px;
+line-height:1.1;
+}
+.headerStickerCardName{
+font-size:10px;
+font-weight:800;
+color:rgba(255,255,255,.92);
+max-width:120px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.headerStickerCardLike{
+margin:0;
+padding:0;
+border:none;
+background:transparent;
+color:rgba(255,160,120,.85);
+font-size:9px;
+font-weight:800;
+cursor:pointer;
+letter-spacing:.04em;
+transition:color .15s;
+}
+.headerStickerCardLike:hover,
+.headerStickerCardLike:focus-visible{
+color:#ff7a45;
+outline:none;
+}
+.headerStickerCardLike.is-liked{
+color:#ff4466;
+}
+.headerStickerFeedEmpty{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:10px;
+font-weight:700;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:rgba(255,255,255,.35);
+padding:0 16px;
 }
 .wrap{
 padding-left:72px;
 padding-right:318px;
+padding-top:0;
+padding-bottom:12px;
+}
+.grid{
+gap:10px;
+margin-top:0;
+}
+.previewShell{
+margin-top:0;
 }
 }
 
@@ -1448,6 +1805,10 @@ animation:none !important;
 animation:none !important;
 transform:translateX(-25%);
 }
+.siteHeaderMarqueeHoriz{
+animation:none !important;
+transform:translateX(-22%);
+}
 .previewEmptyStateVideoKen{
 animation:none;
 transform:scale(1.52) translateY(6%);
@@ -1995,6 +2356,7 @@ display:none;
 .stickyDock{
 display:block;
 right:max(6px, calc((100vw - 1560px) / 2 + 6px));
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 400px) + 10px);
 }
 }
 .dockCard{
@@ -4328,10 +4690,12 @@ width:100%;
 <div class="siteHeaderBrand">
 <img class="siteHeaderLogo" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE"/>
 </div>
-<nav class="siteHeaderNav" aria-label="Website">
+<nav class="siteHeaderNav siteHeaderNav--rail" aria-label="Website">
 <a class="siteHeaderNavLink" href="#" id="siteHeaderHomeLink"><span>Home</span></a>
-<a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
+<span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderAboutLink"><span>About</span></a>
+<span class="siteHeaderNavSep" aria-hidden="true"></span>
+<a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
 </nav>
 <div class="siteHeaderSlogan" id="siteHeaderSlogan">
 <div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
@@ -4397,6 +4761,20 @@ width:100%;
 <button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownProfile">Profile</button>
 <button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownLogout">Log out</button>
 </div>
+</div>
+</div>
+</div>
+<div class="siteHeaderStickerFeed" id="siteHeaderStickerFeed" aria-label="Live sticker drops from creators">
+<button type="button" class="siteHeaderStickerFeedLive" id="headerStickerFeedOpenSocial" title="Open full social feed">LIVE</button>
+<div class="siteHeaderStickerFeedViewport">
+<div class="siteHeaderStickerFeedTrack" id="siteHeaderStickerFeedTrack"></div>
+</div>
+</div>
+<div class="siteHeaderMarquee" aria-hidden="true">
+<div class="siteHeaderMarqueeTrack">
+<div class="siteHeaderMarqueeHoriz">
+<span class="siteHeaderMarqueeDup">YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · </span>
+<span class="siteHeaderMarqueeDup">YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · </span>
 </div>
 </div>
 </div>
@@ -5226,6 +5604,31 @@ const previewEmptyState = document.getElementById("previewEmptyState");
 const previewLabelLogos = Array.from(document.querySelectorAll(".previewLabelLogo"));
 const siteHeaderLogo = document.querySelector(".siteHeaderLogo");
 const siteHeaderSloganWrap = document.getElementById("siteHeaderSloganWrap");
+/** Desktop: layout height ignores transform on slogan — measure painted bottom so body padding clears header + video preview. */
+function syncSiteHeaderStackHeight(){
+try{
+if(!window.matchMedia("(min-width:980px)").matches){
+document.documentElement.style.removeProperty("--site-header-stack");
+return;
+}
+const header = document.querySelector(".siteHeader");
+if(!header) return;
+const cs = getComputedStyle(header);
+if(cs.display === "none" || cs.visibility === "hidden") return;
+let bottom = header.getBoundingClientRect().bottom;
+header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganWrap, .siteHeaderStickerFeed, .siteHeaderMarquee").forEach((el) => {
+const r = el.getBoundingClientRect();
+if(r.height > 0) bottom = Math.max(bottom, r.bottom);
+});
+const pad = Math.max(Math.ceil(bottom) + 14, 300);
+document.documentElement.style.setProperty("--site-header-stack", pad + "px");
+}catch(_e){}
+}
+window.addEventListener("resize", () => requestAnimationFrame(syncSiteHeaderStackHeight));
+window.addEventListener("orientationchange", () => setTimeout(syncSiteHeaderStackHeight, 100));
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(syncSiteHeaderStackHeight));
+window.addEventListener("load", () => requestAnimationFrame(syncSiteHeaderStackHeight));
+requestAnimationFrame(() => requestAnimationFrame(syncSiteHeaderStackHeight));
 const headerCartCount = document.getElementById("headerCartCount");
 const dockLogoImg = document.querySelector(".dockLogoImg");
 const dockThumb = document.getElementById("dockThumb");
@@ -5656,11 +6059,26 @@ doUpdate(urlField || null);
 }
 });
 }
-let socialPosts = [
+const SOCIAL_POSTS_SEED = [
 { id: "1", author: "BADDEST", avatar: "", channel: "skateboarding", imageUrl: "projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png", caption: "First drop. Custom bottle design season is here.", time: "2h ago", likes: 12, liked: false, featured: true, badge: "Official", vibe: "Sticker culture", comments: [{ author: "Creator", text: "So fire." }] },
 { id: "2", author: "StickerHead", avatar: "", channel: "street art", imageUrl: "projects/Users-michaelcboyer-cursor/assets/sdfsfd-429a2c21-a865-42cc-af90-e9aea818d2aa.png", caption: "Half wrap sticker concept. Thoughts?", time: "5h ago", likes: 8, liked: false, badge: "Community", vibe: "Street flex", comments: [{ author: "BADDEST", text: "Clean." }] },
 { id: "3", author: "GripCity", avatar: "", channel: "parkour", imageUrl: "", caption: "Session at the park—bottle never slipped. Grip is guaranteed. Who’s filming their #BaddestBottleChallenge next?", time: "1d ago", likes: 24, liked: false, badge: "Action", vibe: "Skate · park", comments: [] }
 ];
+function loadSocialPostsFromStorage(){
+try{
+const raw = localStorage.getItem("baddest_social_feed_v1");
+if(!raw) return null;
+const arr = JSON.parse(raw);
+if(Array.isArray(arr) && arr.length) return arr;
+}catch(_){}
+return null;
+}
+function persistSocialPosts(){
+try{
+localStorage.setItem("baddest_social_feed_v1", JSON.stringify(socialPosts));
+}catch(_){}
+}
+let socialPosts = loadSocialPostsFromStorage() || SOCIAL_POSTS_SEED.slice();
 let socialFeedFilterChannel = null;
 let socialJoinedRoomId = null;
 let socialRoomMessages = {};
@@ -5874,7 +6292,12 @@ list.appendChild(row);
 }
 function renderSocialFeed(){
 const feed = document.getElementById("socialFeed");
-if(!feed) return;
+if(!feed){
+updateSocialStats();
+renderHeaderStickerFeed();
+persistSocialPosts();
+return;
+}
 feed.innerHTML = "";
 const filtered = socialFeedFilterChannel
 ? socialPosts.filter((p) => (p.channel || "") === socialFeedFilterChannel)
@@ -5953,6 +6376,98 @@ const lb = document.getElementById("socialPostLightbox");
 if(lb && lb.classList.contains("is-open") && lb.dataset.postId === postId) openSocialPostLightbox(postId);
 });
 });
+renderHeaderStickerFeed();
+persistSocialPosts();
+}
+function makeHeaderStickerCard(post){
+const el = document.createElement("div");
+el.className = "headerStickerCard";
+el.dataset.postId = post.id;
+el.setAttribute("role", "button");
+el.tabIndex = 0;
+const thumb = document.createElement("div");
+thumb.className = "headerStickerCardThumb";
+const img = document.createElement("img");
+img.alt = "";
+img.loading = "lazy";
+img.src = post.imageUrl || "";
+thumb.appendChild(img);
+const info = document.createElement("div");
+info.className = "headerStickerCardInfo";
+const name = document.createElement("span");
+name.className = "headerStickerCardName";
+name.textContent = "@" + (post.author || "Creator");
+const likeBtn = document.createElement("button");
+likeBtn.type = "button";
+likeBtn.className = "headerStickerCardLike" + (post.liked ? " is-liked" : "");
+likeBtn.setAttribute("data-header-sticker-like", post.id);
+likeBtn.textContent = "♥ " + (Number.isFinite(post.likes) ? post.likes : 0);
+info.appendChild(name);
+info.appendChild(likeBtn);
+el.appendChild(thumb);
+el.appendChild(info);
+return el;
+}
+function renderHeaderStickerFeed(){
+const track = document.getElementById("siteHeaderStickerFeedTrack");
+const viewport = track && track.parentElement;
+if(!track || !viewport) return;
+const withArt = socialPosts.filter((p) => p.imageUrl && String(p.imageUrl).trim().length > 12);
+track.innerHTML = "";
+track.classList.remove("is-empty");
+viewport.classList.remove("is-header-sticker-empty");
+if(withArt.length === 0){
+const empty = document.createElement("div");
+empty.className = "headerStickerFeedEmpty";
+empty.textContent = "Post a sticker in Social — it shows up here for everyone on this site";
+viewport.classList.add("is-header-sticker-empty");
+track.classList.add("is-empty");
+track.appendChild(empty);
+return;
+}
+const maxN = Math.min(withArt.length, 48);
+const list = withArt.slice(0, maxN);
+const rowA = document.createElement("div");
+rowA.className = "headerStickerFeedRow";
+const rowB = document.createElement("div");
+rowB.className = "headerStickerFeedRow";
+list.forEach((p) => {
+rowA.appendChild(makeHeaderStickerCard(p));
+rowB.appendChild(makeHeaderStickerCard(p));
+});
+track.appendChild(rowA);
+track.appendChild(rowB);
+}
+function initHeaderStickerFeedDelegation(){
+const bar = document.getElementById("siteHeaderStickerFeed");
+if(!bar || bar.__stickerFeedDeleg) return;
+bar.__stickerFeedDeleg = true;
+bar.addEventListener("click", (e) => {
+const likeB = e.target.closest("[data-header-sticker-like]");
+if(likeB){
+e.preventDefault();
+e.stopPropagation();
+const id = likeB.getAttribute("data-header-sticker-like");
+const p = socialPosts.find((x) => x.id === id);
+if(p){
+p.liked = !p.liked;
+p.likes = (Number.isFinite(p.likes) ? p.likes : 0) + (p.liked ? 1 : -1);
+renderSocialFeed();
+}
+return;
+}
+const card = e.target.closest(".headerStickerCard");
+if(card && card.dataset.postId){
+openSocialPostLightbox(card.dataset.postId);
+}
+});
+bar.addEventListener("keydown", (e) => {
+if(e.key !== "Enter" && e.key !== " ") return;
+const card = e.target.closest(".headerStickerCard");
+if(!card || !card.dataset.postId) return;
+e.preventDefault();
+openSocialPostLightbox(card.dataset.postId);
+});
 }
 function setupSocialFeedThumbDelegation(){
 const feed = document.getElementById("socialFeed");
@@ -5975,6 +6490,8 @@ if(id) openSocialPostLightbox(id);
 });
 }
 setupSocialFeedThumbDelegation();
+initHeaderStickerFeedDelegation();
+renderSocialFeed();
 function escapeHtml(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 function renderSocialOnlineList(){
 const list = document.getElementById("socialOnlineList");
@@ -6140,6 +6657,14 @@ socialModal.setAttribute("aria-hidden", "true");
 if(siteHeaderSocialLink){
 siteHeaderSocialLink.addEventListener("click", (event) => {
 event.preventDefault();
+showSocialModal();
+});
+}
+const headerStickerFeedOpenSocial = document.getElementById("headerStickerFeedOpenSocial");
+if(headerStickerFeedOpenSocial){
+headerStickerFeedOpenSocial.addEventListener("click", (event) => {
+event.preventDefault();
+event.stopPropagation();
 showSocialModal();
 });
 }
