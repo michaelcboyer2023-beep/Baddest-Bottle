@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-02-12-livefeed-tune"/>
+<meta name="app-version" content="live-2026-03-24-pollinations-categories-styles"/>
 <!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Full fixed header needs viewport width ≥980px. -->
 <title>Custom Sticker Designer</title>
 <link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
+<link rel="preconnect" href="https://image.pollinations.ai" crossorigin/>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
 <!-- AI Image Generation: SubNP API via Cloudflare Worker proxy -->
@@ -194,14 +195,7 @@ will-change:transform;
 line-height:0;
 overflow:visible;
 }
-/* Glow sits behind transparent PNG; artwork unfiltered so border red stays native */
-.grabLifeGlowHost{
-display:inline-block;
-position:relative;
-max-width:100%;
-overflow:visible;
-}
-.grabLifeGlowHost::before,
+/* Glow sits behind header Grab Life PNG */
 .siteHeaderSloganWrap::before{
 content:"";
 position:absolute;
@@ -1083,7 +1077,7 @@ flex-direction:row;
 flex-wrap:nowrap;
 width:max-content;
 will-change:transform;
-animation:headerStickerFeedMarquee 85s linear infinite;
+animation:headerStickerFeedMarquee 220s linear infinite;
 }
 @keyframes headerStickerFeedMarquee{
 0%{transform:translateX(0);}
@@ -1142,6 +1136,44 @@ width:100%;
 height:100%;
 object-fit:cover;
 display:block;
+}
+.headerStickerCardThumb--masked{
+border-radius:6px;
+}
+.headerStickerCardAvatarBtn{
+flex:0 0 auto;
+width:28px;
+height:28px;
+padding:0;
+margin:0;
+border:none;
+border-radius:50%;
+overflow:hidden;
+cursor:pointer;
+background:rgba(0,0,0,.4);
+border:1px solid rgba(255,140,84,.35);
+box-shadow:0 0 0 1px rgba(0,0,0,.25);
+transition:border-color .18s, transform .18s, box-shadow .18s;
+}
+.headerStickerCardAvatarBtn:hover,
+.headerStickerCardAvatarBtn:focus-visible{
+border-color:rgba(255,160,120,.65);
+transform:scale(1.05);
+box-shadow:0 0 12px rgba(255,102,0,.25);
+outline:none;
+}
+.headerStickerCardAvatarImg{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.siteHeaderStickerFeed .headerStickerCardAvatarBtn{
+width:22px;
+height:22px;
+}
+.siteHeaderStickerFeed .headerStickerCard{
+max-width:236px;
 }
 .headerStickerCardInfo{
 flex:1 1 auto;
@@ -1853,7 +1885,8 @@ animation:none !important;
 transform:translateX(-25%);
 }
 .siteHeaderStickerFeedTrack:not(.is-empty){
-animation:headerStickerFeedMarquee 220s linear infinite !important;
+animation:none !important;
+transform:translateX(-25%);
 }
 .previewEmptyStateVideoKen{
 animation:none;
@@ -3395,6 +3428,38 @@ letter-spacing:.01em;
 text-transform:uppercase;
 color:#fff6eb;
 text-shadow:0 0 18px rgba(255,140,84,.22), 0 0 34px rgba(255,102,0,.14);
+padding-right:48px;
+box-sizing:border-box;
+}
+/* About: scrollable tall content + close control like Social */
+#aboutModal .loginModalCard.aboutModalCard{
+width:min(94vw,520px);
+max-height:min(90vh,920px);
+display:flex;
+flex-direction:column;
+padding:0;
+overflow:hidden;
+position:relative;
+}
+#aboutModal .loginModalCard.aboutModalCard > .loginModalClose{
+z-index:25;
+background:rgba(0,0,0,.5);
+border:1px solid rgba(255,255,255,.12);
+box-shadow:0 4px 14px rgba(0,0,0,.35);
+}
+#aboutModal .aboutModalScroll{
+flex:1 1 auto;
+min-height:0;
+overflow-y:auto;
+overflow-x:hidden;
+-webkit-overflow-scrolling:touch;
+overscroll-behavior:contain;
+padding:18px 22px 22px;
+padding-top:50px;
+}
+@media (max-width:480px){
+#aboutModalTitle{ font-size:clamp(22px,9vw,36px); padding-right:44px; }
+#aboutModal .aboutModalScroll{ padding-left:16px; padding-right:16px; }
 }
 @keyframes socialHeroPulse{
 0%,100%{ opacity:.85; filter:brightness(1); }
@@ -3590,6 +3655,28 @@ color:#fff;
 font-weight:900;
 margin-left:6px;
 letter-spacing:0;
+}
+.socialHeroStat--buzz strong{
+font-variant-numeric:tabular-nums;
+}
+.socialLivePulse{
+margin:6px 0 0;
+min-height:1.25em;
+font-size:11px;
+font-weight:700;
+color:rgba(255,200,160,.52);
+letter-spacing:.02em;
+max-width:min(100%,520px);
+line-height:1.35;
+}
+.socialOnlineCrowdNote{
+margin:-2px 0 10px;
+padding:0 2px;
+font-size:10px;
+font-weight:700;
+color:rgba(255,255,255,.36);
+letter-spacing:.05em;
+line-height:1.4;
 }
 .socialHeroTitle{
 margin:0;
@@ -4371,14 +4458,14 @@ text-shadow:0 0 18px rgba(255,107,26,.35);
 display:flex;
 flex-direction:column;
 align-items:center;
-justify-content:center;
-gap:14px;
+justify-content:flex-start;
+gap:0;
 margin:28px 0 8px;
 padding-top:8px;
 text-align:center;
 }
 .aboutModalLockupTagline{
-margin:0;
+margin:0 0 6px;
 font-size:15px;
 font-weight:900;
 letter-spacing:.2em;
@@ -4389,9 +4476,14 @@ color:rgba(255,255,255,.92);
 display:block;
 position:relative;
 z-index:1;
-max-width:min(100%, 320px);
+max-width:min(100%, 300px);
 width:100%;
 height:auto;
+margin:0;
+padding:0;
+background:transparent !important;
+/* Same key as header: transparent PNG, no baked-in black plate */
+filter:url(#grabHeaderKeyBlack);
 }
 .cartModal{
 display:none;
@@ -4950,7 +5042,7 @@ width:100%;
 <div class="socialHeroTop">
 <span class="socialHeroBadge">BADDEST community</span>
 <div class="socialHeroStats">
-<span class="socialHeroStat">live <strong id="socialStatOnline">3</strong></span>
+<span class="socialHeroStat">live <strong id="socialStatOnline">200</strong></span>
 <span class="socialHeroStat">drops <strong id="socialStatPosts">0</strong></span>
 <span class="socialHeroStat">vibe <strong>action · street · stickers</strong></span>
 </div>
@@ -4976,6 +5068,7 @@ width:100%;
 <div class="socialChannelList" id="socialChannelList"></div>
 <div class="socialSidebarDivider"></div>
 <div class="socialSidebarTitle">Online · DMs</div>
+<p class="socialOnlineCrowdNote" id="socialOnlineCrowdNote"></p>
 <div class="socialOnlineList" id="socialOnlineList"></div>
 </aside>
 <main class="socialMain">
@@ -5047,8 +5140,9 @@ width:100%;
 </div>
 
 <div class="loginModal" id="aboutModal" aria-hidden="true">
-<div class="loginModalCard" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+<div class="loginModalCard aboutModalCard" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
 <button class="loginModalClose" id="aboutModalClose" type="button" aria-label="Close about popup">×</button>
+<div class="aboutModalScroll">
 <div class="loginModalEyebrow">About The Brand</div>
 <h3 class="loginModalTitle" id="aboutModalTitle">Grip it. Sip it. Reuse it.</h3>
 <p class="loginModalText"><strong class="aboutPlasticCallout">END SINGLE SERVE PLASTIC USE</strong> and do it with the BADDEST BOTTLE in your hand. Our Patented Finger Holes Bottle Design makes drinking cool, functional, and safe. Whether you like drinking while taking your final exam, while flying loops in your helicopter, or taking a chug while bombing down the street on your skateboard, you will never have to worry about container slippage while grabbing the BADDEST BOTTLE. Chaos Is Optional—Grip Is Guaranteed.</p>
@@ -5065,7 +5159,6 @@ width:100%;
 </div>
 <div class="aboutModalLockup">
 <p class="aboutModalLockupTagline">Be The BADDEST</p>
-<div class="grabLifeGlowHost">
 <img class="aboutModalGrabLogo" src="projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png" alt="GRAB LIFE BY THE BOTTLES"/>
 </div>
 </div>
@@ -6153,33 +6246,62 @@ doUpdate(urlField || null);
 });
 }
 const SOCIAL_POSTS_SEED = [
-{ id: "1", author: "BADDEST", avatar: "", channel: "skateboarding", imageUrl: "projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png", caption: "First drop. Custom bottle design season is here.", time: "2h ago", likes: 12, liked: false, featured: true, badge: "Official", vibe: "Sticker culture", comments: [{ author: "Creator", text: "So fire." }] },
-{ id: "2", author: "StickerHead", avatar: "", channel: "street art", imageUrl: "projects/Users-michaelcboyer-cursor/assets/sdfsfd-429a2c21-a865-42cc-af90-e9aea818d2aa.png", caption: "Half wrap sticker concept. Thoughts?", time: "5h ago", likes: 8, liked: false, badge: "Community", vibe: "Street flex", comments: [{ author: "BADDEST", text: "Clean." }] },
-{ id: "3", author: "GripCity", avatar: "", channel: "parkour", imageUrl: "", caption: "Session at the park—bottle never slipped. Grip is guaranteed. Who’s filming their #BaddestBottleChallenge next?", time: "1d ago", likes: 24, liked: false, badge: "Action", vibe: "Skate · park", comments: [] }
+{ id: "1", userId: "u1", author: "BADDEST", avatar: "", channel: "skateboarding", imageUrl: "projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png", caption: "First drop. Custom bottle design season is here.", time: "2h ago", likes: 12, liked: false, featured: true, badge: "Official", vibe: "Sticker culture", comments: [{ author: "Creator", text: "So fire." }] },
+{ id: "2", userId: "u2", author: "StickerHead", avatar: "", channel: "street art", imageUrl: "projects/Users-michaelcboyer-cursor/assets/sdfsfd-429a2c21-a865-42cc-af90-e9aea818d2aa.png", caption: "Half wrap sticker concept. Thoughts?", time: "5h ago", likes: 8, liked: false, badge: "Community", vibe: "Street flex", comments: [{ author: "BADDEST", text: "Clean." }] },
+{ id: "3", userId: "u3", author: "GripCity", avatar: "", channel: "parkour", imageUrl: "", caption: "Session at the park—bottle never slipped. Grip is guaranteed. Who’s filming their #BaddestBottleChallenge next?", time: "1d ago", likes: 24, liked: false, badge: "Action", vibe: "Skate · park", comments: [] }
 ];
 function loadSocialPostsFromStorage(){
 try{
 const raw = localStorage.getItem("baddest_social_feed_v1");
 if(!raw) return null;
 const arr = JSON.parse(raw);
-if(Array.isArray(arr) && arr.length) return arr;
+if(Array.isArray(arr) && arr.length) return arr.filter((p) => !p || !p._synthetic);
 }catch(_){}
 return null;
 }
 function persistSocialPosts(){
 try{
-localStorage.setItem("baddest_social_feed_v1", JSON.stringify(socialPosts));
+const toSave = socialPosts.filter((p) => !p._synthetic);
+localStorage.setItem("baddest_social_feed_v1", JSON.stringify(toSave));
 }catch(_){}
 }
 let socialPosts = loadSocialPostsFromStorage() || SOCIAL_POSTS_SEED.slice();
 let socialFeedFilterChannel = null;
 let socialJoinedRoomId = null;
 let socialRoomMessages = {};
-let socialOnlineUsers = [
+function buildSocialOnlineUsersList(){
+const out = [
 { id: "u1", name: "BADDEST", avatar: "" },
 { id: "u2", name: "StickerHead", avatar: "" },
-{ id: "u3", name: "Creator", avatar: "" }
+{ id: "u3", name: "Creator", avatar: "" },
+{ id: "u4", name: "GripNova", avatar: "" },
+{ id: "u5", name: "WrapWitch", avatar: "" },
+{ id: "u6", name: "DeckDemon", avatar: "" },
+{ id: "u7", name: "SipSquadron", avatar: "" },
+{ id: "u8", name: "NeonGriptape", avatar: "" },
+{ id: "u9", name: "BottleBoss", avatar: "" },
+{ id: "u10", name: "VaporVandal", avatar: "" },
+{ id: "u11", name: "ChromeCoyote", avatar: "" },
+{ id: "u12", name: "PixelPunk", avatar: "" },
+{ id: "u13", name: "GlitchGrom", avatar: "" },
+{ id: "u14", name: "HydroHype", avatar: "" },
+{ id: "u15", name: "StickerSphinx", avatar: "" },
+{ id: "u16", name: "RampRoyalty", avatar: "" },
+{ id: "u17", name: "FizzFiend", avatar: "" },
+{ id: "u18", name: "MidnightMerch", avatar: "" },
+{ id: "u19", name: "TurboThumb", avatar: "" },
+{ id: "u20", name: "CosmicChug", avatar: "" },
+{ id: "u21", name: "LabelLurker", avatar: "" },
+{ id: "u22", name: "GripGod", avatar: "" }
 ];
+const ADJ = ["Neon","Void","Turbo","Cyber","Wild","Soft","Iron","Gold","Ice","Fire","Lazy","Mad","Tiny","Cosmic","Hyper","Rogue","Mute","Ultra","Neo","Synth","Laser","Acid","Royal","Ghost","Nova","Rex","Lux","Jax","Kai","Remy"];
+const NOUN = ["Grip","Wolf","Viper","Pilot","Chef","Alien","Bottle","Vibe","Sprite","Lord","Kid","Drop","Ink","Flex","Wave","Bolt","Rush","Shark","Bee","Moth","Fox","Yeti","Dj","Goblin","Knight","Surfer","Sage","Witch","Demon"];
+for(let i = 23; i <= 200; i++){
+out.push({ id: "u" + i, name: ADJ[i % ADJ.length] + NOUN[(i * 7) % NOUN.length] + i, avatar: "" });
+}
+return out;
+}
+let socialOnlineUsers = buildSocialOnlineUsersList();
 let socialDMs = {};
 let currentChatUserId = null;
 function ensureDmThread(userId){
@@ -6197,6 +6319,36 @@ if(postsEl) postsEl.textContent = String(socialPosts.length);
 function humanizeSocialChannel(key){
 if(!key) return "";
 return String(key).split(/\s+/).map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
+function escapeAttrForHtml(s){
+if(s == null || s === "") return "";
+return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+/* Turn project-relative paths into full URLs so feed thumbs work from any origin/path */
+function resolveSocialFeedMediaUrl(url){
+if(url == null || url === "") return "";
+const s = String(url).trim();
+if(/^https?:\/\//i.test(s)) return s;
+if(s.startsWith("//")) return "https:" + s;
+if(s.startsWith("data:") || s.startsWith("blob:")) return s;
+try{
+return new URL(s, window.location.href).href;
+}catch(_){
+return s;
+}
+}
+function formatSocialLikeCount(n){
+const x = Math.max(0, Math.round(Number(n) || 0));
+if(x >= 1000000) return (x / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+if(x >= 10000) return (x / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+if(x >= 1000) return x.toLocaleString();
+return String(x);
+}
+function socialPromptHash(str){
+let h = 2166136261;
+const s = String(str || "");
+for(let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+return h | 0;
 }
 /* Deterministic avatar art for DMs / placeholders (no quality change to AI output) */
 function getSocialPlaceholderAvatar(seed){
@@ -6234,6 +6386,314 @@ return out;
 } catch(_) {}
 return [];
 }
+function getSyntheticChannelPool(){
+try{
+const k = getSocialAiCategoryKeys();
+if(Array.isArray(k) && k.length) return k;
+}catch(_){}
+return ["abstract","aliens","animals","anime","apocalypse","bling","bmx","climbing","cosmic","cryptids","cyberpunk","demons","dinosaurs","dragons","emoji","fashion","food","gangsta","glitch","goth","heavy metal","longboarding","memes","monsters","motocross","mountain biking","music","mutants","nature","paragliding","paranormal","parkour","pop art","punk rock","retro","robots","rock climbing","scuba diving","skiing","skateboarding","snowboarding","space","steampunk","street art","surfing","trail running","wakeboarding","wingsuit","zombies"];
+}
+function mulberry32Social(seed){
+let a = seed >>> 0;
+return function(){
+let t = a = a + 0x6d2b79f5 | 0;
+t = Math.imul(t ^ t >>> 15, t | 1);
+t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+return ((t ^ t >>> 14) >>> 0) / 4294967296;
+};
+}
+/* Default feed thumbs: local canvas data URLs (always load). Set window.baddestUsePollinationsSocialThumbs = true for remote Pollinations <img> URLs (often blocked or flaky in browsers). */
+function makeSocialAiStickerImageUrl(channel, seedStr){
+if(typeof window !== "undefined" && window.baddestUsePollinationsSocialThumbs === true){
+const ch = String(channel || "street culture").replace(/-/g, " ");
+const rng = mulberry32Social(Math.abs(socialPromptHash(seedStr)) || 1);
+const styles = [
+"ultra bold vector sticker art, die-cut vinyl look, saturated colors, graphic design trend 2025, centered composition",
+"streetwear sticker graphic, chrome highlights, matte ink, viral instagram aesthetic, sticker bomb sheet style",
+"electric pop art sticker, thick clean outlines, limited harmonious palette, print-ready halftone accents",
+"dynamic mascot sticker, exaggerated expression and motion, hype character, cel shaded highlights",
+"grunge DIY zine sticker, distressed texture, raw hand-drawn energy, oversized graphic icon",
+"neon cyber sticker, glow edges, futuristic iconography, high contrast silhouette, synthwave palette",
+"y2k chrome bubble sticker, liquid metal, playful surreal object, glossy sticker mockup",
+"minimal brutalist sticker, one heroic symbol, flat color blocks, editorial poster graphic"
+];
+const stylePick = styles[Math.abs(socialPromptHash(seedStr + "|st")) % styles.length];
+const flair = ["chrome", "matte foil", "gloss laminate", "holographic hints", "embossed look"][Math.floor(rng() * 5)];
+const prompt = ch + " inspired original sticker design, " + stylePick + ", " + flair + " finish, single centered artwork, absolutely no text no letters no words no logos, full bleed art square, 4k concept art quality";
+const seedNum = Math.abs(socialPromptHash(seedStr + "|seed")) % 2147483647;
+return "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.slice(0, 950)) + "?width=512&height=512&nologo=true&seed=" + seedNum + "&model=flux";
+}
+return makeRandomStickerDataUrl("feed|" + String(channel || "street") + "|" + String(seedStr));
+}
+function randomViralLikeCount(){
+const r = Math.random();
+if(r < 0.12) return 8000 + Math.floor(Math.random() * 42000);
+if(r < 0.28) return 2000 + Math.floor(Math.random() * 5800);
+if(r < 0.52) return 400 + Math.floor(Math.random() * 1500);
+if(r < 0.78) return 90 + Math.floor(Math.random() * 380);
+return 8 + Math.floor(Math.random() * 110);
+}
+function makeRandomStickerDataUrl(seed){
+const str = String(seed || "seed");
+let h = 2166136261;
+for(let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+const rng = mulberry32Social(h || 1);
+const w = 280;
+const hi = 280;
+const c = document.createElement("canvas");
+c.width = w;
+c.height = hi;
+const ctx = c.getContext("2d");
+if(!ctx) return SOCIAL_POSTS_SEED[0].imageUrl;
+const baseHue = Math.floor(rng() * 360);
+ctx.fillStyle = "hsl(" + baseHue + " 22% 10%)";
+ctx.fillRect(0, 0, w, hi);
+for(let b = 0; b < 12; b++){
+const x = rng() * w;
+const y = rng() * hi;
+const r = 36 + rng() * 140;
+const hue = (baseHue + rng() * 100) % 360;
+const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+g.addColorStop(0, "hsla(" + hue + "," + (62 + rng() * 32) + "%," + (42 + rng() * 28) + "%," + (0.28 + rng() * 0.5) + ")");
+g.addColorStop(1, "hsla(" + hue + ",65%,35%,0)");
+ctx.fillStyle = g;
+ctx.beginPath();
+ctx.arc(x, y, r, 0, Math.PI * 2);
+ctx.fill();
+}
+ctx.globalCompositeOperation = "screen";
+for(let s = 0; s < 7; s++){
+ctx.strokeStyle = "hsla(" + Math.floor((baseHue + rng() * 120) % 360) + "," + (72 + rng() * 25) + "%," + (48 + rng() * 35) + "%," + (0.15 + rng() * 0.4) + ")";
+ctx.lineWidth = 6 + rng() * 28;
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+ctx.beginPath();
+let px = rng() * w;
+let py = rng() * hi;
+ctx.moveTo(px, py);
+for(let k = 0; k < 5; k++){
+px += (rng() - 0.5) * w * 0.55;
+py += (rng() - 0.5) * hi * 0.55;
+ctx.lineTo(px, py);
+}
+ctx.stroke();
+}
+ctx.globalCompositeOperation = "lighter";
+for(let f = 0; f < 4; f++){
+const gx = rng() * w;
+const gy = rng() * hi;
+const gg = ctx.createLinearGradient(gx, gy, gx + rng() * w, gy + rng() * hi);
+gg.addColorStop(0, "hsla(" + Math.floor(rng() * 360) + ",90%,60%,0)");
+gg.addColorStop(0.5, "hsla(" + Math.floor(rng() * 360) + ",85%,55%," + (0.08 + rng() * 0.2) + ")");
+gg.addColorStop(1, "hsla(" + Math.floor(rng() * 360) + ",70%,40%,0)");
+ctx.fillStyle = gg;
+ctx.fillRect(0, 0, w, hi);
+}
+ctx.globalCompositeOperation = "source-over";
+try{
+const noise = ctx.getImageData(0, 0, w, hi);
+const D = noise.data;
+for(let i = 0; i < D.length; i += 4){
+if(rng() > 0.88){
+const n = (rng() * 55) | 0;
+D[i] = Math.min(255, D[i] + n);
+D[i + 1] = Math.min(255, D[i + 1] + n * 0.7);
+D[i + 2] = Math.min(255, D[i + 2] + n * 0.4);
+}
+}
+ctx.putImageData(noise, 0, 0);
+}catch(_e){}
+ctx.globalCompositeOperation = "soft-light";
+ctx.fillStyle = "hsla(" + Math.floor((baseHue + 40) % 360) + ",55%,45%,0.22)";
+ctx.fillRect(0, 0, w, hi);
+ctx.globalCompositeOperation = "source-over";
+return c.toDataURL("image/png");
+}
+const BADDEST_STICKER_FEED_POOL_KEY = "baddest_social_sticker_urls_v1";
+const BADDEST_STICKER_FEED_POOL_MAX = 480;
+function normalizeStickerFeedUrl(u){
+const s = String(u || "").trim();
+if(!s) return "";
+if(/^https?:\/\//i.test(s)) return s;
+if(/^\/\//.test(s)) return "https:" + s;
+return "";
+}
+function loadStickerFeedUrlPoolFromStorage(){
+try{
+const raw = localStorage.getItem(BADDEST_STICKER_FEED_POOL_KEY);
+if(!raw) return [];
+const arr = JSON.parse(raw);
+if(!Array.isArray(arr)) return [];
+const out = [];
+const seen = new Set();
+for(let i = 0; i < arr.length; i++){
+const n = normalizeStickerFeedUrl(arr[i]);
+if(n && !seen.has(n)){ seen.add(n); out.push(n); }
+}
+return out.slice(0, BADDEST_STICKER_FEED_POOL_MAX);
+}catch(_){ return []; }
+}
+function saveStickerFeedUrlPoolToStorage(urls){
+try{
+const seen = new Set();
+const out = [];
+for(let i = 0; i < urls.length && out.length < BADDEST_STICKER_FEED_POOL_MAX; i++){
+const n = normalizeStickerFeedUrl(urls[i]);
+if(n && !seen.has(n)){ seen.add(n); out.push(n); }
+}
+localStorage.setItem(BADDEST_STICKER_FEED_POOL_KEY, JSON.stringify(out));
+}catch(_){}
+}
+function getStickerFeedUrlPool(){
+const fromWin = Array.isArray(window.baddestStickerFeedUrls) ? window.baddestStickerFeedUrls : [];
+const fromStore = loadStickerFeedUrlPoolFromStorage();
+const seen = new Set();
+const out = [];
+function pushList(list){
+for(let i = 0; i < list.length; i++){
+const n = normalizeStickerFeedUrl(list[i]);
+if(!n || seen.has(n)) continue;
+seen.add(n);
+out.push(n);
+if(out.length >= BADDEST_STICKER_FEED_POOL_MAX) break;
+}
+}
+pushList(fromWin);
+pushList(fromStore);
+return out;
+}
+function appendStickerUrlToLiveFeedPool(url){
+const n = normalizeStickerFeedUrl(url);
+if(!n) return 0;
+const cur = loadStickerFeedUrlPoolFromStorage();
+if(cur.indexOf(n) >= 0) return cur.length;
+cur.unshift(n);
+saveStickerFeedUrlPoolToStorage(cur);
+return Math.min(cur.length, BADDEST_STICKER_FEED_POOL_MAX);
+}
+let _refreshSyntheticSocialFeedTimer = null;
+function shuffleSocialFeedOrder(){
+for(let i = socialPosts.length - 1; i > 0; i--){
+const j = Math.floor(Math.random() * (i + 1));
+const t = socialPosts[i];
+socialPosts[i] = socialPosts[j];
+socialPosts[j] = t;
+}
+}
+function refreshSyntheticSocialFeed(){
+socialPosts = socialPosts.filter((p) => !p._synthetic);
+socialPosts = socialPosts.concat(buildSyntheticStickerPosts(220));
+shuffleSocialFeedOrder();
+if(typeof renderHeaderStickerFeed === "function") renderHeaderStickerFeed();
+if(typeof renderSocialFeed === "function") renderSocialFeed();
+if(typeof updateSocialStats === "function") updateSocialStats();
+if(typeof persistSocialPosts === "function") persistSocialPosts();
+}
+function scheduleRefreshSyntheticSocialFeed(){
+if(_refreshSyntheticSocialFeedTimer) clearTimeout(_refreshSyntheticSocialFeedTimer);
+_refreshSyntheticSocialFeedTimer = setTimeout(() => {
+_refreshSyntheticSocialFeedTimer = null;
+refreshSyntheticSocialFeed();
+}, 500);
+}
+function buildSyntheticStickerPosts(count){
+const channels = getSyntheticChannelPool();
+const captions = [
+"Late night lab session",
+"New wrap who dis",
+"Sticker test — honest feedback?",
+"Too clean not to post",
+"Grip check passed",
+"Mockup vs reality",
+"Collab when?",
+"Baddest energy only",
+"Dropped this on my bottle",
+"Channeling main character",
+"Design sprint output",
+"Streetwear x hydration",
+"Peel. Stick. Flex.",
+"Half wrap energy",
+"Full send on this one",
+"Who’s printing this week?",
+"This one broke the algorithm",
+"POV: you actually gripped it",
+"Tag someone who needs this drop",
+"Limited run energy",
+"Printer go brrr",
+"Already ordered 50",
+"Main character sticker arc",
+"Proof of concept: slaps",
+"Comments open — be honest",
+"Trending in 3…2…"
+];
+const times = ["now", "2m ago", "8m ago", "24m ago", "1h ago", "3h ago", "6h ago", "12h ago", "1d ago", "2d ago", "3d ago", "1w ago"];
+const users = socialOnlineUsers;
+if(!users || !users.length) return [];
+const n = Math.max(0, Math.min(320, count | 0));
+const out = [];
+const t0 = Date.now();
+for(let i = 0; i < n; i++){
+const u = users[i % users.length];
+const id = "syn_" + t0.toString(36) + "_" + i + "_" + Math.random().toString(36).slice(2, 10);
+const channel = channels[Math.floor(Math.random() * channels.length)];
+const seed = id + "_" + (u.id || u.name);
+const urlPool = getStickerFeedUrlPool();
+const usePool = urlPool.length > 0;
+out.push({
+id: id,
+userId: u.id,
+author: u.name,
+avatar: getSocialPlaceholderAvatar(u.id || u.name),
+channel: channel,
+imageUrl: usePool ? urlPool[i % urlPool.length] : makeSocialAiStickerImageUrl(channel, seed),
+caption: captions[Math.floor(Math.random() * captions.length)],
+time: times[Math.floor(Math.random() * times.length)],
+likes: randomViralLikeCount(),
+liked: false,
+badge: "Community",
+vibe: "",
+comments: [],
+_synthetic: true,
+_aiImage: !usePool,
+_fromStickerPool: usePool
+});
+}
+return out;
+}
+socialPosts = socialPosts.filter((p) => !p._synthetic);
+socialPosts = socialPosts.concat(buildSyntheticStickerPosts(220));
+shuffleSocialFeedOrder();
+window.applyBaddestStickerFeedUrls = function(urls, opts){
+const merge = opts && opts.merge;
+let arr = [];
+if(Array.isArray(urls)) arr = urls.slice();
+else if(typeof urls === "string") arr = urls.split(/[\n,]+/).map((s) => String(s).trim()).filter(Boolean);
+else {
+console.warn("applyBaddestStickerFeedUrls: pass an array of URLs or a string (newlines or commas).");
+return;
+}
+const norm = [];
+const seen = new Set();
+arr.forEach((u) => {
+const n = normalizeStickerFeedUrl(u);
+if(n && !seen.has(n)){ seen.add(n); norm.push(n); }
+});
+if(!norm.length){
+console.warn("applyBaddestStickerFeedUrls: no valid http(s) URLs.");
+return;
+}
+const prev = merge ? loadStickerFeedUrlPoolFromStorage() : [];
+saveStickerFeedUrlPoolToStorage(norm.concat(prev));
+console.log("[Baddest] Live feed pool:", loadStickerFeedUrlPoolFromStorage().length, "URLs — rebuilding synthetic posts.");
+refreshSyntheticSocialFeed();
+};
+window.refreshBaddestSyntheticSocialFeed = refreshSyntheticSocialFeed;
+window.clearBaddestStickerFeedUrls = function(){
+try{ localStorage.removeItem(BADDEST_STICKER_FEED_POOL_KEY); }catch(_){}
+window.baddestStickerFeedUrls = [];
+refreshSyntheticSocialFeed();
+console.log("[Baddest] Sticker URL pool cleared; feed uses Pollinations again until you add URLs.");
+};
 function ensureSocialRoomThread(roomId){
 if(!socialRoomMessages[roomId]){
 socialRoomMessages[roomId] = [
@@ -6259,8 +6719,15 @@ const wrap = document.getElementById("socialPostLightboxImgWrap");
 wrap.innerHTML = "";
 if(post.imageUrl){
 const img = document.createElement("img");
-img.src = post.imageUrl;
+img.src = resolveSocialFeedMediaUrl(post.imageUrl);
 img.alt = "";
+img.referrerPolicy = "no-referrer";
+img.addEventListener("error", function(){
+const p = socialPosts.find((x) => x.id === post.id);
+if(!p || p._socialLbFallback) return;
+p._socialLbFallback = true;
+this.src = makeRandomStickerDataUrl(post.id + "_lb");
+}, { once: true });
 wrap.appendChild(img);
 } else {
 const ph = document.createElement("div");
@@ -6275,7 +6742,7 @@ const capEl = document.getElementById("socialPostLightboxCaption");
 if(capEl) capEl.textContent = post.caption || "";
 const actEl = document.getElementById("socialPostLightboxActions");
 if(actEl){
-actEl.innerHTML = "<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-lb-like=\"" + post.id + "\">♥ " + post.likes + " Like</button>";
+actEl.innerHTML = "<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-lb-like=\"" + post.id + "\">♥ " + formatSocialLikeCount(post.likes) + " Like</button>";
 }
 const comWrap = document.getElementById("socialPostLightboxComments");
 if(comWrap){
@@ -6383,6 +6850,15 @@ row.appendChild(joinBtn);
 list.appendChild(row);
 });
 }
+function bindSocialPostImageFallback(imgEl, postId){
+if(!imgEl || !postId) return;
+imgEl.addEventListener("error", function(){
+const p = socialPosts.find((x) => x.id === postId);
+if(!p || p._socialImgFallback) return;
+p._socialImgFallback = true;
+this.src = makeRandomStickerDataUrl(postId + "_imgfb");
+}, { once: true });
+}
 function renderSocialFeed(){
 const feed = document.getElementById("socialFeed");
 if(!feed){
@@ -6401,8 +6877,9 @@ postEl.className = "socialPostGridCard" + (post.featured ? " socialPostFeatured"
 postEl.dataset.postId = post.id;
 const avatarSrc = post.avatar || "";
 const channelPill = post.channel ? "<span class=\"socialPostChannelPill\">" + escapeHtml(humanizeSocialChannel(post.channel)) + "</span>" : "";
+const thumbResolved = post.imageUrl ? resolveSocialFeedMediaUrl(post.imageUrl) : "";
 const thumb = post.imageUrl
-? "<div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><img src=\"" + post.imageUrl + "\" alt=\"\" loading=\"lazy\" /><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>"
+? "<div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><img src=\"" + escapeAttrForHtml(thumbResolved) + "\" alt=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer\" data-social-post-img=\"1\" /><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>"
 : "<div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><div class=\"socialPostThumbPlaceholder\">Bb</div><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>";
 postEl.innerHTML =
 thumb +
@@ -6416,7 +6893,7 @@ channelPill +
 "<p class=\"socialPostCaptionGrid\">" + escapeHtml(post.caption || "") + "</p>" +
 "</div>" +
 "<div class=\"socialPostGridFooter\">" +
-"<span class=\"socialPostStat\"><strong>" + post.likes + "</strong> likes</span>" +
+"<span class=\"socialPostStat\"><strong>" + formatSocialLikeCount(post.likes) + "</strong> likes</span>" +
 "<div class=\"socialPostGridFooterActions\">" +
 "<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-action=\"like\" data-post-id=\"" + post.id + "\">♥ Like</button>" +
 "<button type=\"button\" class=\"socialPostAction\" data-action=\"comment\" data-post-id=\"" + post.id + "\">💬 Comment</button>" +
@@ -6430,6 +6907,11 @@ channelPill +
 "</div>" +
 "</div>";
 feed.appendChild(postEl);
+});
+feed.querySelectorAll(".socialPostThumb img[data-social-post-img]").forEach((im) => {
+const wrap = im.closest(".socialPostThumb");
+const pid = wrap && wrap.getAttribute("data-post-id");
+if(pid) bindSocialPostImageFallback(im, pid);
 });
 updateSocialStats();
 feed.querySelectorAll("[data-action=\"like\"]").forEach((btn) => {
@@ -6472,19 +6954,67 @@ if(lb && lb.classList.contains("is-open") && lb.dataset.postId === postId) openS
 renderHeaderStickerFeed();
 persistSocialPosts();
 }
+function resolveSocialUserIdFromPost(post){
+if(!post) return "";
+if(post.userId) return post.userId;
+const u = socialOnlineUsers.find((x) => x.name === post.author);
+return u ? u.id : "";
+}
+function applyHeaderStickerThumbMask(thumbEl){
+if(!thumbEl) return;
+let m = "";
+try{
+m = (document.documentElement.style.getPropertyValue("--label-mask-url") || "").trim();
+}catch(_){}
+if(!m) m = 'url("tmp/full-wrap-processed-mask.png")';
+thumbEl.style.webkitMaskImage = m;
+thumbEl.style.maskImage = m;
+thumbEl.style.webkitMaskSize = "contain";
+thumbEl.style.maskSize = "contain";
+thumbEl.style.webkitMaskRepeat = "no-repeat";
+thumbEl.style.maskRepeat = "no-repeat";
+thumbEl.style.webkitMaskPosition = "center";
+thumbEl.style.maskPosition = "center";
+thumbEl.classList.add("headerStickerCardThumb--masked");
+}
 function makeHeaderStickerCard(post){
 const el = document.createElement("div");
 el.className = "headerStickerCard";
 el.dataset.postId = post.id;
-el.setAttribute("role", "button");
-el.tabIndex = 0;
+const uid = resolveSocialUserIdFromPost(post);
+const avBtn = document.createElement("button");
+avBtn.type = "button";
+avBtn.className = "headerStickerCardAvatarBtn";
+avBtn.setAttribute("data-header-open-social", uid || "");
+avBtn.setAttribute("aria-label", "Open Social — " + (post.author || "creator"));
+avBtn.title = "Open Social · " + (post.author || "Creator");
+const avImg = document.createElement("img");
+avImg.className = "headerStickerCardAvatarImg";
+avImg.alt = "";
+avImg.loading = "lazy";
+const avSrc = (post.avatar && String(post.avatar).trim()) || getSocialPlaceholderAvatar(uid || post.author || "guest");
+avImg.src = avSrc;
+avImg.addEventListener("error", function(){
+const fb = getSocialPlaceholderAvatar(uid || post.author || "guest");
+if(this.src !== fb) this.src = fb;
+});
+avBtn.appendChild(avImg);
 const thumb = document.createElement("div");
 thumb.className = "headerStickerCardThumb";
 const img = document.createElement("img");
+img.className = "headerStickerThumbImg";
 img.alt = "";
 img.loading = "lazy";
-img.src = post.imageUrl || "";
+img.referrerPolicy = "no-referrer";
+img.src = resolveSocialFeedMediaUrl(post.imageUrl || "");
+img.addEventListener("error", function(){
+const p = socialPosts.find((x) => x.id === post.id);
+if(!p || p._headerThumbFallback) return;
+p._headerThumbFallback = true;
+this.src = makeRandomStickerDataUrl(post.id + "_hdr");
+}, { once: true });
 thumb.appendChild(img);
+applyHeaderStickerThumbMask(thumb);
 const info = document.createElement("div");
 info.className = "headerStickerCardInfo";
 const name = document.createElement("span");
@@ -6494,9 +7024,10 @@ const likeBtn = document.createElement("button");
 likeBtn.type = "button";
 likeBtn.className = "headerStickerCardLike" + (post.liked ? " is-liked" : "");
 likeBtn.setAttribute("data-header-sticker-like", post.id);
-likeBtn.textContent = "♥ " + (Number.isFinite(post.likes) ? post.likes : 0);
+likeBtn.textContent = "♥ " + formatSocialLikeCount(Number.isFinite(post.likes) ? post.likes : 0);
 info.appendChild(name);
 info.appendChild(likeBtn);
+el.appendChild(avBtn);
 el.appendChild(thumb);
 el.appendChild(info);
 return el;
@@ -6518,7 +7049,7 @@ track.classList.add("is-empty");
 track.appendChild(empty);
 return;
 }
-const maxN = Math.min(withArt.length, 48);
+const maxN = Math.min(withArt.length, 120);
 const list = withArt.slice(0, maxN);
 const rowA = document.createElement("div");
 rowA.className = "headerStickerFeedRow";
@@ -6549,6 +7080,20 @@ renderSocialFeed();
 }
 return;
 }
+const avOpen = e.target.closest(".headerStickerCardAvatarBtn");
+if(avOpen){
+e.preventDefault();
+e.stopPropagation();
+const uid = avOpen.getAttribute("data-header-open-social") || "";
+showSocialModal();
+if(uid && socialOnlineUsers.some((u) => u.id === uid)){
+currentChatUserId = uid;
+ensureDmThread(uid);
+renderSocialOnlineList();
+renderSocialChat();
+}
+return;
+}
 const card = e.target.closest(".headerStickerCard");
 if(card && card.dataset.postId){
 openSocialPostLightbox(card.dataset.postId);
@@ -6556,6 +7101,19 @@ openSocialPostLightbox(card.dataset.postId);
 });
 bar.addEventListener("keydown", (e) => {
 if(e.key !== "Enter" && e.key !== " ") return;
+const avOpen = e.target.closest(".headerStickerCardAvatarBtn");
+if(avOpen){
+e.preventDefault();
+const uid = avOpen.getAttribute("data-header-open-social") || "";
+showSocialModal();
+if(uid && socialOnlineUsers.some((u) => u.id === uid)){
+currentChatUserId = uid;
+ensureDmThread(uid);
+renderSocialOnlineList();
+renderSocialChat();
+}
+return;
+}
 const card = e.target.closest(".headerStickerCard");
 if(!card || !card.dataset.postId) return;
 e.preventDefault();
@@ -7203,9 +7761,6 @@ photoOffsetY = 0;
 }
 clampPhotoScale();
 clampPhotoOffsets();
-const v = Math.round(photoScale * 100);
-if(photoZoom) photoZoom.value = clamp(v, 20, 300);
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : String(v);
 }
 function syncSelectedStickersToCurrentTemplate(){
 const key = currentLabelTemplate;
@@ -7701,9 +8256,79 @@ return cover * 0.90;
 }
 return Math.max(BASE / iw, BASE / ih) * 0.90;
 }
+/* Minimum user photoScale on labels: total draw scale never below geometric *cover* (fills mask bbox; mask crops, no letterboxing / shrinking inside mask). */
+function getMinPhotoScaleMultiplier(){
+if(!labelMaskCanvas || !baseImg || !baseImg.naturalWidth || !baseImg.naturalHeight) return 0.72;
+const coverG = getGeometricCoverScaleForPhoto(baseImg);
+const bs = getPhotoBaseScale(baseImg);
+if(!(bs > 0)) return 1;
+return clamp(coverG / bs, 0.05, 3);
+}
+/* Pure cover scale for mask bbox (no halfWrap / template fudge) — zoom min/max are relative to this */
+function getGeometricCoverScaleForPhoto(img){
+if(!img || !img.naturalWidth || !img.naturalHeight) return 1;
+const b = getMaskSafeBounds();
+const iw = img.naturalWidth;
+const ih = img.naturalHeight;
+if(!(b.w > 0) || !(b.h > 0)) return 1;
+return Math.max(b.w / iw, b.h / ih);
+}
+/* Max total draw scale = min(absolute cap, coverGeom * factor) so zoom cannot exceed ~factor× “fill mask” size */
+const LABEL_PHOTO_MAX_ZOOM_VS_COVER = 1.75;
+const LABEL_PHOTO_ABS_MAX_DRAW_SCALE = 3;
+function getMaxPhotoScaleMultiplier(){
+if(!labelMaskCanvas || !baseImg || !baseImg.naturalWidth || !baseImg.naturalHeight) return 3;
+const coverG = getGeometricCoverScaleForPhoto(baseImg);
+const bs = getPhotoBaseScale(baseImg);
+if(!(bs > 0)) return 3;
+const maxTotal = Math.min(LABEL_PHOTO_ABS_MAX_DRAW_SCALE, coverG * LABEL_PHOTO_MAX_ZOOM_VS_COVER);
+const maxMul = maxTotal / bs;
+const lo = getMinPhotoScaleMultiplier();
+return clamp(maxMul, lo, 3);
+}
+/* Single source of truth for label preview/export draw scale (must match pan limits) */
+function getLabelPhotoDrawTotalScale(){
+if(!baseImg || !baseImg.naturalWidth || !baseImg.naturalHeight) return 1;
+const iw = baseImg.naturalWidth;
+const ih = baseImg.naturalHeight;
+const bounds = getMaskSafeBounds();
+const bw = bounds.w;
+const bh = bounds.h;
+if(!(bw > 0) || !(bh > 0)) return 1;
+const coverG = getGeometricCoverScaleForPhoto(baseImg);
+const bs = getPhotoBaseScale(baseImg);
+const raw = bs * photoScale;
+const maxTot = Math.min(LABEL_PHOTO_ABS_MAX_DRAW_SCALE, coverG * LABEL_PHOTO_MAX_ZOOM_VS_COVER);
+return clamp(raw, coverG, maxTot);
+}
 function clampPhotoScale(){
-const minScale = labelMaskCanvas ? 0.72 : 0.05;
-photoScale = clamp(photoScale, minScale, 3);
+if(!labelMaskCanvas){
+photoScale = clamp(photoScale, 0.05, 3);
+if(photoZoom){
+photoZoom.min = 20;
+photoZoom.max = 300;
+let v = Math.round(photoScale * 100);
+const cl = clamp(v, 20, 300);
+if(cl !== v) photoScale = cl / 100;
+photoZoom.value = cl;
+if(photoZoomVal) photoZoomVal.textContent = String(cl);
+}
+return;
+}
+const loUser = getMinPhotoScaleMultiplier();
+const hiUser = getMaxPhotoScaleMultiplier();
+photoScale = clamp(photoScale, loUser, hiUser);
+if(photoZoom){
+const loPct = Math.max(5, Math.min(300, Math.round(loUser * 100)));
+const hiPct = Math.max(loPct, Math.min(300, Math.round(hiUser * 100)));
+photoZoom.min = loPct;
+photoZoom.max = hiPct;
+let v = Math.round(photoScale * 100);
+const cl = clamp(v, loPct, hiPct);
+if(cl !== v) photoScale = cl / 100;
+photoZoom.value = cl;
+if(photoZoomVal) photoZoomVal.textContent = String(cl);
+}
 }
 function clampPhotoOffsets(){
 if(!baseImg || !baseImg.naturalWidth || !baseImg.naturalHeight) return;
@@ -7711,9 +8336,22 @@ const iw = baseImg.naturalWidth;
 const ih = baseImg.naturalHeight;
 const bounds = getMaskSafeBounds();
 const baseScale = getPhotoBaseScale(baseImg);
-const scale = Math.min(3, Math.max(0.05, baseScale * photoScale));
+const scale = labelMaskCanvas
+? getLabelPhotoDrawTotalScale()
+: Math.min(3, Math.max(0.05, baseScale * photoScale));
 const dw = iw * scale;
 const dh = ih * scale;
+if(labelMaskCanvas){
+const cw = bounds.w;
+const ch = bounds.h;
+const rxLo = -(cw - dw) / 2;
+const rxHi = (cw - dw) / 2;
+const ryLo = -(ch - dh) / 2;
+const ryHi = (ch - dh) / 2;
+photoOffsetX = clamp(photoOffsetX, Math.min(rxLo, rxHi), Math.max(rxLo, rxHi));
+photoOffsetY = clamp(photoOffsetY, Math.min(ryLo, ryHi), Math.max(ryLo, ryHi));
+return;
+}
 const centeredX = (BASE - dw) / 2;
 const centeredY = (BASE - dh) / 2;
 const edgeX1 = bounds.x + bounds.w - dw - centeredX;
@@ -8065,6 +8703,7 @@ loadingOverlay.style.maskPosition = "center";
 loadingOverlay.style.webkitMaskPosition = "center";
 }
 syncBleedOverlays();
+if(typeof renderHeaderStickerFeed === "function") renderHeaderStickerFeed();
 } else {
 maskAspect = null;
 window._maskBounds = null;
@@ -8098,6 +8737,7 @@ loadingOverlay.style.maskImage = "";
 loadingOverlay.style.webkitMaskImage = "";
 }
 syncBleedOverlays();
+if(typeof renderHeaderStickerFeed === "function") renderHeaderStickerFeed();
 }
 }
 let mainPreviewSnapshotVersion = 0;
@@ -8408,9 +9048,6 @@ photoOffsetY = 0;
 photoScale = getInitialPhotoScaleForTemplate();
 clampPhotoScale();
 clampPhotoOffsets();
-const v = Math.round(photoScale * 100);
-if(photoZoom) photoZoom.value = clamp(v, 20, 300);
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : v;
 enableCheckoutButtons();
 updateMobileNoticeThumbnails();
 if(typeof updateLockButton === 'function') updateLockButton();
@@ -8437,9 +9074,6 @@ photoOffsetX = 0; photoOffsetY = 0;
 photoScale = getInitialPhotoScaleForTemplate();
 clampPhotoScale();
 clampPhotoOffsets();
-const v = Math.round(photoScale * 100);
-if(photoZoom) photoZoom.value = clamp(v, 20, 300);
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : v;
 enableCheckoutButtons();
 if(typeof updateLockButton === 'function') updateLockButton();
 const mobileNotice = document.querySelector('.mobileDesktopNotice');
@@ -9189,7 +9823,9 @@ const fitH = useMaskBounds ? bh : BASE;
 const baseScale = (labelMaskCanvas && !forExport)
 ? getPhotoBaseScale(baseImg)
 : Math.max(fitW / iw, fitH / ih) * bleedMult;
-const scale = Math.min(3, Math.max(0.05, baseScale * photoScale));
+const scale = labelMaskCanvas
+? getLabelPhotoDrawTotalScale()
+: Math.min(3, Math.max(0.05, baseScale * photoScale));
 const dw = Math.round(iw * scale);
 const dh = Math.round(ih * scale);
 const cx = useMaskBounds ? bx : 0;
@@ -11867,13 +12503,11 @@ fastThrottledRenderAll();
 }
 
 photoZoom.addEventListener("input", ()=>{
-const v = clamp(+photoZoom.value||100,20,300);
-photoScale = v/100;
+const lo = labelMaskCanvas ? Math.max(5, Math.min(300, Math.round(getMinPhotoScaleMultiplier() * 100))) : 20;
+const v = clamp(+photoZoom.value || 100, lo, 300);
+photoScale = v / 100;
 clampPhotoScale();
 clampPhotoOffsets();
-const actualV = Math.round(photoScale * 100);
-photoZoom.value = actualV;
-photoZoomVal.textContent = actualV;
 syncPreviewPhotoImg();
 scheduleMainPreviewRender();
 throttledRenderAll();
@@ -12150,6 +12784,7 @@ const dy = y - drag.startY;
 if(drag.target==="photo"){
 photoOffsetX = drag.startOX + dx;
 photoOffsetY = drag.startOY + dy;
+clampPhotoOffsets();
 } else if(drag.target==="text" && drag.idx>=0){
 texts[drag.idx].enabled=true;
 texts[drag.idx].x = drag.startOX + dx;
@@ -12190,11 +12825,8 @@ const dy = e.touches[1].clientY - e.touches[0].clientY;
 const dist = Math.hypot(dx, dy);
 if(pinchStartDist > 0){
 const factor = dist / pinchStartDist;
-photoScale = clamp(pinchStartScale * factor, 0.05, 3);
+photoScale = pinchStartScale * factor;
 clampPhotoScale();
-const v = Math.round(photoScale*100);
-if(photoZoom) { photoZoom.value = clamp(v,20,300); photoZoom.max = 300; }
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : v;
 }
 const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
 const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
@@ -12202,6 +12834,7 @@ const rect = canvas.getBoundingClientRect();
 const s = BASE / rect.width;
 photoOffsetX = pinchStartOX + (midX - pinchStartMidX) * s;
 photoOffsetY = pinchStartOY + (midY - pinchStartMidY) * s;
+clampPhotoOffsets();
 if(!pinchRaf) pinchRaf = requestAnimationFrame(()=>{ pinchRaf=0; renderAll(); });
 }
 }, {passive:false});
@@ -12213,11 +12846,9 @@ container.addEventListener("wheel", async (e)=>{
 e.preventDefault();
 if(baseImg){
 const factor = e.deltaY < 0 ? 1.06 : 0.94;
-photoScale = clamp(photoScale*factor, 0.05, 3);
+photoScale = photoScale * factor;
 clampPhotoScale();
-const v = Math.round(photoScale*100);
-if(photoZoom) { photoZoom.value = clamp(v,20,300); photoZoom.max = 300; }
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : v;
+clampPhotoOffsets();
 await renderAll();
 } else {
 const idx = modeToTextIndex(editMode);
@@ -12347,15 +12978,9 @@ if(!baseImg) return;
 e.preventDefault();
 beginMainPreviewInteraction();
 const factor = e.deltaY < 0 ? 1.06 : 0.94;
-photoScale = clamp(photoScale * factor, 0.05, 3);
+photoScale = photoScale * factor;
 clampPhotoScale();
 clampPhotoOffsets();
-const v = Math.round(photoScale * 100);
-if(photoZoom) {
-photoZoom.value = clamp(v, 20, 300);
-photoZoom.max = 300;
-}
-if(photoZoomVal) photoZoomVal.textContent = photoZoom ? photoZoom.value : v;
 pushMainPreviewUpdate();
 endMainPreviewInteraction(220);
 }, {passive:false});
