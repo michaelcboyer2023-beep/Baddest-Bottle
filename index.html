@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-02-12-githack-marquee"/>
-<!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Full fixed header + marquees need viewport width ≥980px. -->
+<meta name="app-version" content="live-2026-02-12-livefeed-tune"/>
+<!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Full fixed header needs viewport width ≥980px. -->
 <title>Custom Sticker Designer</title>
 <link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
@@ -192,7 +192,33 @@ display:inline-block;
 background:transparent !important;
 will-change:transform;
 line-height:0;
-isolation:isolate;
+overflow:visible;
+}
+/* Glow sits behind transparent PNG; artwork unfiltered so border red stays native */
+.grabLifeGlowHost{
+display:inline-block;
+position:relative;
+max-width:100%;
+overflow:visible;
+}
+.grabLifeGlowHost::before,
+.siteHeaderSloganWrap::before{
+content:"";
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+z-index:0;
+pointer-events:none;
+width:122%;
+height:108%;
+background:radial-gradient(ellipse 70% 88% at 50% 50%, rgba(255,32,32,.48) 0%, rgba(160,22,22,.2) 45%, transparent 72%);
+filter:blur(22px);
+opacity:.9;
+}
+.siteHeaderSloganWrap::before{
+width:128%;
+height:96%;
 }
 /* Orange sweep underline removed; logo still uses cursor parallax on .siteHeaderSloganWrap */
 .siteHeaderSlogan::before{
@@ -212,21 +238,14 @@ object-position:center;
 vertical-align:middle;
 background:none !important;
 background-color:transparent !important;
-filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
-mix-blend-mode:lighten;
--webkit-mask-image:url("projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png");
-mask-image:url("projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png");
--webkit-mask-size:contain;
-mask-size:contain;
--webkit-mask-repeat:no-repeat;
-mask-repeat:no-repeat;
--webkit-mask-position:center;
-mask-position:center;
--webkit-mask-mode:luminance;
-mask-mode:luminance;
+position:relative;
+z-index:1;
+/* True alpha from RGB sum: knocks out black/near-black without washing reds like screen/lighten */
+filter:url(#grabHeaderKeyBlack);
 }
-.siteHeaderSlogan:hover .siteHeaderSloganImg{
-filter:drop-shadow(0 0 18px rgba(255,138,58,.34)) drop-shadow(0 0 34px rgba(255,102,0,.18)) brightness(1.06);
+.siteHeaderSlogan:hover .siteHeaderSloganWrap::before{
+opacity:0.98;
+filter:blur(26px);
 }
 .siteHeaderSlogan:hover{
 color:#ff9a4a;
@@ -661,7 +680,7 @@ z-index:1;
 animation:none !important; /* Disable animation on mobile */
 }
 /* Mobile: drop heavy animations — exclude site header tickers so they stay “live” when header is visible */
-*:not(.siteHeaderMarquee):not(.siteHeaderMarqueeTrack):not(.siteHeaderMarqueeHoriz):not(.siteHeaderMarqueeDup):not(.siteHeaderStickerFeed):not(.siteHeaderStickerFeedViewport):not(.siteHeaderStickerFeedTrack):not(.headerStickerFeedRow):not(.headerStickerCard):not(.headerStickerCardThumb):not(.headerStickerCardInfo):not(.headerStickerCardName):not(.headerStickerCardLike){
+*:not(.siteHeaderStickerFeed):not(.siteHeaderStickerFeedViewport):not(.siteHeaderStickerFeedTrack):not(.headerStickerFeedRow):not(.headerStickerCard):not(.headerStickerCardThumb):not(.headerStickerCardInfo):not(.headerStickerCardName):not(.headerStickerCardLike){
 animation:none !important;
 -webkit-animation:none !important;
 }
@@ -877,9 +896,11 @@ max-width:100% !important;
 
 /* Keep sticky preview from blocking main content on desktop */
 @media (min-width: 980px){
-/* Stack under safe-area; JS measures real bottom (parallax). Fallback = big row + marquee + buffer — no preview overlap */
+/* Stack under safe-area; JS measures real bottom (parallax). Fallback = big row + LIVE band + buffer */
 :root{
---site-header-stack:calc(2px + max(148px, min(268px, 34vh)) + 42px + clamp(20px, 2.6vw, 28px) + 46px);
+--site-header-px:20px;
+--site-header-band-gap:2px;
+--site-header-stack:calc(0px + max(112px, min(178px, 24vh)) + 40px + var(--site-header-band-gap) + 28px);
 }
 html{
 scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
@@ -893,6 +914,7 @@ flex-direction:column;
 align-items:stretch;
 align-content:stretch;
 gap:0;
+row-gap:0;
 position:fixed;
 top:0;
 left:0;
@@ -905,36 +927,36 @@ border-bottom:1px solid rgba(255,102,0,.18);
 backdrop-filter:blur(12px);
 box-shadow:0 8px 26px rgba(0,0,0,.26);
 }
-/* Full-size row + marquee directly under (minimal vertical padding) */
+/* Full-size row — compact so more of the designer tool stays visible */
 .siteHeaderInner{
 display:flex;
 flex-wrap:nowrap;
 align-items:center;
 justify-content:flex-start;
-gap:14px;
+gap:10px;
 min-height:0;
-padding:2px 22px 0;
+padding:2px var(--site-header-px) 0;
 margin:0 auto;
 width:100%;
 max-width:1560px;
 box-sizing:border-box;
 }
 .siteHeaderLogo{
-height:clamp(118px, 14vw, 148px);
+height:clamp(84px, 10vw, 112px);
 width:auto;
 top:0;
 }
 .siteHeaderNav{
 flex:0 0 auto;
-margin-left:10px;
+margin-left:8px;
 }
 .siteHeaderNav--rail{
 margin-left:0;
-padding:4px 6px;
+padding:3px 5px;
 }
 .siteHeaderNav--rail .siteHeaderNavLink{
-min-height:40px;
-padding:0 15px;
+min-height:36px;
+padding:0 13px;
 font-size:11px;
 letter-spacing:.13em;
 }
@@ -949,8 +971,8 @@ padding:0 8px;
 justify-content:center;
 }
 .siteHeaderSloganImg{
-height:clamp(175px, 20vw, 268px);
-max-height:min(268px, 34vh);
+height:clamp(118px, 14vw, 178px);
+max-height:min(178px, 24vh);
 width:auto;
 }
 .siteHeaderActions{
@@ -958,90 +980,66 @@ flex:0 0 auto;
 margin-left:auto;
 align-self:center;
 padding-top:0;
-gap:10px;
+gap:8px;
 }
 .siteHeaderSocials{
-margin-left:14px;
-margin-right:18px;
-gap:10px;
+margin-left:10px;
+margin-right:12px;
+gap:8px;
 }
 .siteHeaderSocialBtn{
-width:44px;
-height:44px;
+width:40px;
+height:40px;
 }
 .siteHeaderIconBtn,
 .siteHeaderLoginBtn{
-min-height:44px;
+min-height:40px;
 }
 .siteHeaderIconBtn{
-width:44px;
+width:40px;
 }
 .siteHeaderLoginBtn{
-padding:0 16px 0 14px;
-font-size:12px;
+padding:0 14px 0 12px;
+font-size:11px;
 letter-spacing:.12em;
 }
-.siteHeaderMarquee{
-width:100%;
-flex:0 0 auto;
-margin-top:-12px;
-height:clamp(20px, 2.6vw, 28px);
-overflow:hidden;
-display:flex;
-align-items:center;
-pointer-events:none;
-border-top:1px solid rgba(255,102,0,.16);
-background:rgba(0,0,0,.22);
--webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
--webkit-mask-size:100% 100%;
-mask-size:100% 100%;
--webkit-mask-repeat:no-repeat;
-mask-repeat:no-repeat;
-}
-.siteHeaderMarqueeTrack{width:100%;overflow:hidden;}
-.siteHeaderMarqueeHoriz{
-display:flex;
-flex-direction:row;
-flex-wrap:nowrap;
-width:max-content;
-animation:siteHeaderMarqueeScroll 72s linear infinite;
-}
-@keyframes siteHeaderMarqueeScroll{
-0%{ transform:translateX(0); }
-100%{ transform:translateX(-50%); }
-}
-.siteHeaderMarqueeDup{
-flex-shrink:0;
-padding:0 2em;
-font-size:clamp(8px, 0.98vw, 11px);
-font-weight:800;
-letter-spacing:.3em;
-text-transform:uppercase;
-white-space:nowrap;
-color:rgba(255,255,255,.98);
-line-height:1;
-text-shadow:0 0 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.45);
-}
-/* Live worldwide sticker ticker (between nav row and text marquee) */
+/* Live worldwide sticker ticker — tucked tight under the nav row */
 .siteHeaderStickerFeed{
 display:flex;
-align-items:stretch;
+align-items:center;
 flex:0 0 auto;
 min-height:0;
-margin-top:-6px;
-height:42px;
+margin-top:-42px;
+padding:0 var(--site-header-px);
+box-sizing:border-box;
+height:40px;
 background:rgba(0,0,0,.2);
-border-top:1px solid rgba(255,102,0,.14);
-border-bottom:1px solid rgba(255,102,0,.08);
+border-top:1px solid rgba(255,102,0,.12);
+border-bottom:1px solid rgba(255,102,0,.06);
 position:relative;
-z-index:1;
+}
+.siteHeaderStickerFeed .headerStickerFeedRow{
+gap:6px;
+}
+.siteHeaderStickerFeed .headerStickerCard{
+padding:2px 9px 2px 3px;
+gap:6px;
+max-width:200px;
+}
+.siteHeaderStickerFeed .headerStickerCardThumb{
+width:30px;
+height:30px;
+border-radius:8px;
+}
+.siteHeaderStickerFeed .headerStickerCardName{
+font-size:10px;
+max-width:118px;
 }
 .siteHeaderStickerFeedLive{
 flex:0 0 auto;
 align-self:stretch;
 margin:0;
-padding:0 10px 0 14px;
+padding:0 11px;
 border:none;
 border-right:1px solid rgba(255,102,0,.2);
 background:linear-gradient(180deg, rgba(255,68,0,.22), rgba(180,40,0,.12));
@@ -1105,8 +1103,8 @@ display:flex;
 flex-direction:row;
 flex-wrap:nowrap;
 align-items:center;
-gap:8px;
-padding:0 12px;
+gap:9px;
+padding:0;
 box-sizing:border-box;
 }
 .headerStickerCard{
@@ -1115,8 +1113,8 @@ display:flex;
 flex-direction:row;
 align-items:center;
 gap:8px;
-max-width:200px;
-padding:4px 10px 4px 4px;
+max-width:230px;
+padding:4px 12px 4px 4px;
 border-radius:999px;
 border:1px solid rgba(255,255,255,.1);
 background:rgba(255,255,255,.05);
@@ -1132,8 +1130,8 @@ outline:none;
 }
 .headerStickerCardThumb{
 flex:0 0 auto;
-width:32px;
-height:32px;
+width:34px;
+height:34px;
 border-radius:10px;
 overflow:hidden;
 background:rgba(0,0,0,.35);
@@ -1155,10 +1153,10 @@ gap:2px;
 line-height:1.1;
 }
 .headerStickerCardName{
-font-size:10px;
+font-size:11px;
 font-weight:800;
 color:rgba(255,255,255,.92);
-max-width:120px;
+max-width:140px;
 overflow:hidden;
 text-overflow:ellipsis;
 white-space:nowrap;
@@ -1169,7 +1167,7 @@ padding:0;
 border:none;
 background:transparent;
 color:rgba(255,160,120,.85);
-font-size:9px;
+font-size:11px;
 font-weight:800;
 cursor:pointer;
 letter-spacing:.04em;
@@ -1484,13 +1482,12 @@ border-radius:12px;
 aspect-ratio:1000 / 633 !important;
 animation:mainPreviewEdgePulse 3.2s ease-in-out infinite;
 }
-/* Full wrap: no inset vignette or ::after wash — photo reads sharp to the mask edge */
+/* Full wrap: flat preview — no pulse, minimal chrome so label art reads clearly */
 #shapeFrameTop.dockThumb.label.template-fullWrap{
+animation:none;
 box-shadow:
-0 18px 40px rgba(0,0,0,.5),
-0 0 0 1px rgba(255,255,255,.16),
-0 0 0 2px rgba(255,68,0,.20),
-0 0 16px rgba(255,68,0,.14);
+0 14px 32px rgba(0,0,0,.42),
+0 0 0 1px rgba(255,255,255,.12);
 }
 #shapeFrameTop.dockThumb.label.template-fullWrap::after{
 display:none;
@@ -1745,6 +1742,54 @@ animation:previewMarqueeGlowFade 14s ease-in-out infinite reverse, previewMarque
 95%{ transform:translate(-3px,0); }
 96%{ transform:translate(1px,0); }
 }
+/* Top strip inside bottle video (mirrors bottom END SINGLE SERVE treatment) */
+.previewEmptyStateMarquee--top{
+position:absolute;
+left:0;
+right:0;
+top:0;
+bottom:auto;
+height:clamp(40px, 9vw, 56px);
+width:100%;
+z-index:4;
+overflow:hidden;
+pointer-events:none;
+display:flex;
+align-items:center;
+-webkit-mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+mask-image:linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+-webkit-mask-size:100% 100%;
+mask-size:100% 100%;
+-webkit-mask-repeat:no-repeat;
+mask-repeat:no-repeat;
+}
+.previewEmptyStateMarqueeTopTrack{
+width:100%;
+overflow:hidden;
+}
+.previewEmptyStateMarqueeTopHoriz{
+display:flex;
+flex-direction:row;
+flex-wrap:nowrap;
+width:max-content;
+animation:previewTopMarqueeScroll 68s linear infinite;
+}
+@keyframes previewTopMarqueeScroll{
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+}
+.previewEmptyStateMarqueeTopDup{
+flex-shrink:0;
+padding:0 2em;
+font-size:clamp(12px, 2.35vw, 17px);
+font-weight:800;
+letter-spacing:.26em;
+text-transform:uppercase;
+white-space:nowrap;
+color:rgba(255,255,255,.98);
+line-height:1.15;
+text-shadow:0 0 12px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.5);
+}
 /* Bottom strip: white copy, horizontal mask 0% (edges) → 100% (center) → 0% */
 .previewEmptyStateMarquee--bottom{
 position:absolute;
@@ -1799,13 +1844,13 @@ text-shadow:0 0 14px rgba(0,0,0,.5), 0 1px 3px rgba(0,0,0,.45);
 .previewEmptyStateMarqueeDup--reuse{
 animation:none !important;
 }
-.previewEmptyStateMarqueeBottomHoriz{
+.previewEmptyStateMarqueeTopHoriz{
 animation:none !important;
 transform:translateX(-25%);
 }
-.siteHeaderMarqueeHoriz{
-animation:siteHeaderMarqueeScroll 220s linear infinite !important;
-transform:none;
+.previewEmptyStateMarqueeBottomHoriz{
+animation:none !important;
+transform:translateX(-25%);
 }
 .siteHeaderStickerFeedTrack:not(.is-empty){
 animation:headerStickerFeedMarquee 220s linear infinite !important;
@@ -1819,6 +1864,8 @@ transform:scale(1.52) translateY(6%);
 .previewEmptyStateMarquee{ width:clamp(52px, 14vw, 76px); }
 .previewEmptyStateMarqueeDup,
 .previewEmptyStateMarqueeDup--reuse{ font-size:clamp(15px, 5.5vw, 26px); letter-spacing:.22em; }
+.previewEmptyStateMarqueeTopDup{ font-size:clamp(10px, 3.4vw, 14px); letter-spacing:.18em; padding:0 1.2em; }
+.previewEmptyStateMarquee--top{ height:clamp(32px, 11vw, 48px); }
 .previewEmptyStateMarqueeBottomDup{ font-size:clamp(9px, 2.6vw, 12px); letter-spacing:.22em; padding:0 1.2em; }
 .previewEmptyStateLabel{ max-width:calc(100% - 120px); }
 }
@@ -2357,7 +2404,7 @@ display:none;
 .stickyDock{
 display:block;
 right:max(6px, calc((100vw - 1560px) / 2 + 6px));
-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 400px) + 10px);
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 400px) + 6px);
 }
 }
 .dockCard{
@@ -4314,6 +4361,38 @@ color:rgba(255,255,255,.46);
 font-size:12px;
 text-align:center;
 }
+.aboutPlasticCallout{
+color:#ff6b1a;
+font-weight:900;
+letter-spacing:.04em;
+text-shadow:0 0 18px rgba(255,107,26,.35);
+}
+.aboutModalLockup{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:14px;
+margin:28px 0 8px;
+padding-top:8px;
+text-align:center;
+}
+.aboutModalLockupTagline{
+margin:0;
+font-size:15px;
+font-weight:900;
+letter-spacing:.2em;
+text-transform:uppercase;
+color:rgba(255,255,255,.92);
+}
+.aboutModalGrabLogo{
+display:block;
+position:relative;
+z-index:1;
+max-width:min(100%, 320px);
+width:100%;
+height:auto;
+}
 .cartModal{
 display:none;
 position:fixed;
@@ -4686,6 +4765,14 @@ width:100%;
 </head>
 <body>
 
+<svg class="grabHeaderFilterDefs" aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden;clip-path:inset(50%)">
+<defs>
+<filter id="grabHeaderKeyBlack" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 1 1 0 -0.13"/>
+</filter>
+</defs>
+</svg>
+
 <header class="siteHeader">
 <div class="siteHeaderInner">
 <div class="siteHeaderBrand">
@@ -4769,14 +4856,6 @@ width:100%;
 <button type="button" class="siteHeaderStickerFeedLive" id="headerStickerFeedOpenSocial" title="Open full social feed">LIVE</button>
 <div class="siteHeaderStickerFeedViewport">
 <div class="siteHeaderStickerFeedTrack" id="siteHeaderStickerFeedTrack"></div>
-</div>
-</div>
-<div class="siteHeaderMarquee" aria-hidden="true">
-<div class="siteHeaderMarqueeTrack">
-<div class="siteHeaderMarqueeHoriz">
-<span class="siteHeaderMarqueeDup">YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · </span>
-<span class="siteHeaderMarqueeDup">YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE TASTES BETTER IN THE BADDEST BOTTLE · </span>
-</div>
 </div>
 </div>
 </header>
@@ -4884,7 +4963,7 @@ width:100%;
 <div class="socialChallengeStrip">
 <div>
 <span class="socialChallengeLabel">TikTok-ready challenge</span>
-<p class="socialChallengeText">Film your bottle in the wild. Show the grip. Tag <code>#BaddestBottleChallenge</code> — flash your colors.</p>
+<p class="socialChallengeText">Film your bottle in the wild. Show the grip. Tag <code>#BaddestBottleChallenge</code>.</p>
 </div>
 <button type="button" class="socialCopyChallengeBtn" id="socialCopyChallengeBtn" title="Copy hashtag">Copy tag</button>
 </div>
@@ -4972,19 +5051,24 @@ width:100%;
 <button class="loginModalClose" id="aboutModalClose" type="button" aria-label="Close about popup">×</button>
 <div class="loginModalEyebrow">About The Brand</div>
 <h3 class="loginModalTitle" id="aboutModalTitle">Grip it. Sip it. Reuse it.</h3>
-<p class="loginModalText"><strong>*END SINGLE SERVE PLASTIC USE*</strong> and do it with the BADDEST BOTTLE in your hand. Our Patented Finger Holes Bottle Design makes drinking cool, functional, and safe. Whether you like drinking while taking your final exam, while flying loops in your helicopter, or taking a chug while bombing down the street on your skateboard, you will never have to worry about container slippage while grabbing the BADDEST BOTTLE. Chaos Is Optional—Grip Is Guaranteed.</p>
+<p class="loginModalText"><strong class="aboutPlasticCallout">END SINGLE SERVE PLASTIC USE</strong> and do it with the BADDEST BOTTLE in your hand. Our Patented Finger Holes Bottle Design makes drinking cool, functional, and safe. Whether you like drinking while taking your final exam, while flying loops in your helicopter, or taking a chug while bombing down the street on your skateboard, you will never have to worry about container slippage while grabbing the BADDEST BOTTLE. Chaos Is Optional—Grip Is Guaranteed.</p>
 <p class="loginModalText" style="margin-top:12px;font-weight:800;color:var(--red2);">GRIP IT. SIP IT. REUSE IT and GRAB LIFE BY THE BOTTLES.</p>
 <hr style="border:0;height:1px;background:rgba(255,255,255,.12);margin:18px 0;"/>
 <p class="loginModalText">BADDEST BOTTLE is built to turn hydration into identity. We make bottles that feel bold, personal, and worth carrying everywhere, so what is in your hands actually matches your energy.</p>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">Our Vibe</h4>
-<p class="infoModalSectionText">BADDEST BOTTLE blends art, attitude, and identity into collectible bottle designs that feel custom, elevated, and made to be seen. Stronger hydration. Higher confidence. A sudden urge to live life harder and go bigger. That is the feeling behind the brand.</p>
+<p class="infoModalSectionText">BADDEST BOTTLE blends art, attitude, and identity into collectible bottle designs that feel custom, elevated, and made to be seen. Stronger hydration. Higher confidence. A sudden urge to live life harder and go bigger. That is the feeling behind the brand. Matches your style, your energy.</p>
 </div>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">Why We’re Building This</h4>
 <p class="infoModalSectionText">We want to create more than a product builder. We are building a space where your bottle becomes your style, your grip, and your way. Design it, reuse it, own it, and eventually share it with a full community that can discover, comment on, rate, and shop what you create.</p>
 </div>
-<p class="infoModalFootnote">Be the baddest. Grab life by the bottles.</p>
+<div class="aboutModalLockup">
+<p class="aboutModalLockupTagline">Be The BADDEST</p>
+<div class="grabLifeGlowHost">
+<img class="aboutModalGrabLogo" src="projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png" alt="GRAB LIFE BY THE BOTTLES"/>
+</div>
+</div>
 </div>
 </div>
 
@@ -5044,6 +5128,14 @@ width:100%;
 <img id="previewPhotoImg" class="previewPhotoImg" alt="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;"/>
 <canvas class="canvas" id="previewTop"></canvas>
 <div class="previewEmptyState" id="previewEmptyState">
+<div class="previewEmptyStateMarquee previewEmptyStateMarquee--top" aria-hidden="true">
+<div class="previewEmptyStateMarqueeTopTrack">
+<div class="previewEmptyStateMarqueeTopHoriz">
+<span class="previewEmptyStateMarqueeTopDup">YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · </span>
+<span class="previewEmptyStateMarqueeTopDup">YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · YOUR FAVORITE BEVERAGE WILL TASTE BETTER IN THE BADDEST BOTTLE · </span>
+</div>
+</div>
+</div>
 <div class="previewEmptyStateMarquee previewEmptyStateMarquee--left" aria-hidden="true">
 <div class="previewEmptyStateMarqueeSpin">
 <div class="previewEmptyStateMarqueeHoriz">
@@ -5617,11 +5709,11 @@ if(!header) return;
 const cs = getComputedStyle(header);
 if(cs.display === "none" || cs.visibility === "hidden") return;
 let bottom = header.getBoundingClientRect().bottom;
-header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganWrap, .siteHeaderStickerFeed, .siteHeaderMarquee").forEach((el) => {
+header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganWrap, .siteHeaderStickerFeed").forEach((el) => {
 const r = el.getBoundingClientRect();
 if(r.height > 0) bottom = Math.max(bottom, r.bottom);
 });
-const pad = Math.max(Math.ceil(bottom) + 14, 300);
+const pad = Math.max(Math.ceil(bottom) + 6, 248);
 document.documentElement.style.setProperty("--site-header-stack", pad + "px");
 }catch(_e){}
 }
