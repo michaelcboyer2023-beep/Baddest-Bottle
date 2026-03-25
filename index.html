@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="app-version" content="live-2026-03-24-pollinations-categories-styles"/>
-<!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Full fixed header needs viewport width ≥980px. -->
+<!-- CDN: raw.githack.com caches GitHub files — if header/LIVE strip looks old, hard-refresh or open raw.githubusercontent.com/.../main/index.html, or append ?v=1 to the URL. Site header is fixed on all viewports. -->
 <title>Custom Sticker Designer</title>
 <link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
@@ -55,10 +55,24 @@ overflow-x:hidden;
 overflow-y:auto;
 -webkit-overflow-scrolling:touch;}
 .siteHeader{
-display:none;
-background:linear-gradient(180deg, rgba(15,8,5,.97) 0%, rgba(9,7,10,.95) 100%);
-backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px);
+display:flex;
+flex-direction:column;
+align-items:stretch;
+align-content:stretch;
+gap:0;
+row-gap:0;
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:auto;
+min-height:0;
+z-index:150;
+background:linear-gradient(180deg, rgba(9,7,10,.96), rgba(9,7,10,.88));
+border-bottom:1px solid rgba(255,102,0,.18);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+box-shadow:0 8px 26px rgba(0,0,0,.26);
 }
 .siteHeaderInner{
 width:min(100%, 1560px);
@@ -615,6 +629,7 @@ overflow-y:auto !important;
 height:100% !important;
 -webkit-overflow-scrolling:touch !important;
 touch-action:pan-y !important;
+scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px));
 }
 body{
 overflow-x:hidden !important;
@@ -626,6 +641,70 @@ touch-action:pan-y !important;
 position:relative !important;
 /* Ensure body is actually scrollable */
 overscroll-behavior-y:auto !important;
+}
+/* Persistent site header — compact on small screens (normal site nav) */
+.siteHeader{
+z-index:160;
+}
+.siteHeaderInner{
+flex-wrap:wrap;
+row-gap:6px;
+padding:8px max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+gap:8px;
+align-items:center;
+}
+.siteHeaderLogo{
+height:clamp(40px, 11vw, 52px) !important;
+top:0 !important;
+}
+.siteHeaderNav{
+flex:1 1 auto;
+margin-left:0;
+min-width:0;
+justify-content:flex-end;
+}
+.siteHeaderNav--rail{
+margin-left:auto;
+padding:2px 5px;
+}
+.siteHeaderNav--rail .siteHeaderNavLink{
+min-height:32px;
+padding:0 10px;
+font-size:9px;
+letter-spacing:.1em;
+}
+.siteHeaderNavSep{
+height:18px;
+}
+.siteHeaderSlogan{
+display:none !important;
+}
+.siteHeaderSocials{
+display:none !important;
+}
+.siteHeaderStickerFeed{
+display:none !important;
+}
+.siteHeaderActions{
+margin-left:0;
+flex:0 0 auto;
+gap:4px;
+}
+.siteHeaderIconBtn,
+.siteHeaderLoginBtn{
+min-height:36px;
+}
+.siteHeaderIconBtn{
+width:36px;
+}
+.siteHeaderLoginBtn{
+padding:0 10px 0 8px;
+font-size:10px;
+letter-spacing:.08em;
+}
+.siteHeaderSocialBtn{
+width:34px;
+height:34px;
 }
 /* Force scrolling container to be body/html, not wrap */
 .wrap{
@@ -901,25 +980,6 @@ scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack)
 }
 body{
 padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
-}
-.siteHeader{
-display:flex;
-flex-direction:column;
-align-items:stretch;
-align-content:stretch;
-gap:0;
-row-gap:0;
-position:fixed;
-top:0;
-left:0;
-right:0;
-height:auto;
-min-height:0;
-z-index:120;
-background:linear-gradient(180deg, rgba(9,7,10,.96), rgba(9,7,10,.88));
-border-bottom:1px solid rgba(255,102,0,.18);
-backdrop-filter:blur(12px);
-box-shadow:0 8px 26px rgba(0,0,0,.26);
 }
 /* Full-size row — compact so more of the designer tool stays visible */
 .siteHeaderInner{
@@ -1254,10 +1314,10 @@ display:none !important;
 .mobileBottomPreview{
 display:none !important;
 }
-/* Make main preview fixed at top on mobile - stays visible while scrolling */
+/* Make main preview fixed below site header on mobile - stays visible while scrolling */
 .previewShell{
 position:fixed !important;
-top:0 !important;
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px)) !important;
 left:0 !important;
 right:0 !important;
 z-index:100 !important;
@@ -1285,9 +1345,9 @@ pointer-events:auto !important;
 will-change:contents;
 contain:layout style paint;
 }
-/* Add padding to grid so content doesn't hide behind fixed preview */
+/* Add padding to grid so content doesn't hide behind fixed header + preview */
 .grid{
-padding-top:calc(min(96vw, 1280px) + 40px) !important;
+padding-top:calc(var(--site-header-stack, 64px) + min(96vw, 1280px) + 40px) !important;
 min-height:calc(100vh + 1500px) !important;
 height:auto !important;
 max-height:none !important;
@@ -2484,6 +2544,28 @@ border-radius:12px;
 aspect-ratio:1000/633;
 }
 .dockThumb img{width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1}
+/* Same YouTube + Ken pan as main preview empty state (desktop sticky dock) */
+.dockThumb .dockEmptyStateVideo{
+position:absolute;
+inset:0;
+z-index:1;
+display:none;
+pointer-events:none;
+overflow:hidden;
+border-radius:inherit;
+background:#060606;
+isolation:isolate;
+transform:translateZ(0);
+-webkit-transform:translateZ(0);
+contain:strict;
+}
+.dockThumb.showDockEmptyVideo .dockEmptyStateVideo{
+display:block;
+}
+.dockThumb.showDockEmptyVideo > #dockImg{
+display:none !important;
+visibility:hidden !important;
+}
 .dockTools{
 display:flex;gap:8px;flex-wrap:wrap;
 padding:10px 12px 12px;
@@ -3374,6 +3456,20 @@ transition:opacity .24s ease;
 display:flex;
 opacity:1;
 }
+/* Keep global header visible: overlays only cover the area below the fixed nav */
+#loginModal.active,
+#profileModal.active,
+#aboutModal.active,
+#socialModal.active{
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px));
+left:0;
+right:0;
+bottom:0;
+align-items:flex-start;
+justify-content:center;
+padding:12px 16px 16px;
+box-sizing:border-box;
+}
 .loginModalCard{
 width:min(92vw, 460px);
 padding:26px 24px 22px;
@@ -3461,6 +3557,61 @@ padding-top:50px;
 #aboutModalTitle{ font-size:clamp(22px,9vw,36px); padding-right:44px; }
 #aboutModal .aboutModalScroll{ padding-left:16px; padding-right:16px; }
 }
+/* Desktop / laptop: wide + height-capped so About + Social fit a standard screen */
+@media (min-width:981px){
+#aboutModal .loginModalCard.aboutModalCard{
+width:min(96vw, 920px);
+max-width:min(96vw, 920px);
+max-height:min(70vh, 640px);
+}
+#aboutModalTitle{
+font-size:clamp(28px, 2.8vw, 40px);
+}
+.socialPageCard,
+.socialPageModal .socialPageCard{
+max-width:min(98vw, 1440px);
+max-height:min(76vh, 820px);
+}
+.socialHero{
+padding:12px 22px 10px clamp(80px, 16vw, 132px);
+}
+.socialHeroTop{
+margin-bottom:6px;
+gap:8px;
+}
+.socialAccountBar{
+padding:6px 0 8px;
+margin-bottom:2px;
+}
+.socialHeroTitle{
+font-size:clamp(22px, 2.2vw, 32px);
+}
+.socialHeroTagline{
+font-size:12px;
+line-height:1.35;
+margin:4px 0 0;
+max-width:min(72ch, 720px);
+}
+.socialChallengeStrip{
+margin-top:8px;
+padding:10px 14px;
+gap:10px;
+}
+.socialChallengeText{
+font-size:12px;
+line-height:1.4;
+}
+.socialSidebar{
+width:200px;
+}
+.socialMain{
+padding:12px 16px 16px;
+gap:12px;
+}
+.socialChatMessages{
+min-height:120px;
+}
+}
 @keyframes socialHeroPulse{
 0%,100%{ opacity:.85; filter:brightness(1); }
 50%{ opacity:1; filter:brightness(1.15); }
@@ -3513,10 +3664,26 @@ z-index:20;
 background:rgba(0,0,0,.45);
 border:1px solid rgba(255,255,255,.1);
 }
+.socialModalBbLogo{
+position:absolute;
+top:12px;
+left:14px;
+height:clamp(32px, 8.5vw, 48px);
+width:auto;
+max-width:min(42vw, 200px);
+object-fit:contain;
+object-position:left center;
+z-index:18;
+pointer-events:none;
+user-select:none;
+background:transparent;
+/* Transparent mark only — match header BB glow (no black-plate key filter) */
+filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+}
 .socialHero{
 position:relative;
 z-index:1;
-padding:20px 24px 16px;
+padding:20px 24px 16px clamp(88px, 24vw, 150px);
 border-bottom:1px solid rgba(255,255,255,.08);
 background:linear-gradient(180deg, rgba(255,102,0,.06), transparent);
 }
@@ -4472,6 +4639,17 @@ letter-spacing:.2em;
 text-transform:uppercase;
 color:rgba(255,255,255,.92);
 }
+.aboutModalBbLogo{
+display:block;
+max-width:min(100%, 260px);
+width:auto;
+height:auto;
+margin:0 auto 12px;
+object-fit:contain;
+background:transparent;
+/* Transparent mark only — same orange glow as .siteHeaderLogo */
+filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+}
 .aboutModalGrabLogo{
 display:block;
 position:relative;
@@ -4500,6 +4678,14 @@ transition:opacity .24s ease;
 .cartModal.active{
 display:flex;
 opacity:1;
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px));
+left:0;
+right:0;
+bottom:0;
+align-items:flex-start;
+justify-content:center;
+padding:12px 16px 16px;
+box-sizing:border-box;
 }
 .cartModalCard{
 width:min(92vw, 560px);
@@ -4879,7 +5065,7 @@ width:100%;
 </nav>
 <div class="siteHeaderSlogan" id="siteHeaderSlogan">
 <div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
-<img class="siteHeaderSloganImg" src="projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png" alt="GRAB LIFE BY THE BOTTLES"/>
+<img class="siteHeaderSloganImg" src="projects/Users-michaelcboyer-cursor/assets/grab-life-by-the-bottles-client.png" alt="GRAB LIFE BY THE BOTTLES"/>
 </div>
 </div>
 <div class="siteHeaderActions">
@@ -5038,6 +5224,7 @@ width:100%;
 <div class="loginModal socialPageModal" id="socialModal" aria-hidden="true">
 <div class="socialPageCard" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
 <button class="loginModalClose" id="socialModalClose" type="button" aria-label="Close social">×</button>
+<img class="socialModalBbLogo" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="" width="200" height="48" decoding="async"/>
 <header class="socialHero">
 <div class="socialHeroTop">
 <span class="socialHeroBadge">BADDEST community</span>
@@ -5151,7 +5338,7 @@ width:100%;
 <p class="loginModalText">BADDEST BOTTLE is built to turn hydration into identity. We make bottles that feel bold, personal, and worth carrying everywhere, so what is in your hands actually matches your energy.</p>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">Our Vibe</h4>
-<p class="infoModalSectionText">BADDEST BOTTLE blends art, attitude, and identity into collectible bottle designs that feel custom, elevated, and made to be seen. Stronger hydration. Higher confidence. A sudden urge to live life harder and go bigger. That is the feeling behind the brand. Matches your style, your energy.</p>
+<p class="infoModalSectionText">BADDEST BOTTLE blends art, attitude, and identity into collectible bottle designs that feel custom, elevated, and made to be seen. Stronger hydration. Higher confidence. A sudden urge to live life harder and go bigger.</p>
 </div>
 <div class="infoModalSection">
 <h4 class="infoModalSectionTitle">Why We’re Building This</h4>
@@ -5159,7 +5346,8 @@ width:100%;
 </div>
 <div class="aboutModalLockup">
 <p class="aboutModalLockupTagline">Be The BADDEST</p>
-<img class="aboutModalGrabLogo" src="projects/Users-michaelcboyer-cursor/assets/grablife-cb6c5d32-087a-459b-968e-2dc1ffb6d9a4.png" alt="GRAB LIFE BY THE BOTTLES"/>
+<img class="aboutModalBbLogo" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE" width="260" height="80" decoding="async"/>
+<img class="aboutModalGrabLogo" src="projects/Users-michaelcboyer-cursor/assets/grab-life-by-the-bottles-client.png" alt="GRAB LIFE BY THE BOTTLES"/>
 </div>
 </div>
 </div>
@@ -5198,9 +5386,9 @@ width:100%;
 </div>
 </div>
 <div class="dockPreview">
-<div class="dockThumb" id="dockThumb"><div class="smartTvGlowHalo" id="smartTvGlowDock" aria-hidden="true"></div><img id="dockImg" alt="preview"/></div>
+<div class="dockThumb showDockEmptyVideo" id="dockThumb"><div class="smartTvGlowHalo" id="smartTvGlowDock" aria-hidden="true"></div><div class="dockEmptyStateVideo" id="dockEmptyStateVideo" aria-hidden="true"><div class="previewEmptyStateVideoPlane"><div class="previewEmptyStateVideoKen"><iframe class="previewEmptyStateArt" src="https://www.youtube.com/embed/9EX9T0UyEF0?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=9EX9T0UyEF0&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;iv_load_policy=3" title="Bottle preview animation" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div></div><img id="dockImg" alt="preview"/></div>
 <div class="dockLogo" style="margin-top:12px;text-align:center;">
-<img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-16e7c32c-e3c3-4777-a6d9-2540cfe47b1a.png" alt="BADDEST BOTTLE" />
+<img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE" />
 </div>
 </div>
 <div class="selectedStickerSection" id="selectedStickerSection">
@@ -5790,13 +5978,9 @@ const previewEmptyState = document.getElementById("previewEmptyState");
 const previewLabelLogos = Array.from(document.querySelectorAll(".previewLabelLogo"));
 const siteHeaderLogo = document.querySelector(".siteHeaderLogo");
 const siteHeaderSloganWrap = document.getElementById("siteHeaderSloganWrap");
-/** Desktop: layout height ignores transform on slogan — measure painted bottom so body padding clears header + video preview. */
+/** Measure fixed header height for body offset, mobile preview top, and modal insets (all viewports). */
 function syncSiteHeaderStackHeight(){
 try{
-if(!window.matchMedia("(min-width:980px)").matches){
-document.documentElement.style.removeProperty("--site-header-stack");
-return;
-}
 const header = document.querySelector(".siteHeader");
 if(!header) return;
 const cs = getComputedStyle(header);
@@ -5806,7 +5990,9 @@ header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganWra
 const r = el.getBoundingClientRect();
 if(r.height > 0) bottom = Math.max(bottom, r.bottom);
 });
-const pad = Math.max(Math.ceil(bottom) + 6, 248);
+const isDesktop = window.matchMedia("(min-width:980px)").matches;
+const minPad = isDesktop ? 248 : 52;
+const pad = Math.max(Math.ceil(bottom) + 6, minPad);
 document.documentElement.style.setProperty("--site-header-stack", pad + "px");
 }catch(_e){}
 }
@@ -5899,6 +6085,10 @@ const previewMainBlock = document.querySelector(".previewBlock.mainPreviewMirror
 if(previewMainBlock){
 if(hasImage) previewMainBlock.classList.remove("mainPreviewVideoIdle");
 else previewMainBlock.classList.add("mainPreviewVideoIdle");
+}
+if(dockThumb){
+if(hasImage) dockThumb.classList.remove("showDockEmptyVideo");
+else dockThumb.classList.add("showDockEmptyVideo");
 }
 previewLabelLogos.forEach(el => {
 el.style.display = hasImage ? "block" : "none";
@@ -9995,10 +10185,9 @@ if (previewTop) {
 try {
 const placeholderDataURL = previewTop.toDataURL("image/png", 0.92);
 if (dockImg) {
-dockImg.src = placeholderDataURL;
-dockImg.style.display = 'block';
-dockImg.style.opacity = '1';
-dockImg.style.visibility = 'visible';
+dockImg.removeAttribute("src");
+dockImg.style.display = "none";
+dockImg.style.visibility = "hidden";
 }
 if (mobileThumbImg) {
 mobileThumbImg.src = placeholderDataURL;
