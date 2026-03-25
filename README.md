@@ -28,7 +28,7 @@ https://raw.githubusercontent.com/michaelcboyer2023-beep/Baddest-Bottle/main/ind
 3. **Security interstitial** — Opening HTML via raw.githack shows **“One more step”**. Click **Open the page**; that’s normal.
 
 **Pinned build (example — replace SHA after each deploy with `git rev-parse HEAD`):**  
-https://raw.githack.com/michaelcboyer2023-beep/Baddest-Bottle/c2f08ddb44c6e0544f3068389bd18ad1be301585/index.html  
+https://raw.githack.com/michaelcboyer2023-beep/Baddest-Bottle/f250f5af255c82daef603c66973108385967e8f4/index.html  
 
 **Same file, raw CDN (also needs full SHA; then click through warning):**  
-https://rawcdn.githack.com/michaelcboyer2023-beep/Baddest-Bottle/c2f08ddb44c6e0544f3068389bd18ad1be301585/index.html
+https://rawcdn.githack.com/michaelcboyer2023-beep/Baddest-Bottle/f250f5af255c82daef603c66973108385967e8f4/index.html
