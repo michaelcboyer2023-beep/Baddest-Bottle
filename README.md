@@ -20,4 +20,15 @@ The repo **does** have `index.html` on `main`, but **GitHub Pages must be turned
 
 **Confirm file on GitHub:**  
 https://raw.githubusercontent.com/michaelcboyer2023-beep/Baddest-Bottle/main/index.html  
-(raw is cached ~5 minutes; add `?v=1` to bust cache in some clients.)
+
+### If raw.githack links look broken or don’t show your latest deploy
+
+1. **Wrong or short SHA** — The path must be the **full** commit hash (40 characters). A truncated hash returns a broken page.
+2. **`…/main/…` on raw.githack** — High-traffic or default URLs often get **redirected to the CDN**, which caches **`main` for a long time**. You see an **old build** even after you push. **Fix:** use a URL that includes the **commit SHA** instead of `main`, or use **GitHub Pages** (above).
+3. **Security interstitial** — Opening HTML via raw.githack shows **“One more step”**. Click **Open the page**; that’s normal.
+
+**Pinned build (example — replace SHA after each deploy with `git rev-parse HEAD`):**  
+https://raw.githack.com/michaelcboyer2023-beep/Baddest-Bottle/0f04159469ca78408d7977801147ff05ce5bf912/index.html  
+
+**Same file, raw CDN (also needs full SHA; then click through warning):**  
+https://rawcdn.githack.com/michaelcboyer2023-beep/Baddest-Bottle/0f04159469ca78408d7977801147ff05ce5bf912/index.html
