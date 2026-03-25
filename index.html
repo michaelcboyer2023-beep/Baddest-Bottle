@@ -248,8 +248,8 @@ background:none !important;
 background-color:transparent !important;
 position:relative;
 z-index:1;
-/* True alpha from RGB sum: knocks out black/near-black without washing reds like screen/lighten */
-filter:url(#grabHeaderKeyBlack);
+/* Knock out baked black plate, then brand glow (order: key → shadow) */
+filter:url(#grabHeaderKeyBlack) drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
 }
 .siteHeaderSlogan:hover .siteHeaderSloganWrap::before{
 opacity:0.98;
@@ -973,7 +973,7 @@ max-width:100% !important;
 :root{
 --site-header-px:20px;
 --site-header-band-gap:2px;
---site-header-stack:calc(0px + max(112px, min(178px, 24vh)) + 40px + var(--site-header-band-gap) + 28px);
+--site-header-stack:calc(0px + max(112px, min(178px, 24vh)) + 28px + var(--site-header-band-gap) + 16px);
 }
 html{
 scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
@@ -1139,6 +1139,9 @@ width:max-content;
 will-change:transform;
 animation:headerStickerFeedMarquee 220s linear infinite;
 }
+.siteHeaderStickerFeedTrack.is-marquee-slow{
+animation-duration:1400s;
+}
 @keyframes headerStickerFeedMarquee{
 0%{transform:translateX(0);}
 100%{transform:translateX(-50%);}
@@ -1285,6 +1288,145 @@ text-transform:uppercase;
 color:rgba(255,255,255,.35);
 padding:0 16px;
 }
+.headerStickerHoverDock{
+position:absolute;
+left:50%;
+top:100%;
+bottom:auto;
+transform:translateX(-50%);
+margin-top:10px;
+z-index:200;
+width:min(94vw, 400px);
+max-width:400px;
+pointer-events:none;
+}
+.headerStickerHoverDock:not([hidden]){
+pointer-events:auto;
+}
+.headerStickerHoverDockCard{
+position:relative;
+border-radius:18px;
+border:1px solid rgba(255,140,84,.4);
+background:linear-gradient(165deg, rgba(26,16,22,.98), rgba(10,7,12,.99));
+box-shadow:
+0 0 0 1px rgba(255,255,255,.06) inset,
+0 24px 60px rgba(0,0,0,.55),
+0 0 40px rgba(255,102,0,.12);
+overflow:hidden;
+}
+.headerStickerHoverClose{
+position:absolute;
+top:8px;
+right:8px;
+z-index:3;
+width:32px;
+height:32px;
+border:none;
+border-radius:10px;
+background:rgba(0,0,0,.5);
+color:rgba(255,255,255,.85);
+font-size:20px;
+line-height:1;
+cursor:pointer;
+transition:background .15s ease, color .15s ease;
+}
+.headerStickerHoverClose:hover{
+background:rgba(255,102,0,.25);
+color:#fff;
+}
+.headerStickerHoverImgWrap{
+display:flex;
+align-items:center;
+justify-content:center;
+padding:14px 14px 8px;
+background:radial-gradient(120% 80% at 50% 0%, rgba(255,102,0,.12), transparent 55%);
+}
+.headerStickerHoverImgWrap img{
+display:block;
+max-width:100%;
+width:auto;
+height:auto;
+max-height:min(52vh, 320px);
+object-fit:contain;
+border-radius:14px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(0,0,0,.35);
+}
+.headerStickerHoverBody{
+padding:0 14px 14px;
+}
+.headerStickerHoverAuthor{
+font-size:12px;
+font-weight:900;
+color:var(--red2);
+letter-spacing:.06em;
+margin-bottom:6px;
+}
+.headerStickerHoverCaption{
+margin:0 0 10px;
+font-size:11px;
+line-height:1.45;
+font-weight:600;
+color:rgba(255,255,255,.78);
+max-height:4.5em;
+overflow:hidden;
+display:-webkit-box;
+-webkit-line-clamp:3;
+-webkit-box-orient:vertical;
+}
+.headerStickerHoverActions{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:8px;
+margin-bottom:10px;
+}
+.headerStickerHoverLike{
+margin:0;
+padding:8px 14px;
+border-radius:999px;
+border:1px solid rgba(255,140,84,.35);
+background:rgba(255,102,0,.12);
+color:rgba(255,200,160,.95);
+font-size:11px;
+font-weight:900;
+letter-spacing:.06em;
+cursor:pointer;
+transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+.headerStickerHoverLike:hover{
+background:rgba(255,102,0,.22);
+border-color:rgba(255,200,160,.5);
+color:#fff;
+}
+.headerStickerHoverLike.is-liked{
+color:#ff6688;
+border-color:rgba(255,68,102,.45);
+background:rgba(255,68,102,.12);
+}
+.headerStickerHoverCommentBox{
+display:flex;
+gap:6px;
+align-items:center;
+}
+.headerStickerHoverCommentInput{
+flex:1;
+min-width:0;
+padding:8px 10px;
+border-radius:12px;
+border:1px solid rgba(255,140,84,.28);
+background:rgba(0,0,0,.45);
+color:#fff;
+font-size:12px;
+}
+.headerStickerHoverCommentInput::placeholder{
+color:rgba(255,255,255,.35);
+}
+.headerStickerHoverCommentBtn{
+padding:8px 12px !important;
+font-size:10px !important;
+flex-shrink:0;
+}
 .wrap{
 padding-left:72px;
 padding-right:318px;
@@ -1347,7 +1489,7 @@ contain:layout style paint;
 }
 /* Add padding to grid so content doesn't hide behind fixed header + preview */
 .grid{
-padding-top:calc(var(--site-header-stack, 64px) + min(96vw, 1280px) + 40px) !important;
+padding-top:calc(var(--site-header-stack, 64px) + min(96vw, 1280px) + 28px) !important;
 min-height:calc(100vh + 1500px) !important;
 height:auto !important;
 max-height:none !important;
@@ -2497,7 +2639,7 @@ display:none;
 .stickyDock{
 display:block;
 right:max(6px, calc((100vw - 1560px) / 2 + 6px));
-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 400px) + 6px);
+top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 400px) + 2px);
 }
 }
 .dockCard{
@@ -3470,6 +3612,17 @@ justify-content:center;
 padding:12px 16px 16px;
 box-sizing:border-box;
 }
+/* Social: full viewport below site header — card stretches edge to edge */
+#socialModal.active{
+flex-direction:column;
+align-items:stretch;
+justify-content:flex-start;
+overflow:hidden;
+overscroll-behavior:contain;
+-webkit-overflow-scrolling:touch;
+padding:0 env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+min-height:0;
+}
 .loginModalCard{
 width:min(92vw, 460px);
 padding:26px 24px 22px;
@@ -3529,7 +3682,7 @@ box-sizing:border-box;
 }
 /* About: scrollable tall content + close control like Social */
 #aboutModal .loginModalCard.aboutModalCard{
-width:min(94vw,520px);
+width:min(96vw,620px);
 max-height:min(90vh,920px);
 display:flex;
 flex-direction:column;
@@ -3560,56 +3713,75 @@ padding-top:50px;
 /* Desktop / laptop: wide + height-capped so About + Social fit a standard screen */
 @media (min-width:981px){
 #aboutModal .loginModalCard.aboutModalCard{
-width:min(96vw, 920px);
-max-width:min(96vw, 920px);
-max-height:min(70vh, 640px);
+width:min(97vw, 1040px);
+max-width:min(97vw, 1040px);
+max-height:min(78vh, 760px);
 }
 #aboutModalTitle{
 font-size:clamp(28px, 2.8vw, 40px);
 }
 .socialPageCard,
 .socialPageModal .socialPageCard{
-max-width:min(98vw, 1440px);
-max-height:min(76vh, 820px);
+width:100%;
+max-width:none;
+flex:1 1 auto;
+min-height:0;
+height:100%;
+max-height:none;
+border-radius:0;
 }
 .socialHero{
-padding:12px 22px 10px clamp(80px, 16vw, 132px);
+padding:8px 14px 6px;
 }
 .socialHeroTop{
-margin-bottom:6px;
-gap:8px;
+margin-bottom:4px;
+gap:6px;
 }
 .socialAccountBar{
-padding:6px 0 8px;
-margin-bottom:2px;
+padding:4px 0 6px;
+margin-bottom:0;
+}
+.socialAccountBarInner{
+min-height:36px;
+}
+.socialAccountAvatar{
+width:36px;
+height:36px;
 }
 .socialHeroTitle{
-font-size:clamp(22px, 2.2vw, 32px);
+font-size:clamp(18px, 1.9vw, 26px);
 }
 .socialHeroTagline{
-font-size:12px;
+font-size:11px;
 line-height:1.35;
-margin:4px 0 0;
-max-width:min(72ch, 720px);
+margin:2px 0 0;
+max-width:min(60ch, 560px);
 }
 .socialChallengeStrip{
-margin-top:8px;
-padding:10px 14px;
-gap:10px;
+margin-top:6px;
+padding:6px 10px;
+gap:6px;
 }
 .socialChallengeText{
-font-size:12px;
-line-height:1.4;
+font-size:10px;
+line-height:1.35;
+}
+.socialCopyChallengeBtn{
+padding:6px 12px;
+font-size:10px;
 }
 .socialSidebar{
-width:200px;
+width:176px;
 }
 .socialMain{
-padding:12px 16px 16px;
-gap:12px;
+padding:0;
+gap:8px;
 }
 .socialChatMessages{
-min-height:120px;
+min-height:72px;
+}
+.socialChatSide{
+width:228px;
 }
 }
 @keyframes socialHeroPulse{
@@ -3621,19 +3793,24 @@ min-height:120px;
 100%{ background-position:100% 50%; }
 }
 .socialPageModal.active{
-align-items:center;
-padding:16px;
+align-items:stretch;
+padding:0;
 background:rgba(0,0,0,.72);
 backdrop-filter:blur(12px);
 -webkit-backdrop-filter:blur(12px);
+min-height:0;
 }
 .socialPageCard{
 width:100%;
-max-width:1320px;
-max-height:92vh;
+max-width:none;
+flex:1 1 auto;
+align-self:stretch;
+min-height:0;
+max-height:none;
+flex-shrink:1;
 display:flex;
 flex-direction:column;
-border-radius:28px;
+border-radius:0;
 border:1px solid rgba(255,140,84,.35);
 background:
 radial-gradient(120% 80% at 10% 0%, rgba(255,102,0,.22) 0%, transparent 45%),
@@ -3660,44 +3837,65 @@ animation:socialMeshShift 12s ease-in-out infinite alternate;
 .socialPageCard::before{ animation:none; }
 }
 .socialPageCard > .loginModalClose{
-z-index:20;
+z-index:40;
 background:rgba(0,0,0,.45);
 border:1px solid rgba(255,255,255,.1);
+cursor:pointer;
 }
-.socialModalBbLogo{
-position:absolute;
-top:12px;
-left:14px;
-height:clamp(32px, 8.5vw, 48px);
-width:auto;
-max-width:min(42vw, 200px);
-object-fit:contain;
-object-position:left center;
-z-index:18;
-pointer-events:none;
-user-select:none;
-background:transparent;
-/* Transparent mark only — match header BB glow (no black-plate key filter) */
-filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+/* Social: clear click targets + pointer cursor on interactive controls */
+.socialRoomFilter,
+.socialRoomJoinBtn,
+.socialRoomAllBtn,
+.socialOnlineUser,
+.socialCopyChallengeBtn,
+.socialShareUploadBtn,
+.socialSharePostBtn,
+.socialChatSend,
+.socialCommentSubmit,
+.socialPostThumb,
+.socialPostThumbOpen{
+cursor:pointer;
+}
+.socialSharePreviewWrap{
+cursor:pointer;
+}
+.socialOnlineToggleBtn{
+cursor:pointer;
+}
+.socialAccountEditBtn,
+.socialLoginBarBtn{
+cursor:pointer;
+}
+.socialChatInput,
+.socialShareCaptionSmall,
+.socialCommentInput{
+cursor:text;
 }
 .socialHero{
 position:relative;
 z-index:1;
-padding:20px 24px 16px clamp(88px, 24vw, 150px);
+flex-shrink:0;
+padding:12px 16px 8px;
 border-bottom:1px solid rgba(255,255,255,.08);
 background:linear-gradient(180deg, rgba(255,102,0,.06), transparent);
+}
+/* Hero lives in center column: sidebars/chat align to card top */
+.socialMain > .socialHero{
+padding:8px 10px 10px;
+border-bottom:1px solid rgba(255,255,255,.1);
+border-radius:0;
 }
 .socialHeroTop{
 display:flex;
 flex-wrap:wrap;
 align-items:center;
 justify-content:space-between;
-gap:12px;
-margin-bottom:10px;
+gap:8px;
+margin-bottom:6px;
 }
 .socialAccountBar{
-padding:10px 0 14px;
-margin-bottom:4px;
+padding:6px 0 8px;
+margin-bottom:2px;
 border-bottom:1px solid rgba(255,255,255,.07);
 }
 .socialAccountBarInner{
@@ -3705,7 +3903,7 @@ display:flex;
 align-items:center;
 justify-content:flex-end;
 gap:12px;
-min-height:44px;
+min-height:36px;
 }
 .socialAccountLoggedIn{
 display:flex;
@@ -3767,12 +3965,12 @@ letter-spacing:.14em !important;
 .socialChatSideHeader{
 display:flex;
 align-items:center;
-gap:10px;
-min-height:44px;
+gap:8px;
+min-height:36px;
 }
 .socialChatHeaderAvatar{
-width:36px;
-height:36px;
+width:28px;
+height:28px;
 border-radius:50%;
 object-fit:cover;
 flex-shrink:0;
@@ -3845,36 +4043,86 @@ color:rgba(255,255,255,.36);
 letter-spacing:.05em;
 line-height:1.4;
 }
+.socialOnlineName{
+flex:1;
+min-width:0;
+text-align:left;
+font-size:10px;
+font-weight:800;
+color:rgba(255,255,255,.9);
+letter-spacing:.02em;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.socialOnlineToggleBtn{
+width:calc(100% - 8px);
+margin:8px 4px 4px;
+padding:10px 12px;
+border-radius:10px;
+border:1px solid rgba(255,140,84,.35);
+background:rgba(255,102,0,.1);
+color:var(--red2);
+font-size:10px;
+font-weight:900;
+letter-spacing:.12em;
+text-transform:uppercase;
+cursor:pointer;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialOnlineToggleBtn:hover{
+background:rgba(255,102,0,.2);
+border-color:rgba(255,200,160,.45);
+color:#fff;
+}
+.socialChatSideHeader--room .socialChatRoomBadge{
+display:inline-flex;
+align-items:center;
+gap:6px;
+font-size:11px;
+font-weight:900;
+letter-spacing:.14em;
+text-transform:uppercase;
+color:var(--red2);
+}
+.socialChatRoomDot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#ff6600;
+box-shadow:0 0 10px rgba(255,102,0,.55);
+flex-shrink:0;
+}
 .socialHeroTitle{
 margin:0;
-font-size:clamp(26px, 4vw, 38px);
+font-size:clamp(20px, 3.2vw, 30px);
 font-weight:1000;
-line-height:1.02;
+line-height:1.05;
 letter-spacing:.04em;
 text-transform:uppercase;
 color:#fff;
-text-shadow:0 0 24px rgba(255,102,0,.25), 0 0 60px rgba(255,80,0,.12);
+text-shadow:0 0 18px rgba(255,102,0,.22), 0 0 40px rgba(255,80,0,.1);
 }
 .socialHeroTagline{
-margin:8px 0 0;
-max-width:640px;
-font-size:14px;
-line-height:1.5;
+margin:4px 0 0;
+max-width:min(56ch, 520px);
+font-size:12px;
+line-height:1.4;
 color:rgba(255,255,255,.62);
 font-weight:600;
 }
 .socialChallengeStrip{
-margin-top:16px;
-padding:14px 16px;
-border-radius:16px;
+margin-top:8px;
+padding:8px 12px;
+border-radius:12px;
 border:1px solid rgba(255,140,84,.28);
 background:linear-gradient(135deg, rgba(255,102,0,.14), rgba(40,12,24,.5));
-box-shadow:0 8px 32px rgba(0,0,0,.35);
+box-shadow:0 4px 20px rgba(0,0,0,.3);
 display:flex;
 flex-wrap:wrap;
 align-items:center;
 justify-content:space-between;
-gap:12px;
+gap:8px;
 }
 .socialChallengeLabel{
 display:block;
@@ -3886,11 +4134,11 @@ margin-bottom:4px;
 }
 .socialChallengeText{
 margin:0;
-font-size:13px;
+font-size:11px;
 font-weight:700;
 color:rgba(255,255,255,.92);
-line-height:1.45;
-max-width:520px;
+line-height:1.4;
+max-width:min(48ch, 480px);
 }
 .socialChallengeText code{
 font-family:inherit;
@@ -3899,14 +4147,14 @@ color:#ffb366;
 }
 .socialCopyChallengeBtn{
 flex-shrink:0;
-padding:10px 18px;
+padding:6px 14px;
 border-radius:999px;
 border:1px solid rgba(255,200,160,.45);
 background:rgba(0,0,0,.4);
 color:var(--red2);
-font-size:11px;
+font-size:10px;
 font-weight:900;
-letter-spacing:.14em;
+letter-spacing:.12em;
 text-transform:uppercase;
 cursor:pointer;
 transition:background .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease;
@@ -3917,49 +4165,56 @@ color:#fff;
 box-shadow:0 0 20px rgba(255,102,0,.25);
 transform:translateY(-1px);
 }
-.socialLayout{ display:flex; flex:1; min-height:0; position:relative; z-index:1; }
+.socialLayout{ display:flex; flex:1; min-height:0; max-height:100%; overflow:hidden; position:relative; z-index:3; }
 .socialSidebar{
-width:220px;
+width:188px;
 flex-shrink:0;
+min-height:0;
+max-height:100%;
+overflow-x:hidden;
+overflow-y:auto;
+-webkit-overflow-scrolling:touch;
 border-right:1px solid rgba(255,255,255,.1);
 display:flex;
 flex-direction:column;
 background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.12));
+position:relative;
+z-index:2;
 }
 .socialSidebarHead{
-padding:14px 16px 8px;
-font-size:9px;
+padding:8px 10px 4px;
+font-size:8px;
 font-weight:900;
 letter-spacing:.2em;
 color:rgba(255,255,255,.4);
 text-transform:uppercase;
 }
 .socialSidebarTitle{
-padding:0 16px 8px;
-font-size:11px;
+padding:0 10px 4px;
+font-size:10px;
 font-weight:900;
-letter-spacing:.18em;
+letter-spacing:.16em;
 color:var(--red2);
 text-transform:uppercase;
 }
 .socialSidebarHint{
-margin:0 16px 10px;
-font-size:10px;
-line-height:1.4;
-color:rgba(255,255,255,.4);
+margin:0 10px 6px;
+font-size:9px;
+line-height:1.35;
+color:rgba(255,255,255,.38);
 font-weight:600;
 }
 .socialSidebarDivider{
 height:1px;
-margin:12px 12px;
+margin:8px 8px;
 background:linear-gradient(90deg, transparent, rgba(255,140,84,.25), transparent);
 }
 .socialChannelList{
-padding:0 8px 8px;
+padding:0 6px 6px;
 display:flex;
 flex-direction:column;
-gap:5px;
-max-height:min(42vh, 380px);
+gap:4px;
+max-height:min(28vh, 220px);
 overflow:auto;
 }
 .socialRoomRow{
@@ -3995,13 +4250,13 @@ flex:1;
 min-width:0;
 display:flex;
 align-items:center;
-gap:8px;
-padding:8px 10px;
-border-radius:10px;
+gap:6px;
+padding:5px 8px;
+border-radius:8px;
 border:1px solid transparent;
 background:rgba(255,255,255,.03);
 color:rgba(255,255,255,.88);
-font-size:11px;
+font-size:10px;
 font-weight:800;
 letter-spacing:.04em;
 text-transform:capitalize;
@@ -4056,9 +4311,9 @@ color:#1a0f08;
 }
 .socialRoomAllBtn{
 width:100%;
-padding:10px 12px;
-margin-bottom:6px;
-border-radius:10px;
+padding:6px 10px;
+margin-bottom:4px;
+border-radius:8px;
 border:1px solid rgba(255,255,255,.12);
 background:rgba(0,0,0,.3);
 color:rgba(255,255,255,.85);
@@ -4074,23 +4329,23 @@ transition:background .15s ease, border-color .15s ease;
 border-color:rgba(255,140,84,.45);
 background:rgba(255,102,0,.12);
 }
-.socialOnlineList{ flex:1; overflow:auto; padding:4px 8px 12px; min-height:0; }
+.socialOnlineList{ flex:1; overflow:auto; padding:2px 6px 8px; min-height:0; }
 .socialOnlineUser{
 display:flex;
 align-items:center;
-gap:10px;
-padding:12px 12px;
+gap:8px;
+padding:6px 8px;
 cursor:pointer;
 border:none;
 background:transparent;
 width:100%;
 text-align:left;
 color:rgba(255,255,255,.92);
-font-size:13px;
+font-size:11px;
 font-weight:800;
 transition:background .18s ease, box-shadow .18s ease;
-border-radius:12px;
-margin-bottom:4px;
+border-radius:10px;
+margin-bottom:2px;
 }
 .socialOnlineUser:hover{
 background:rgba(255,102,0,.1);
@@ -4101,17 +4356,35 @@ background:rgba(255,102,0,.2);
 color:#fff;
 box-shadow:0 0 24px rgba(255,102,0,.15);
 }
-.socialOnlineAvatar{ width:40px; height:40px; border-radius:50%; object-fit:cover; background:linear-gradient(135deg, rgba(255,102,0,.4), rgba(80,20,40,.6)); flex-shrink:0; border:2px solid rgba(255,140,84,.25); }
+.socialOnlineAvatar{ width:30px; height:30px; border-radius:50%; object-fit:cover; background:linear-gradient(135deg, rgba(255,102,0,.4), rgba(80,20,40,.6)); flex-shrink:0; border:1px solid rgba(255,140,84,.25); }
 .socialOnlineDot{ width:8px; height:8px; border-radius:50%; background:var(--ok); flex-shrink:0; margin-left:auto; box-shadow:0 0 8px rgba(16,185,129,.6); }
 .socialMain{
-flex:1;
+flex:1 1 0;
+min-width:0;
+min-height:0;
 overflow:auto;
-padding:18px 20px 24px;
+-webkit-overflow-scrolling:touch;
+padding:0;
 display:flex;
 flex-direction:column;
-gap:18px;
-min-width:0;
+gap:8px;
 background:rgba(0,0,0,.08);
+position:relative;
+z-index:2;
+}
+.socialMain > .socialFeedHead,
+.socialMain > .socialCompose{
+padding-left:10px;
+padding-right:10px;
+}
+.socialMain > .socialFeedHead{
+padding-top:8px;
+}
+.socialMain > .socialCompose{
+padding-bottom:0;
+}
+.socialMain > .socialFeed{
+padding:0 10px 10px;
 }
 .socialFeedHead{
 display:flex;
@@ -4130,11 +4403,11 @@ text-transform:uppercase;
 }
 .socialFeedTitle span{
 display:block;
-margin-top:4px;
-font-size:18px;
-letter-spacing:.06em;
+margin-top:2px;
+font-size:14px;
+letter-spacing:.05em;
 color:#fff;
-text-shadow:0 0 20px rgba(255,102,0,.2);
+text-shadow:0 0 16px rgba(255,102,0,.18);
 }
 .socialFeedChips{
 display:flex;
@@ -4158,52 +4431,55 @@ color:var(--red2);
 background:rgba(255,102,0,.08);
 }
 .socialComposeHead{
-font-size:10px;
+font-size:9px;
 font-weight:900;
-letter-spacing:.18em;
+letter-spacing:.16em;
 color:var(--red2);
 text-transform:uppercase;
-margin-bottom:8px;
+margin-bottom:4px;
 }
 .socialCompose{
-border-radius:18px;
+border-radius:12px;
 border:1px solid rgba(255,140,84,.22);
 background:rgba(255,255,255,.04);
 backdrop-filter:blur(8px);
 -webkit-backdrop-filter:blur(8px);
-padding:16px;
+padding:8px 10px;
 display:flex;
 flex-direction:column;
-gap:12px;
-box-shadow:0 12px 40px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.04) inset;
+gap:6px;
+box-shadow:0 6px 24px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.04) inset;
 }
-.socialComposeRow{ display:flex; gap:14px; align-items:flex-start; }
-.socialSharePreviewWrap{ position:relative; width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-radius:14px; background:rgba(0,0,0,.4); border:1px dashed rgba(255,140,84,.4); }
+.socialComposeRow{ display:flex; gap:8px; align-items:flex-start; }
+.socialSharePreviewWrap{ position:relative; width:52px; height:52px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-radius:10px; background:rgba(0,0,0,.4); border:1px dashed rgba(255,140,84,.4); }
 .socialSharePreviewWrap .socialSharePreviewSmall{ width:100%; height:100%; object-fit:cover; border-radius:14px; position:absolute; inset:0; }
 .socialShareUploadBtn{ position:relative; z-index:1; font-size:10px; font-weight:900; letter-spacing:.12em; color:var(--red2); cursor:pointer; padding:8px 10px; border-radius:10px; background:rgba(255,102,0,.18); border:1px solid rgba(255,140,84,.35); transition:background .2s ease, color .2s ease; }
 .socialShareUploadBtn:hover{ background:rgba(255,102,0,.32); color:#fff; }
 .socialSharePreviewWrap:has(.socialSharePreviewSmall[src]:not([src=""])) .socialShareUploadBtn{ opacity:0; pointer-events:none; }
-.socialSharePreviewSmall{ width:80px; height:80px; border-radius:14px; object-fit:cover; background:rgba(0,0,0,.3); flex-shrink:0; }
+.socialSharePreviewSmall{ width:52px; height:52px; border-radius:10px; object-fit:cover; background:rgba(0,0,0,.3); flex-shrink:0; }
 .socialShareCaptionSmall{
 flex:1;
-padding:12px 14px;
-border-radius:14px;
+padding:6px 8px;
+border-radius:10px;
 border:1px solid rgba(255,140,84,.28);
 background:rgba(0,0,0,.45);
 color:#fff;
-font-size:14px;
-min-height:80px;
+font-size:12px;
+min-height:48px;
 resize:none;
 box-sizing:border-box;
-line-height:1.45;
+line-height:1.4;
 }
 .socialShareCaptionSmall::placeholder{ color:rgba(255,255,255,.38); }
 .socialComposeActions{ display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; }
 .socialFeed{
 display:grid;
 grid-template-columns:repeat(3, minmax(0, 1fr));
-gap:14px;
+gap:8px;
 align-items:start;
+}
+@media (min-width:1180px){
+.socialFeed{ grid-template-columns:repeat(4, minmax(0, 1fr)); }
 }
 @media (max-width:1100px){
 .socialFeed{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
@@ -4212,7 +4488,7 @@ align-items:start;
 .socialFeed{ grid-template-columns:1fr; }
 }
 .socialPostGridCard{
-border-radius:16px;
+border-radius:12px;
 border:1px solid rgba(255,255,255,.1);
 background:linear-gradient(165deg, rgba(255,255,255,.07), rgba(0,0,0,.2));
 overflow:hidden;
@@ -4222,27 +4498,27 @@ display:flex;
 flex-direction:column;
 }
 .socialPostGridCard:hover{
-transform:translateY(-3px);
+transform:translateY(-2px);
 border-color:rgba(255,140,84,.35);
-box-shadow:0 14px 40px rgba(0,0,0,.4), 0 0 32px rgba(255,102,0,.1);
+box-shadow:0 8px 28px rgba(0,0,0,.35), 0 0 20px rgba(255,102,0,.08);
 }
 .socialPostGridCard.socialPostFeatured{
 border-color:rgba(255,140,84,.5);
 box-shadow:0 0 0 1px rgba(255,102,0,.2), 0 10px 36px rgba(255,80,0,.15);
 }
 .socialPostGridCard.is-thread-open .socialPostThread{
-max-height:320px;
+max-height:220px;
 opacity:1;
-padding:10px 12px 12px;
+padding:6px 8px 8px;
 border-top:1px solid rgba(255,255,255,.08);
 }
 .socialPostThumb{
 position:relative;
 width:100%;
-aspect-ratio:4 / 5;
-max-height:min(220px, 32vw);
+aspect-ratio:1;
+max-height:min(108px, 22vw);
 height:auto;
-min-height:120px;
+min-height:64px;
 margin:0 auto;
 background:radial-gradient(ellipse at 30% 20%, rgba(255,102,0,.18), rgba(10,8,12,.95));
 overflow:hidden;
@@ -4286,7 +4562,7 @@ inset:0;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:28px;
+font-size:18px;
 font-weight:1000;
 color:rgba(255,255,255,.1);
 letter-spacing:.08em;
@@ -4366,25 +4642,25 @@ gap:10px;
 margin-bottom:12px;
 }
 .socialPostGridMeta{
-padding:10px 12px 8px;
+padding:6px 8px 4px;
 }
 .socialPostGridTop{
 display:flex;
 align-items:center;
-gap:8px;
-margin-bottom:6px;
+gap:6px;
+margin-bottom:4px;
 }
 .socialPostAvatar{
-width:28px;
-height:28px;
+width:22px;
+height:22px;
 border-radius:50%;
 object-fit:cover;
 background:linear-gradient(135deg, rgba(255,102,0,.4), rgba(60,20,40,.6));
 border:1px solid rgba(255,140,84,.25);
 flex-shrink:0;
 }
-.socialPostAuthor{ font-weight:900; font-size:12px; color:#fff; letter-spacing:.02em; }
-.socialPostTime{ font-size:10px; color:rgba(255,255,255,.4); margin-left:auto; font-weight:700; }
+.socialPostAuthor{ font-weight:900; font-size:10px; color:#fff; letter-spacing:.02em; }
+.socialPostTime{ font-size:9px; color:rgba(255,255,255,.4); margin-left:auto; font-weight:700; }
 .socialPostChannelPill{
 font-size:8px;
 font-weight:900;
@@ -4399,12 +4675,12 @@ margin-bottom:6px;
 display:inline-block;
 }
 .socialPostCaptionGrid{
-font-size:12px;
-line-height:1.45;
-color:rgba(255,255,255,.78);
+font-size:10px;
+line-height:1.35;
+color:rgba(255,255,255,.75);
 font-weight:600;
 display:-webkit-box;
--webkit-line-clamp:3;
+-webkit-line-clamp:2;
 -webkit-box-orient:vertical;
 overflow:hidden;
 margin:0;
@@ -4413,9 +4689,9 @@ margin:0;
 display:flex;
 align-items:center;
 justify-content:space-between;
-gap:8px;
+gap:6px;
 flex-wrap:wrap;
-padding:8px 12px 10px;
+padding:5px 8px 6px;
 border-top:1px solid rgba(255,255,255,.06);
 background:rgba(0,0,0,.2);
 }
@@ -4427,7 +4703,7 @@ flex-wrap:wrap;
 pointer-events:auto;
 }
 .socialPostStat{
-font-size:11px;
+font-size:9px;
 font-weight:800;
 color:rgba(255,255,255,.55);
 letter-spacing:.02em;
@@ -4469,53 +4745,415 @@ color:#fff;
 font-size:12px;
 }
 .socialCommentInput::placeholder{ color:rgba(255,255,255,.35); }
-.socialPostAction{ display:inline-flex; align-items:center; gap:4px; padding:6px 10px; border:none; background:rgba(255,255,255,.06); color:rgba(255,255,255,.7); font-size:11px; font-weight:800; cursor:pointer; border-radius:8px; transition:color .2s ease, background .2s ease; }
+.socialPostAction{ display:inline-flex; align-items:center; gap:2px; padding:4px 8px; border:none; background:rgba(255,255,255,.06); color:rgba(255,255,255,.7); font-size:9px; font-weight:800; cursor:pointer; border-radius:6px; transition:color .2s ease, background .2s ease; }
 .socialPostAction:hover{ color:var(--red2); background:rgba(255,102,0,.12); }
 .socialPostAction.liked{ color:#ff6688; background:rgba(255,68,102,.12); }
 .socialChatSide{
-width:300px;
+width:min(100%, 280px);
 flex-shrink:0;
+min-width:0;
+min-height:0;
+max-height:100%;
+overflow:hidden;
 border-left:1px solid rgba(255,255,255,.1);
 display:flex;
 flex-direction:column;
 background:linear-gradient(180deg, rgba(0,0,0,.4), rgba(8,6,12,.85));
+position:relative;
+z-index:2;
 }
-.socialChatSideHeader{
-padding:14px 16px;
-border-bottom:1px solid rgba(255,255,255,.1);
+.socialChatInbox{
+flex:0 0 auto;
+display:flex;
+flex-direction:column;
+min-height:0;
+max-height:min(38vh, 220px);
+border-bottom:1px solid rgba(255,255,255,.12);
+background:rgba(0,0,0,.22);
+}
+.socialChatInboxHead{
+padding:8px 10px 4px;
+font-size:9px;
+font-weight:900;
+letter-spacing:.18em;
+text-transform:uppercase;
+color:var(--red2);
+flex-shrink:0;
+}
+.socialChatInboxList{
+flex:1 1 auto;
+min-height:72px;
+overflow-y:auto;
+overflow-x:hidden;
+-webkit-overflow-scrolling:touch;
+padding:4px 6px 8px;
+display:flex;
+flex-direction:column;
+gap:3px;
+}
+.socialChatInboxEmpty{
+padding:10px 8px;
+font-size:10px;
+font-weight:600;
+line-height:1.45;
+color:rgba(255,255,255,.38);
+text-align:center;
+}
+.socialChatInboxRow{
+display:flex;
+align-items:flex-start;
+gap:8px;
+width:100%;
+padding:8px 8px;
+margin:0;
+border-radius:12px;
+background:rgba(255,255,255,.04);
+border:1px solid rgba(255,255,255,.06);
+cursor:pointer;
+text-align:left;
+transition:background .15s ease, border-color .15s ease;
+box-sizing:border-box;
+}
+.socialChatInboxRow:hover{
+background:rgba(255,102,0,.1);
+border-color:rgba(255,140,84,.22);
+}
+.socialChatInboxRow.is-active{
+background:rgba(255,102,0,.16);
+border-color:rgba(255,140,84,.42);
+box-shadow:0 0 0 1px rgba(255,102,0,.12);
+}
+.socialChatInboxAvatar{
+width:36px;
+height:36px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+border:2px solid rgba(255,140,84,.3);
+background:linear-gradient(135deg, rgba(255,102,0,.25), rgba(40,12,24,.5));
+}
+.socialChatInboxRowMain{
+flex:1;
+min-width:0;
+display:flex;
+flex-direction:column;
+gap:2px;
+}
+.socialChatInboxTitle{
 font-size:11px;
 font-weight:900;
-letter-spacing:.14em;
+color:rgba(255,255,255,.92);
+letter-spacing:.02em;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.socialChatInboxPreview{
+font-size:10px;
+font-weight:600;
+line-height:1.35;
+color:rgba(255,255,255,.45);
+display:-webkit-box;
+-webkit-line-clamp:2;
+-webkit-box-orient:vertical;
+overflow:hidden;
+}
+.socialChatInboxBadge{
+flex-shrink:0;
+width:36px;
+height:36px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,102,0,.15);
+border:1px solid rgba(255,140,84,.35);
+}
+.socialChatInboxBadge .socialChatRoomDot{
+width:10px;
+height:10px;
+}
+.socialChatThread{
+flex:1 1 0;
+min-height:0;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+}
+.socialChatSideHeader{
+padding:6px 10px;
+min-height:36px;
+border-bottom:1px solid rgba(255,255,255,.1);
+font-size:10px;
+font-weight:900;
+letter-spacing:.12em;
 text-transform:uppercase;
 color:rgba(255,255,255,.85);
 background:rgba(0,0,0,.2);
 }
-.socialChatMessages{ flex:1; overflow:auto; padding:14px; display:flex; flex-direction:column; gap:12px; min-height:200px; }
+.socialChatMessages{ flex:1 1 0; min-height:0; overflow:auto; padding:6px 8px; display:flex; flex-direction:column; gap:6px; -webkit-overflow-scrolling:touch; }
 .socialChatMsg{ display:flex; gap:10px; max-width:94%; }
 .socialChatMsg.own{ align-self:flex-end; flex-direction:row-reverse; }
 .socialChatMsgBubble{
-padding:10px 14px;
-border-radius:16px;
-font-size:13px;
-line-height:1.45;
-box-shadow:0 4px 16px rgba(0,0,0,.2);
+padding:6px 10px;
+border-radius:12px;
+font-size:11px;
+line-height:1.4;
+box-shadow:0 2px 10px rgba(0,0,0,.18);
 }
 .socialChatMsg:not(.own) .socialChatMsgBubble{ background:rgba(255,255,255,.1); color:#fff; border-radius:16px 16px 16px 4px; border:1px solid rgba(255,255,255,.08); }
 .socialChatMsg.own .socialChatMsgBubble{ background:linear-gradient(135deg, rgba(255,120,50,.35), rgba(255,80,0,.22)); color:#fff; border-radius:16px 16px 4px 16px; border:1px solid rgba(255,160,100,.25); }
 .socialChatMsgAuthor{ font-size:10px; font-weight:800; color:var(--red2); margin-bottom:3px; letter-spacing:.06em; text-transform:uppercase; }
-.socialChatInputWrap{ display:flex; gap:8px; padding:12px 14px; border-top:1px solid rgba(255,255,255,.1); background:rgba(0,0,0,.25); }
-.socialChatInput{ flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,140,84,.28); background:rgba(0,0,0,.45); color:#fff; font-size:13px; }
-.socialChatEmpty{ padding:28px 20px; text-align:center; font-size:13px; color:rgba(255,255,255,.45); line-height:1.55; font-weight:600; }
+.socialChatInputWrap{
+display:flex;
+flex-direction:column;
+gap:0;
+padding:0;
+border-top:1px solid rgba(255,255,255,.1);
+background:rgba(0,0,0,.25);
+flex-shrink:0;
+}
+.socialChatAttachPanels{
+position:relative;
+flex-shrink:0;
+}
+.socialChatAttachPanel{
+position:absolute;
+bottom:100%;
+left:0;
+right:0;
+margin-bottom:4px;
+max-height:min(42vh, 220px);
+overflow:auto;
+-webkit-overflow-scrolling:touch;
+padding:8px 10px 10px;
+border-radius:14px 14px 4px 4px;
+border:1px solid rgba(255,140,84,.35);
+background:linear-gradient(180deg, rgba(22,14,18,.98), rgba(10,7,12,.97));
+box-shadow:0 -8px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06) inset;
+z-index:8;
+}
+.socialChatAttachPanelHead{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:8px;
+font-size:9px;
+font-weight:900;
+letter-spacing:.16em;
+text-transform:uppercase;
+color:var(--red2);
+}
+.socialChatAttachClose{
+width:28px;
+height:28px;
+border:none;
+border-radius:8px;
+background:rgba(255,255,255,.08);
+color:rgba(255,255,255,.75);
+font-size:18px;
+line-height:1;
+cursor:pointer;
+transition:background .15s ease;
+}
+.socialChatAttachClose:hover{ background:rgba(255,102,0,.2); color:#fff; }
+.socialChatEmojiGrid{
+display:grid;
+grid-template-columns:repeat(8, 1fr);
+gap:4px;
+}
+.socialChatEmojiCell{
+margin:0;
+padding:6px 0;
+border:none;
+border-radius:10px;
+background:rgba(255,255,255,.06);
+font-size:22px;
+line-height:1;
+cursor:pointer;
+transition:background .12s ease, transform .12s ease;
+}
+.socialChatEmojiCell:hover{
+background:rgba(255,102,0,.2);
+transform:scale(1.08);
+}
+.socialChatGifGrid{
+display:grid;
+grid-template-columns:repeat(3, 1fr);
+gap:6px;
+margin-bottom:8px;
+}
+.socialChatGifPick{
+position:relative;
+width:100%;
+padding:0;
+margin:0;
+border:none;
+border-radius:10px;
+overflow:hidden;
+cursor:pointer;
+aspect-ratio:1;
+background:rgba(0,0,0,.4);
+}
+.socialChatGifPick img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.socialChatGifPick:focus-visible{ outline:2px solid var(--red2); outline-offset:2px; }
+.socialChatGifPasteRow{
+display:flex;
+gap:6px;
+align-items:center;
+}
+.socialChatGifUrlInput{
+flex:1;
+min-width:0;
+padding:6px 8px;
+border-radius:10px;
+border:1px solid rgba(255,140,84,.28);
+background:rgba(0,0,0,.45);
+color:#fff;
+font-size:11px;
+}
+.socialChatGifPasteSend{
+padding:6px 10px !important;
+font-size:10px !important;
+flex-shrink:0;
+}
+.socialChatStickerBottleBtn{
+width:100%;
+margin:0 0 8px;
+padding:8px 10px;
+border-radius:12px;
+border:1px solid rgba(255,140,84,.4);
+background:linear-gradient(135deg, rgba(255,102,0,.2), rgba(60,20,40,.5));
+color:var(--red2);
+font-size:10px;
+font-weight:900;
+letter-spacing:.1em;
+text-transform:uppercase;
+cursor:pointer;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialChatStickerBottleBtn:hover{
+background:rgba(255,102,0,.28);
+border-color:rgba(255,200,160,.5);
+color:#fff;
+}
+.socialChatStickerGrid{
+display:grid;
+grid-template-columns:repeat(3, 1fr);
+gap:6px;
+}
+.socialChatStickerPick{
+width:100%;
+aspect-ratio:1;
+padding:0;
+margin:0;
+border:2px solid rgba(255,140,84,.25);
+border-radius:12px;
+overflow:hidden;
+cursor:pointer;
+background:rgba(0,0,0,.35);
+transition:border-color .15s ease, transform .12s ease;
+}
+.socialChatStickerPick:hover{
+border-color:rgba(255,160,100,.55);
+transform:scale(1.03);
+}
+.socialChatStickerPick img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+.socialChatToolbar{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:4px;
+padding:6px 8px 4px;
+border-bottom:1px solid rgba(255,255,255,.06);
+}
+.socialChatToolBtn{
+min-width:36px;
+height:34px;
+padding:0 8px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.06);
+color:rgba(255,255,255,.88);
+font-size:16px;
+line-height:1;
+cursor:pointer;
+transition:background .15s ease, border-color .15s ease;
+}
+.socialChatToolBtn:hover{
+background:rgba(255,102,0,.15);
+border-color:rgba(255,140,84,.35);
+}
+.socialChatToolGifLab{
+font-size:10px;
+font-weight:900;
+letter-spacing:.08em;
+color:var(--red2);
+}
+.socialChatInputRow{
+display:flex;
+gap:6px;
+align-items:center;
+padding:6px 8px 8px;
+}
+.socialChatInput{ flex:1; padding:6px 10px; border-radius:10px; border:1px solid rgba(255,140,84,.28); background:rgba(0,0,0,.45); color:#fff; font-size:12px; }
+.socialChatMsgImg{
+display:block;
+max-width:min(100%, 200px);
+max-height:160px;
+width:auto;
+height:auto;
+border-radius:12px;
+object-fit:cover;
+margin:0 0 4px;
+}
+.socialChatMsg--media .socialChatMsgBubble{
+padding:8px;
+max-width:min(100%, 220px);
+}
+.socialChatMsgCaption{
+margin-top:6px;
+font-size:11px;
+line-height:1.35;
+color:rgba(255,255,255,.88);
+word-break:break-word;
+}
+.socialChatMsgUnsafe{
+font-size:11px;
+color:rgba(255,255,255,.45);
+font-style:italic;
+}
+.socialChatEmpty{ padding:12px 10px; text-align:center; font-size:11px; color:rgba(255,255,255,.45); line-height:1.45; font-weight:600; }
 .socialShareForm{ display:flex; flex-direction:column; gap:12px; }
 .socialSharePreview{ width:100%; max-width:200px; aspect-ratio:1; object-fit:cover; border-radius:12px; background:rgba(0,0,0,.3); align-self:center; }
 .socialShareCaption{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,140,84,.25); background:rgba(0,0,0,.35); color:#fff; font-size:13px; min-height:70px; resize:vertical; box-sizing:border-box; }
-.socialPageModal .socialPageCard{ margin:auto; max-height:92vh; }
+.socialPageModal .socialPageCard{
+margin:0;
+width:100%;
+max-width:none;
+flex:1 1 auto;
+align-self:stretch;
+min-height:0;
+max-height:none;
+border-radius:0;
+}
 @media (max-width: 980px){
 .socialLayout{ flex-direction:column; }
-.socialSidebar{ width:100%; border-right:none; border-bottom:1px solid rgba(255,255,255,.1); max-height:160px; }
+.socialSidebar{ width:100%; border-right:none; border-bottom:1px solid rgba(255,255,255,.1); max-height:min(140px, 28vh); }
 .socialOnlineList{ display:flex; flex-wrap:wrap; gap:6px; padding:8px 12px; }
 .socialOnlineUser{ width:auto; flex:1 1 auto; min-width:140px; margin-bottom:0; }
-.socialChatSide{ width:100%; border-left:none; border-top:1px solid rgba(255,255,255,.1); min-height:220px; }
+.socialChatSide{ width:100%; border-left:none; border-top:1px solid rgba(255,255,255,.1); min-height:min(220px, 42vh); max-height:min(320px, 48vh); }
+.socialChatInbox{ max-height:min(30vh, 140px); }
 .socialHeroTop{ flex-direction:column; align-items:flex-start; }
 }
 .loginModalText{
@@ -4641,7 +5279,7 @@ color:rgba(255,255,255,.92);
 }
 .aboutModalBbLogo{
 display:block;
-max-width:min(100%, 260px);
+max-width:min(100%, 300px);
 width:auto;
 height:auto;
 margin:0 auto 12px;
@@ -4654,14 +5292,13 @@ filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,1
 display:block;
 position:relative;
 z-index:1;
-max-width:min(100%, 300px);
+max-width:min(100%, 380px);
 width:100%;
 height:auto;
 margin:0;
 padding:0;
 background:transparent !important;
-/* Same key as header: transparent PNG, no baked-in black plate */
-filter:url(#grabHeaderKeyBlack);
+filter:url(#grabHeaderKeyBlack) drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
 }
 .cartModal{
 display:none;
@@ -5135,6 +5772,25 @@ width:100%;
 <div class="siteHeaderStickerFeedViewport">
 <div class="siteHeaderStickerFeedTrack" id="siteHeaderStickerFeedTrack"></div>
 </div>
+<div class="headerStickerHoverDock" id="headerStickerHoverDock" aria-hidden="true" hidden>
+<div class="headerStickerHoverDockCard">
+<button type="button" class="headerStickerHoverClose" id="headerStickerHoverClose" aria-label="Close preview">×</button>
+<div class="headerStickerHoverImgWrap">
+<img id="headerStickerHoverImg" alt="" />
+</div>
+<div class="headerStickerHoverBody">
+<div class="headerStickerHoverAuthor" id="headerStickerHoverAuthor"></div>
+<p class="headerStickerHoverCaption" id="headerStickerHoverCaption"></p>
+<div class="headerStickerHoverActions">
+<button type="button" class="headerStickerHoverLike" id="headerStickerHoverLike">♥ <span id="headerStickerHoverLikeCount">0</span></button>
+</div>
+<div class="headerStickerHoverCommentBox">
+<input type="text" class="headerStickerHoverCommentInput" id="headerStickerHoverCommentInput" maxlength="240" placeholder="Quick comment…" autocomplete="off" />
+<button type="button" class="btn ghost headerStickerHoverCommentBtn" id="headerStickerHoverCommentBtn">Post</button>
+</div>
+</div>
+</div>
+</div>
 </div>
 </header>
 
@@ -5224,7 +5880,18 @@ width:100%;
 <div class="loginModal socialPageModal" id="socialModal" aria-hidden="true">
 <div class="socialPageCard" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
 <button class="loginModalClose" id="socialModalClose" type="button" aria-label="Close social">×</button>
-<img class="socialModalBbLogo" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="" width="200" height="48" decoding="async"/>
+<div class="socialLayout">
+<aside class="socialSidebar">
+<div class="socialSidebarHead">BADDEST squad</div>
+<div class="socialSidebarTitle">Chat rooms</div>
+<p class="socialSidebarHint">Vibe channels match AI sticker categories: extreme sports, anime, pop art, street, music, cosmic, weird horror &amp; more. Tap a room to filter the feed or join chat.</p>
+<div class="socialChannelList" id="socialChannelList"></div>
+<div class="socialSidebarDivider"></div>
+<div class="socialSidebarTitle">Online now · DMs</div>
+<p class="socialOnlineCrowdNote" id="socialOnlineCrowdNote">Tap a name to open a private DM. Join a room to chat with everyone in that vibe.</p>
+<div class="socialOnlineList" id="socialOnlineList"></div>
+</aside>
+<main class="socialMain">
 <header class="socialHero">
 <div class="socialHeroTop">
 <span class="socialHeroBadge">BADDEST community</span>
@@ -5247,18 +5914,6 @@ width:100%;
 <button type="button" class="socialCopyChallengeBtn" id="socialCopyChallengeBtn" title="Copy hashtag">Copy tag</button>
 </div>
 </header>
-<div class="socialLayout">
-<aside class="socialSidebar">
-<div class="socialSidebarHead">BADDEST squad</div>
-<div class="socialSidebarTitle">Chat rooms</div>
-<p class="socialSidebarHint">Vibe channels match AI sticker categories: extreme sports, anime, pop art, street, music, cosmic, weird horror &amp; more. Tap a room to filter the feed or join chat.</p>
-<div class="socialChannelList" id="socialChannelList"></div>
-<div class="socialSidebarDivider"></div>
-<div class="socialSidebarTitle">Online · DMs</div>
-<p class="socialOnlineCrowdNote" id="socialOnlineCrowdNote"></p>
-<div class="socialOnlineList" id="socialOnlineList"></div>
-</aside>
-<main class="socialMain">
 <div class="socialFeedHead">
 <h3 class="socialFeedTitle">The feed <span>Show your bottle</span></h3>
 <div class="socialFeedChips" aria-hidden="true">
@@ -5286,12 +5941,46 @@ width:100%;
 <div class="socialFeed" id="socialFeed"></div>
 </main>
 <aside class="socialChatSide">
+<div class="socialChatInbox" aria-label="Your chats">
+<div class="socialChatInboxHead">Chats</div>
+<div class="socialChatInboxList" id="socialChatInboxList"></div>
+</div>
+<div class="socialChatThread">
 <div class="socialChatSideHeader" id="socialChatSideHeader">Messages</div>
 <div class="socialChatMessages" id="socialChatMessages"></div>
-<div id="socialChatEmpty" class="socialChatEmpty">Choose a <strong>room</strong> or an <strong>online</strong> name to chat.</div>
+<div id="socialChatEmpty" class="socialChatEmpty">Pick a chat above, or start one from <strong>Online now</strong> / <strong>Join</strong> on a room.</div>
 <div class="socialChatInputWrap" id="socialChatInputWrap" style="display:none;">
-<input type="text" id="socialChatInput" class="socialChatInput" placeholder="Type a message..." maxlength="500" />
+<div class="socialChatAttachPanels">
+<div class="socialChatAttachPanel" id="socialChatEmojiPanel" role="region" aria-label="Emoji picker" hidden>
+<div class="socialChatAttachPanelHead"><span>Emoji</span><button type="button" class="socialChatAttachClose" data-close-chat-panel="" aria-label="Close">×</button></div>
+<div class="socialChatEmojiGrid" id="socialChatEmojiGrid"></div>
+</div>
+<div class="socialChatAttachPanel" id="socialChatGifPanel" role="region" aria-label="GIF picker" hidden>
+<div class="socialChatAttachPanelHead"><span>GIF</span><button type="button" class="socialChatAttachClose" data-close-chat-panel="" aria-label="Close">×</button></div>
+<div class="socialChatGifGrid" id="socialChatGifGrid"></div>
+<div class="socialChatGifPasteRow">
+<input type="url" id="socialChatGifUrlInput" class="socialChatGifUrlInput" placeholder="Paste image or GIF URL (https://…)" inputmode="url" />
+<button type="button" class="btn ghost socialChatGifPasteSend" id="socialChatGifUrlSend">Add</button>
+</div>
+</div>
+<div class="socialChatAttachPanel" id="socialChatStickerPanel" role="region" aria-label="Stickers" hidden>
+<div class="socialChatAttachPanelHead"><span>Stickers</span><button type="button" class="socialChatAttachClose" data-close-chat-panel="" aria-label="Close">×</button></div>
+<button type="button" class="socialChatStickerBottleBtn" id="socialChatStickerBottleBtn">Share your bottle art</button>
+<div class="socialChatStickerGrid" id="socialChatStickerGrid"></div>
+</div>
+</div>
+<div class="socialChatToolbar" id="socialChatToolbar" aria-label="Message attachments">
+<button type="button" class="socialChatToolBtn" id="socialChatBtnEmoji" title="Emoji">😊</button>
+<button type="button" class="socialChatToolBtn" id="socialChatBtnPhoto" title="Photo">📷</button>
+<input type="file" id="socialChatPhotoUpload" accept="image/*" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none;" tabindex="-1" aria-hidden="true" />
+<button type="button" class="socialChatToolBtn" id="socialChatBtnGif" title="GIF"><span class="socialChatToolGifLab">GIF</span></button>
+<button type="button" class="socialChatToolBtn" id="socialChatBtnSticker" title="Sticker">🎨</button>
+</div>
+<div class="socialChatInputRow">
+<input type="text" id="socialChatInput" class="socialChatInput" placeholder="Type a message..." maxlength="500" autocomplete="off" />
 <button type="button" class="btn primary" id="socialChatSend">Send</button>
+</div>
+</div>
 </div>
 </aside>
 </div>
@@ -5991,8 +6680,9 @@ const r = el.getBoundingClientRect();
 if(r.height > 0) bottom = Math.max(bottom, r.bottom);
 });
 const isDesktop = window.matchMedia("(min-width:980px)").matches;
-const minPad = isDesktop ? 248 : 52;
-const pad = Math.max(Math.ceil(bottom) + 6, minPad);
+/* Tight to real header: small buffer only; avoid old 248px floor that floated content far below the bar */
+const minPad = isDesktop ? 160 : 48;
+const pad = Math.max(Math.ceil(bottom) + 1, minPad);
 document.documentElement.style.setProperty("--site-header-stack", pad + "px");
 }catch(_e){}
 }
@@ -6458,7 +7148,183 @@ localStorage.setItem("baddest_social_feed_v1", JSON.stringify(toSave));
 let socialPosts = loadSocialPostsFromStorage() || SOCIAL_POSTS_SEED.slice();
 let socialFeedFilterChannel = null;
 let socialJoinedRoomId = null;
-let socialRoomMessages = {};
+const SOCIAL_ONLINE_PREVIEW = 28;
+let socialOnlineExpanded = false;
+const SOCIAL_DM_STORAGE_KEY = "baddest_social_dms_v1";
+const SOCIAL_ROOM_STORAGE_KEY = "baddest_social_rooms_v1";
+const SOCIAL_INBOX_ORDER_KEY = "baddest_social_inbox_order_v1";
+function parseSocialInboxEntry(s){
+if(!s || typeof s !== "string") return null;
+if(s.indexOf("dm:") === 0) return { type: "dm", id: s.slice(3) };
+if(s.indexOf("room:") === 0) return { type: "room", id: s.slice(5) };
+return null;
+}
+function socialInboxKey(type, id){
+return type === "dm" ? "dm:" + id : "room:" + id;
+}
+function loadSocialInboxOrder(){
+try{
+const raw = localStorage.getItem(SOCIAL_INBOX_ORDER_KEY);
+const arr = raw ? JSON.parse(raw) : [];
+return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+}catch(_){ return []; }
+}
+let socialInboxOrder = loadSocialInboxOrder();
+function persistSocialInboxOrder(){
+try{ localStorage.setItem(SOCIAL_INBOX_ORDER_KEY, JSON.stringify(socialInboxOrder)); }catch(_){}
+}
+function pruneSocialInboxOrder(){
+socialInboxOrder = socialInboxOrder.filter((s) => {
+const p = parseSocialInboxEntry(s);
+if(!p) return false;
+if(p.type === "dm") return !!(socialDMs && socialDMs[p.id]);
+if(p.type === "room") return !!(socialRoomMessages && socialRoomMessages[p.id]);
+return false;
+});
+persistSocialInboxOrder();
+}
+function touchSocialInbox(type, id){
+if(!id) return;
+const k = socialInboxKey(type, id);
+socialInboxOrder = socialInboxOrder.filter((x) => x !== k);
+socialInboxOrder.unshift(k);
+persistSocialInboxOrder();
+}
+function socialLastMessagePreview(msgs){
+if(!msgs || !msgs.length) return "No messages yet";
+const m = msgs[msgs.length - 1];
+const t = m && m.text != null ? String(m.text) : "";
+if(t.length > 58) return t.slice(0, 56) + "…";
+return t || "No messages yet";
+}
+function collectSocialInboxItems(){
+pruneSocialInboxOrder();
+const byKey = new Map();
+Object.keys(socialDMs || {}).forEach((uid) => {
+const user = socialOnlineUsers.find((u) => u.id === uid);
+byKey.set(socialInboxKey("dm", uid), {
+type: "dm",
+id: uid,
+title: user ? user.name : "User",
+preview: socialLastMessagePreview(socialDMs[uid]),
+avatarSeed: uid
+});
+});
+Object.keys(socialRoomMessages || {}).forEach((rid) => {
+byKey.set(socialInboxKey("room", rid), {
+type: "room",
+id: rid,
+title: humanizeSocialChannel(rid) + " · room",
+preview: socialLastMessagePreview(socialRoomMessages[rid]),
+avatarSeed: rid
+});
+});
+const items = [];
+socialInboxOrder.forEach((s) => {
+const p = parseSocialInboxEntry(s);
+if(!p) return;
+const k = socialInboxKey(p.type, p.id);
+const it = byKey.get(k);
+if(it){
+items.push(it);
+byKey.delete(k);
+}
+});
+const rest = Array.from(byKey.values());
+rest.sort((a, b) => String(a.title).localeCompare(String(b.title)));
+return items.concat(rest);
+}
+function renderSocialInbox(){
+const wrap = document.getElementById("socialChatInboxList");
+if(!wrap) return;
+wrap.innerHTML = "";
+const items = collectSocialInboxItems();
+if(!items.length){
+const empty = document.createElement("div");
+empty.className = "socialChatInboxEmpty";
+empty.textContent = "No chats yet. Tap someone under Online now or Join a room.";
+wrap.appendChild(empty);
+return;
+}
+items.forEach((it) => {
+const btn = document.createElement("button");
+btn.type = "button";
+btn.className = "socialChatInboxRow";
+const isDm = it.type === "dm";
+const active = (isDm && currentChatUserId === it.id) || (!isDm && socialJoinedRoomId === it.id);
+if(active) btn.classList.add("is-active");
+if(isDm){
+const img = document.createElement("img");
+img.className = "socialChatInboxAvatar";
+img.alt = "";
+img.src = getSocialPlaceholderAvatar(it.avatarSeed || it.id);
+img.addEventListener("error", function(){
+this.src = getSocialPlaceholderAvatar(it.id);
+});
+const main = document.createElement("div");
+main.className = "socialChatInboxRowMain";
+const t = document.createElement("div");
+t.className = "socialChatInboxTitle";
+t.textContent = it.title;
+const pr = document.createElement("div");
+pr.className = "socialChatInboxPreview";
+pr.textContent = it.preview;
+main.appendChild(t);
+main.appendChild(pr);
+btn.appendChild(img);
+btn.appendChild(main);
+}else{
+const badge = document.createElement("div");
+badge.className = "socialChatInboxBadge";
+const dot = document.createElement("span");
+dot.className = "socialChatRoomDot";
+badge.appendChild(dot);
+const main = document.createElement("div");
+main.className = "socialChatInboxRowMain";
+const t = document.createElement("div");
+t.className = "socialChatInboxTitle";
+t.textContent = it.title;
+const pr = document.createElement("div");
+pr.className = "socialChatInboxPreview";
+pr.textContent = it.preview;
+main.appendChild(t);
+main.appendChild(pr);
+btn.appendChild(badge);
+btn.appendChild(main);
+}
+btn.addEventListener("click", () => {
+if(it.type === "dm"){
+socialJoinedRoomId = null;
+currentChatUserId = it.id;
+ensureDmThread(it.id);
+touchSocialInbox("dm", it.id);
+}else{
+currentChatUserId = null;
+socialJoinedRoomId = it.id;
+ensureSocialRoomThread(it.id);
+touchSocialInbox("room", it.id);
+}
+renderSocialChannels();
+renderSocialOnlineList();
+renderSocialChat();
+});
+wrap.appendChild(btn);
+});
+}
+function loadSocialChatStorage(key){
+try{
+const raw = localStorage.getItem(key);
+if(raw) return JSON.parse(raw);
+}catch(_){}
+return null;
+}
+function persistSocialDmMap(){
+try{ localStorage.setItem(SOCIAL_DM_STORAGE_KEY, JSON.stringify(socialDMs)); }catch(_){}
+}
+function persistSocialRoomMap(){
+try{ localStorage.setItem(SOCIAL_ROOM_STORAGE_KEY, JSON.stringify(socialRoomMessages)); }catch(_){}
+}
+let socialRoomMessages = loadSocialChatStorage(SOCIAL_ROOM_STORAGE_KEY) || {};
 function buildSocialOnlineUsersList(){
 const out = [
 { id: "u1", name: "BADDEST", avatar: "" },
@@ -6492,11 +7358,11 @@ out.push({ id: "u" + i, name: ADJ[i % ADJ.length] + NOUN[(i * 7) % NOUN.length] 
 return out;
 }
 let socialOnlineUsers = buildSocialOnlineUsersList();
-let socialDMs = {};
+let socialDMs = loadSocialChatStorage(SOCIAL_DM_STORAGE_KEY) || {};
 let currentChatUserId = null;
 function ensureDmThread(userId){
 if(!socialDMs[userId]) socialDMs[userId] = [
-{ author: socialOnlineUsers.find((u) => u.id === userId) ? socialOnlineUsers.find((u) => u.id === userId).name : "User", text: "Hey! Message me here.", own: false }
+{ author: socialOnlineUsers.find((u) => u.id === userId) ? socialOnlineUsers.find((u) => u.id === userId).name : "User", text: "Hey! Drop a message — this is your DM thread.", own: false }
 ];
 return socialDMs[userId];
 }
@@ -7030,6 +7896,7 @@ socialJoinedRoomId = null;
 socialJoinedRoomId = key;
 currentChatUserId = null;
 ensureSocialRoomThread(key);
+touchSocialInbox("room", key);
 }
 renderSocialChannels();
 renderSocialOnlineList();
@@ -7167,6 +8034,120 @@ thumbEl.style.webkitMaskPosition = "center";
 thumbEl.style.maskPosition = "center";
 thumbEl.classList.add("headerStickerCardThumb--masked");
 }
+let headerStickerHoverHideTimer = null;
+let headerStickerHoverPostId = null;
+function cancelHeaderStickerHoverHide(){
+if(headerStickerHoverHideTimer){
+clearTimeout(headerStickerHoverHideTimer);
+headerStickerHoverHideTimer = null;
+}
+}
+function headerStickerImmediateCloseHoverDock(){
+cancelHeaderStickerHoverHide();
+headerStickerHoverPostId = null;
+const dock = document.getElementById("headerStickerHoverDock");
+const track = document.getElementById("siteHeaderStickerFeedTrack");
+if(dock){
+dock.hidden = true;
+dock.setAttribute("aria-hidden", "true");
+}
+if(track) track.classList.remove("is-marquee-slow");
+}
+function updateHeaderStickerHoverPanelContent(post){
+if(!post) return;
+const img = document.getElementById("headerStickerHoverImg");
+const auth = document.getElementById("headerStickerHoverAuthor");
+const cap = document.getElementById("headerStickerHoverCaption");
+const likeBtn = document.getElementById("headerStickerHoverLike");
+const likeSpan = document.getElementById("headerStickerHoverLikeCount");
+const url = resolveSocialFeedMediaUrl(post.imageUrl || "");
+if(img) img.src = url;
+if(auth) auth.textContent = "@" + (post.author || "Creator");
+if(cap) cap.textContent = post.caption || "";
+if(likeBtn) likeBtn.classList.toggle("is-liked", !!post.liked);
+if(likeSpan) likeSpan.textContent = formatSocialLikeCount(Number.isFinite(post.likes) ? post.likes : 0);
+}
+function hideHeaderStickerHoverPreview(){
+if(headerStickerHoverHideTimer) clearTimeout(headerStickerHoverHideTimer);
+headerStickerHoverHideTimer = setTimeout(() => {
+headerStickerHoverHideTimer = null;
+const bar = document.getElementById("siteHeaderStickerFeed");
+const dock = document.getElementById("headerStickerHoverDock");
+const track = document.getElementById("siteHeaderStickerFeedTrack");
+if(bar && bar.querySelector(".headerStickerCard:hover")) return;
+if(dock){
+if(typeof dock.matches === "function" && dock.matches(":hover")) return;
+if(document.activeElement && dock.contains(document.activeElement)) return;
+dock.hidden = true;
+dock.setAttribute("aria-hidden", "true");
+}
+if(track) track.classList.remove("is-marquee-slow");
+headerStickerHoverPostId = null;
+}, 160);
+}
+function showHeaderStickerHoverPreview(post){
+if(!post || !post.imageUrl || String(post.imageUrl).trim().length < 8) return;
+cancelHeaderStickerHoverHide();
+headerStickerHoverPostId = post.id;
+const dock = document.getElementById("headerStickerHoverDock");
+const img = document.getElementById("headerStickerHoverImg");
+const track = document.getElementById("siteHeaderStickerFeedTrack");
+updateHeaderStickerHoverPanelContent(post);
+if(img){
+img.onerror = function(){
+const p = socialPosts.find((x) => x.id === post.id);
+if(!p || p._headerHoverImgFb) return;
+p._headerHoverImgFb = true;
+this.src = makeRandomStickerDataUrl(post.id + "_hv");
+};
+}
+if(dock){
+dock.hidden = false;
+dock.setAttribute("aria-hidden", "false");
+}
+if(track) track.classList.add("is-marquee-slow");
+}
+function postHeaderStickerHoverComment(){
+const input = document.getElementById("headerStickerHoverCommentInput");
+const text = input && input.value.trim();
+if(!text || !headerStickerHoverPostId) return;
+const p = socialPosts.find((x) => x.id === headerStickerHoverPostId);
+if(!p) return;
+p.comments = p.comments || [];
+p.comments.push({ author: firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "Guest", text: text });
+if(input) input.value = "";
+renderSocialFeed();
+updateHeaderStickerHoverPanelContent(p);
+}
+function initHeaderStickerHoverDock(){
+const dock = document.getElementById("headerStickerHoverDock");
+if(!dock || dock.__hoverDockInit) return;
+dock.__hoverDockInit = true;
+dock.addEventListener("mouseenter", cancelHeaderStickerHoverHide);
+dock.addEventListener("mouseleave", () => hideHeaderStickerHoverPreview());
+dock.addEventListener("focusin", cancelHeaderStickerHoverHide);
+dock.addEventListener("focusout", (e) => {
+if(e.relatedTarget && dock.contains(e.relatedTarget)) return;
+hideHeaderStickerHoverPreview();
+});
+const closeBtn = document.getElementById("headerStickerHoverClose");
+if(closeBtn) closeBtn.addEventListener("click", (e) => { e.stopPropagation(); headerStickerImmediateCloseHoverDock(); });
+const likeBtn = document.getElementById("headerStickerHoverLike");
+if(likeBtn) likeBtn.addEventListener("click", (e) => {
+e.stopPropagation();
+if(!headerStickerHoverPostId) return;
+const p = socialPosts.find((x) => x.id === headerStickerHoverPostId);
+if(!p) return;
+p.liked = !p.liked;
+p.likes = (Number.isFinite(p.likes) ? p.likes : 0) + (p.liked ? 1 : -1);
+renderSocialFeed();
+updateHeaderStickerHoverPanelContent(p);
+});
+const cBtn = document.getElementById("headerStickerHoverCommentBtn");
+const cInp = document.getElementById("headerStickerHoverCommentInput");
+if(cBtn) cBtn.addEventListener("click", (e) => { e.stopPropagation(); postHeaderStickerHoverComment(); });
+if(cInp) cInp.addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); postHeaderStickerHoverComment(); } });
+}
 function makeHeaderStickerCard(post){
 const el = document.createElement("div");
 el.className = "headerStickerCard";
@@ -7220,6 +8201,25 @@ info.appendChild(likeBtn);
 el.appendChild(avBtn);
 el.appendChild(thumb);
 el.appendChild(info);
+el.addEventListener("mouseenter", () => {
+cancelHeaderStickerHoverHide();
+showHeaderStickerHoverPreview(post);
+});
+el.addEventListener("mouseleave", (ev) => {
+const dock = document.getElementById("headerStickerHoverDock");
+if(dock && ev.relatedTarget && (dock === ev.relatedTarget || dock.contains(ev.relatedTarget))) return;
+hideHeaderStickerHoverPreview();
+});
+el.addEventListener("focusin", () => {
+cancelHeaderStickerHoverHide();
+showHeaderStickerHoverPreview(post);
+});
+el.addEventListener("focusout", (ev) => {
+const dock = document.getElementById("headerStickerHoverDock");
+if(dock && ev.relatedTarget && dock.contains(ev.relatedTarget)) return;
+if(ev.relatedTarget && el.contains(ev.relatedTarget)) return;
+hideHeaderStickerHoverPreview();
+});
 return el;
 }
 function renderHeaderStickerFeed(){
@@ -7251,8 +8251,15 @@ rowB.appendChild(makeHeaderStickerCard(p));
 });
 track.appendChild(rowA);
 track.appendChild(rowB);
+if(headerStickerHoverPostId){
+const dock = document.getElementById("headerStickerHoverDock");
+const p = socialPosts.find((x) => x.id === headerStickerHoverPostId);
+if(dock && !dock.hidden && p) updateHeaderStickerHoverPanelContent(p);
+else if(!p) headerStickerImmediateCloseHoverDock();
+}
 }
 function initHeaderStickerFeedDelegation(){
+initHeaderStickerHoverDock();
 const bar = document.getElementById("siteHeaderStickerFeed");
 if(!bar || bar.__stickerFeedDeleg) return;
 bar.__stickerFeedDeleg = true;
@@ -7277,8 +8284,11 @@ e.stopPropagation();
 const uid = avOpen.getAttribute("data-header-open-social") || "";
 showSocialModal();
 if(uid && socialOnlineUsers.some((u) => u.id === uid)){
+socialJoinedRoomId = null;
 currentChatUserId = uid;
 ensureDmThread(uid);
+touchSocialInbox("dm", uid);
+renderSocialChannels();
 renderSocialOnlineList();
 renderSocialChat();
 }
@@ -7297,8 +8307,11 @@ e.preventDefault();
 const uid = avOpen.getAttribute("data-header-open-social") || "";
 showSocialModal();
 if(uid && socialOnlineUsers.some((u) => u.id === uid)){
+socialJoinedRoomId = null;
 currentChatUserId = uid;
 ensureDmThread(uid);
+touchSocialInbox("dm", uid);
+renderSocialChannels();
 renderSocialOnlineList();
 renderSocialChat();
 }
@@ -7336,12 +8349,18 @@ renderSocialFeed();
 function escapeHtml(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 function renderSocialOnlineList(){
 const list = document.getElementById("socialOnlineList");
+const noteEl = document.getElementById("socialOnlineCrowdNote");
 if(!list) return;
 list.innerHTML = "";
-socialOnlineUsers.forEach((u) => {
+if(noteEl){
+const total = socialOnlineUsers.length;
+noteEl.textContent = total + " online · tap a name for DMs. Use Join on a room for public chat.";
+}
+const displayUsers = socialOnlineExpanded ? socialOnlineUsers : socialOnlineUsers.slice(0, SOCIAL_ONLINE_PREVIEW);
+displayUsers.forEach((u) => {
 const btn = document.createElement("button");
 btn.type = "button";
-btn.className = "socialOnlineUser" + (currentChatUserId === u.id ? " active" : "");
+btn.className = "socialOnlineUser" + (currentChatUserId === u.id && !socialJoinedRoomId ? " active" : "");
 btn.dataset.userId = u.id;
 const avSrc = (u.avatar && String(u.avatar).trim()) || getSocialPlaceholderAvatar(u.id || u.name);
 const fbSrc = getSocialPlaceholderAvatar(u.id || u.name);
@@ -7362,39 +8381,72 @@ btn.appendChild(imgEl);
 btn.appendChild(nameSpan);
 btn.appendChild(dot);
 btn.addEventListener("click", () => {
+socialJoinedRoomId = null;
 currentChatUserId = u.id;
 ensureDmThread(u.id);
+touchSocialInbox("dm", u.id);
+renderSocialChannels();
 renderSocialOnlineList();
 renderSocialChat();
 });
 list.appendChild(btn);
 });
+if(socialOnlineUsers.length > SOCIAL_ONLINE_PREVIEW){
+const tb = document.createElement("button");
+tb.type = "button";
+tb.className = "socialOnlineToggleBtn";
+tb.textContent = socialOnlineExpanded ? "Show fewer" : ("Show all " + socialOnlineUsers.length + " online");
+tb.addEventListener("click", (ev) => {
+ev.preventDefault();
+socialOnlineExpanded = !socialOnlineExpanded;
+renderSocialOnlineList();
+});
+list.appendChild(tb);
+}
 }
 function renderSocialChat(){
 const container = document.getElementById("socialChatMessages");
 const emptyEl = document.getElementById("socialChatEmpty");
 const inputWrap = document.getElementById("socialChatInputWrap");
 const headerEl = document.getElementById("socialChatSideHeader");
+const chatInput = document.getElementById("socialChatInput");
 if(!container) return;
 container.innerHTML = "";
-if(!currentChatUserId){
+const inDm = !!currentChatUserId;
+const inRoom = !inDm && !!socialJoinedRoomId;
+if(!inDm && !inRoom){
 if(emptyEl) emptyEl.style.display = "block";
 if(inputWrap) inputWrap.style.display = "none";
 if(headerEl){
 headerEl.textContent = "";
 headerEl.classList.remove("socialChatSideHeader--peer");
+headerEl.classList.remove("socialChatSideHeader--room");
 const t = document.createElement("span");
 t.textContent = "Messages";
 headerEl.appendChild(t);
 }
+renderSocialInbox();
 return;
 }
 if(emptyEl) emptyEl.style.display = "none";
 if(inputWrap) inputWrap.style.display = "flex";
-const user = socialOnlineUsers.find((u) => u.id === currentChatUserId);
+if(chatInput){
+if(inDm){
+const peer = socialOnlineUsers.find((u) => u.id === currentChatUserId);
+chatInput.placeholder = peer ? ("Message " + peer.name + "…") : "Type a message…";
+}else{
+chatInput.placeholder = "Message in #" + humanizeSocialChannel(socialJoinedRoomId) + "…";
+}
+}
 if(headerEl){
 headerEl.textContent = "";
+headerEl.classList.remove("socialChatSideHeader--peer");
+headerEl.classList.remove("socialChatSideHeader--room");
+}
+if(inDm){
+if(headerEl){
 headerEl.classList.add("socialChatSideHeader--peer");
+const user = socialOnlineUsers.find((u) => u.id === currentChatUserId);
 if(user){
 const av = document.createElement("img");
 av.className = "socialChatHeaderAvatar";
@@ -7409,18 +8461,40 @@ headerEl.appendChild(av);
 headerEl.appendChild(lab);
 }else{
 const t = document.createElement("span");
-t.textContent = "Chat";
+t.textContent = "DM";
 headerEl.appendChild(t);
 }
 }
-const messages = ensureDmThread(currentChatUserId);
-messages.forEach((msg) => {
+const dmMsgs = ensureDmThread(currentChatUserId);
+dmMsgs.forEach((msg) => {
 const div = document.createElement("div");
 div.className = "socialChatMsg" + (msg.own ? " own" : "");
 div.innerHTML = `<div><span class="socialChatMsgAuthor">${escapeHtml(msg.author)}</span><div class="socialChatMsgBubble">${escapeHtml(msg.text)}</div></div>`;
 container.appendChild(div);
 });
+}else if(inRoom){
+if(headerEl){
+headerEl.classList.add("socialChatSideHeader--room");
+const badge = document.createElement("span");
+badge.className = "socialChatRoomBadge";
+const dot = document.createElement("span");
+dot.className = "socialChatRoomDot";
+const lab = document.createElement("span");
+lab.textContent = humanizeSocialChannel(socialJoinedRoomId) + " · room chat";
+badge.appendChild(dot);
+badge.appendChild(lab);
+headerEl.appendChild(badge);
+}
+const roomMsgs = ensureSocialRoomThread(socialJoinedRoomId);
+roomMsgs.forEach((msg) => {
+const div = document.createElement("div");
+div.className = "socialChatMsg" + (msg.own ? " own" : "");
+div.innerHTML = `<div><span class="socialChatMsgAuthor">${escapeHtml(msg.author)}</span><div class="socialChatMsgBubble">${escapeHtml(msg.text)}</div></div>`;
+container.appendChild(div);
+});
+}
 container.scrollTop = container.scrollHeight;
+renderSocialInbox();
 }
 function updateSocialAccountBar(user){
 const inner = document.getElementById("socialAccountBarInner");
@@ -7468,12 +8542,13 @@ inner.appendChild(btn);
 }
 function showSocialModal(){
 if(!socialModal) return;
+if(typeof hideAboutModal === "function") hideAboutModal();
 socialModal.classList.add("active");
 socialModal.setAttribute("aria-hidden", "false");
 socialModal.classList.add("socialPage");
 const spc = document.querySelector(".socialPageCard");
-if(spc) spc.style.maxHeight = "";
-currentChatUserId = null;
+if(spc){ spc.style.maxHeight = ""; spc.style.height = ""; }
+socialOnlineExpanded = false;
 socialUploadedPhotoUrl = "";
 updateSocialAccountBar();
 renderSocialChannels();
@@ -7610,9 +8685,19 @@ renderSocialFeed();
 if(socialChatSend && socialChatInput){
 socialChatSend.addEventListener("click", () => {
 const text = socialChatInput.value.trim();
-if(!text || !currentChatUserId) return;
+if(!text) return;
+const me = firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "You";
+if(currentChatUserId){
 ensureDmThread(currentChatUserId);
-socialDMs[currentChatUserId].push({ author: firebaseAuth && firebaseAuth.currentUser ? (firebaseAuth.currentUser.displayName || "You") : "You", text: text, own: true });
+socialDMs[currentChatUserId].push({ author: me, text: text, own: true });
+persistSocialDmMap();
+touchSocialInbox("dm", currentChatUserId);
+}else if(socialJoinedRoomId){
+ensureSocialRoomThread(socialJoinedRoomId);
+socialRoomMessages[socialJoinedRoomId].push({ author: me, text: text, own: true });
+persistSocialRoomMap();
+touchSocialInbox("room", socialJoinedRoomId);
+}else return;
 socialChatInput.value = "";
 renderSocialChat();
 });
@@ -7658,7 +8743,7 @@ hideSocialModal();
 }
 if(aboutModal){
 aboutModal.addEventListener("click", (event) => {
-if(event.target === aboutModal){
+if(!event.target.closest(".aboutModalCard")){
 hideAboutModal();
 }
 });
@@ -12367,10 +13452,8 @@ if(faceHex) {
 faceHex.textContent = "#FFFFFF";
 }
 
-// Render to show the new face and color
 await renderAll();
 
-// Automatically start generation
 if(aiGenerateButton) {
 aiGenerateButton.click();
 }
