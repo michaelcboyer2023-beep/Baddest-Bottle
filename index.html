@@ -187,6 +187,28 @@ transform:translateY(-1px);
 .siteHeaderNavLink:hover::before{
 transform:translateX(0);
 }
+.siteHeaderNavLink.is-active{
+color:#fff;
+border-color:rgba(255,140,84,.55);
+background:rgba(255,102,0,.1);
+}
+.siteHeaderNavLink.is-active::before{
+transform:translateX(0);
+}
+.siteAppPage[hidden]{
+display:none !important;
+}
+.siteAppPage--baddest{
+padding-bottom:24px;
+}
+.baddestHallPageWrap{
+max-width:1560px;
+margin:0 auto;
+padding:10px 12px 20px;
+}
+.baddestBackHomeBtn{
+margin-bottom:10px;
+}
 .siteHeaderSlogan{
 position:relative;
 display:inline-flex;
@@ -5825,7 +5847,7 @@ width:100%;
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderAboutLink"><span>About</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
-<a class="siteHeaderNavLink" href="#the-baddest" id="siteHeaderBaddestLink"><span>The Baddest</span></a>
+<a class="siteHeaderNavLink" href="#baddest" id="siteHeaderBaddestLink"><span>The Baddest</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
 </nav>
@@ -6171,6 +6193,7 @@ width:100%;
 </div>
 </div>
 
+<div id="pageHome" class="siteAppPage">
 <!-- Mobile sticky bar -->
 <div class="mobileBar">
 <div class="mobileInfo">
@@ -6218,19 +6241,6 @@ width:100%;
 </div>
 
 <div class="wrap">
-<section class="baddestHallSection" id="the-baddest" aria-labelledby="baddestHallHeadingText">
-<div class="baddestHallInner">
-<div class="baddestHallHeadingStack">
-<h2 class="baddestHallHeadingText" id="baddestHallHeadingText">THE BADDEST</h2>
-<img id="baddestHallHeadingImg" class="baddestHallHeadingImg" src="projects/Users-michaelcboyer-cursor/assets/the-baddest-heading.png" alt="" width="560" height="140" decoding="async"/>
-</div>
-<p class="baddestHallSub">Community sticker hall — ranked by likes. Drop yours in Social; the crowd decides who lands here.</p>
-<div class="baddestHallFeed socialFeed" id="baddestHallFeed" aria-label="Top voted sticker designs"></div>
-<div class="baddestHallFooter">
-<button type="button" class="btn ghost" id="baddestHallOpenSocialBtn">Open Social · vote &amp; post</button>
-</div>
-</div>
-</section>
 <div class="grid">
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror mainPreviewVideoIdle">
@@ -6639,6 +6649,27 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 </div>
 </div>
+</div>
+</div>
+
+<main id="pageBaddest" class="siteAppPage siteAppPage--baddest" hidden aria-label="The Baddest sticker hall">
+<div class="wrap baddestHallPageWrap">
+<button type="button" class="btn ghost baddestBackHomeBtn" id="baddestBackHomeBtn">← Home · designer</button>
+<section class="baddestHallSection" id="the-baddest" aria-labelledby="baddestHallHeadingText">
+<div class="baddestHallInner">
+<div class="baddestHallHeadingStack">
+<h2 class="baddestHallHeadingText" id="baddestHallHeadingText">THE BADDEST</h2>
+<img id="baddestHallHeadingImg" class="baddestHallHeadingImg" src="projects/Users-michaelcboyer-cursor/assets/the-baddest-heading.png" alt="" width="560" height="140" decoding="async"/>
+</div>
+<p class="baddestHallSub">Community sticker hall — ranked by likes. Drop yours in Social; the crowd decides who lands here.</p>
+<div class="baddestHallFeed socialFeed" id="baddestHallFeed" aria-label="Top voted sticker designs"></div>
+<div class="baddestHallFooter">
+<button type="button" class="btn ghost" id="baddestHallOpenSocialBtn">Open Social · vote &amp; post</button>
+</div>
+</div>
+</section>
+</div>
+</main>
 
 <script>
 (() => {
@@ -6801,8 +6832,40 @@ const previewLoadingVideo = document.getElementById("previewLoadingVideo");
 const PREVIEW_VIDEO_FALLBACK_SRC = "projects/Users-michaelcboyer-cursor/assets/grok-video-0435a3d2-4696-42af-9b2c-18116987c1db-ezgif.com-video-to-gif-converter-81664189-aed3-410e-b75a-f40b90cc3bd8.png";
 const AI_WORKER_URL = "https://aigenerate.michaelcboyer2023.workers.dev";
 const siteHeaderHomeLink = document.getElementById("siteHeaderHomeLink");
+const siteHeaderBaddestLink = document.getElementById("siteHeaderBaddestLink");
 const siteHeaderSocialLink = document.getElementById("siteHeaderSocialLink");
 const siteHeaderAboutLink = document.getElementById("siteHeaderAboutLink");
+const pageHomeEl = document.getElementById("pageHome");
+const pageBaddestEl = document.getElementById("pageBaddest");
+function updateSiteNavActive(route){
+[siteHeaderHomeLink, siteHeaderBaddestLink].forEach((l) => { if(l) l.classList.remove("is-active"); });
+if(route === "baddest" && siteHeaderBaddestLink) siteHeaderBaddestLink.classList.add("is-active");
+if(route === "home" && siteHeaderHomeLink) siteHeaderHomeLink.classList.add("is-active");
+}
+function setSiteRoute(route){
+const home = pageHomeEl;
+const baddest = pageBaddestEl;
+if(!home || !baddest) return;
+if(route === "baddest"){
+home.hidden = true;
+baddest.hidden = false;
+if(typeof renderBaddestHall === "function") renderBaddestHall();
+document.body.classList.add("siteRoute-baddest");
+updateSiteNavActive("baddest");
+}else{
+home.hidden = false;
+baddest.hidden = true;
+document.body.classList.remove("siteRoute-baddest");
+updateSiteNavActive("home");
+}
+if(typeof syncSiteHeaderStackHeight === "function") requestAnimationFrame(() => syncSiteHeaderStackHeight());
+window.scrollTo(0, 0);
+}
+function applyRouteFromHash(){
+const h = String(location.hash || "").toLowerCase().replace(/^#\/?/, "");
+if(h === "baddest") setSiteRoute("baddest");
+else setSiteRoute("home");
+}
 const dockImg = document.getElementById("dockImg");
 const mobileThumbImg = document.getElementById("mobileThumbImg");
 const previewEmptyState = document.getElementById("previewEmptyState");
@@ -6967,7 +7030,33 @@ document.addEventListener("mouseleave", () => { targetX = 0; targetY = 0; target
 if(siteHeaderHomeLink){
 siteHeaderHomeLink.addEventListener("click", (event) => {
 event.preventDefault();
-window.location.reload();
+try{
+history.replaceState(null, "", location.pathname + location.search || "");
+}catch(_e){}
+setSiteRoute("home");
+});
+}
+if(siteHeaderBaddestLink){
+siteHeaderBaddestLink.addEventListener("click", (event) => {
+event.preventDefault();
+try{
+history.pushState(null, "", "#baddest");
+}catch(_e){
+location.hash = "baddest";
+}
+setSiteRoute("baddest");
+});
+}
+window.addEventListener("hashchange", () => applyRouteFromHash());
+window.addEventListener("popstate", () => applyRouteFromHash());
+const baddestBackHomeBtn = document.getElementById("baddestBackHomeBtn");
+if(baddestBackHomeBtn){
+baddestBackHomeBtn.addEventListener("click", (e) => {
+e.preventDefault();
+try{
+history.replaceState(null, "", location.pathname + location.search || "");
+}catch(_e){}
+setSiteRoute("home");
 });
 }
 const siteHeaderLoginBtn = document.getElementById("siteHeaderLoginBtn");
@@ -8599,6 +8688,7 @@ if(typeof showSocialModal === "function") showSocialModal();
 }
 initHeaderStickerFeedDelegation();
 renderSocialFeed();
+applyRouteFromHash();
 function escapeHtml(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 function renderSocialOnlineList(){
 const list = document.getElementById("socialOnlineList");
