@@ -4494,6 +4494,126 @@ align-items:start;
 @media (max-width:640px){
 .socialFeed{ grid-template-columns:1fr; }
 }
+.baddestHallSection{
+margin:0 0 14px;
+padding:14px 12px 16px;
+border-radius:16px;
+border:1px solid rgba(255,140,84,.28);
+background:linear-gradient(165deg, rgba(255,80,0,.08), rgba(0,0,0,.35));
+box-shadow:0 12px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+position:relative;
+z-index:2;
+overflow:hidden;
+}
+.baddestHallSection::before{
+content:"";
+position:absolute;
+inset:-40% -20% auto -20%;
+height:55%;
+background:radial-gradient(ellipse at 50% 0%, rgba(255,102,0,.22), transparent 55%);
+pointer-events:none;
+}
+.baddestHallInner{ position:relative; z-index:1; }
+.baddestHallHeadingStack{
+display:grid;
+place-items:center;
+justify-items:center;
+margin:0 auto 10px;
+max-width:min(640px, 100%);
+min-height:clamp(56px, 12vw, 100px);
+}
+.baddestHallHeadingText{
+grid-area:1/1;
+margin:0;
+font-family:system-ui, -apple-system, "Segoe UI", sans-serif;
+font-size:clamp(28px, 7vw, 52px);
+font-weight:950;
+letter-spacing:.04em;
+line-height:0.95;
+text-align:center;
+text-transform:uppercase;
+color:#fff;
+text-shadow:0 0 40px rgba(255,102,0,.45), 0 2px 0 rgba(0,0,0,.85), 0 0 1px #000;
+-webkit-text-stroke:1px rgba(255,140,84,.35);
+}
+.baddestHallHeadingImg{
+grid-area:1/1;
+max-width:min(560px, 100%);
+width:100%;
+height:auto;
+object-fit:contain;
+opacity:0;
+transition:opacity .25s ease;
+pointer-events:none;
+}
+.baddestHallHeadingImg.is-loaded{
+opacity:1;
+}
+.baddestHallSub{
+margin:0 0 12px;
+text-align:center;
+font-size:12px;
+font-weight:700;
+line-height:1.45;
+color:rgba(255,255,255,.62);
+max-width:520px;
+margin-left:auto;
+margin-right:auto;
+}
+.baddestHallFeed.socialFeed{
+margin-top:4px;
+}
+.baddestHallCard{
+position:relative;
+}
+.baddestHallCard .socialPostThread{
+display:none !important;
+}
+.baddestHallCard .socialPostAction[data-action="comment"]{
+display:none !important;
+}
+.baddestHallCard .socialPostStat strong{
+font-size:12px;
+}
+.baddestHallRankPill{
+position:absolute;
+top:7px;
+left:7px;
+z-index:4;
+padding:3px 7px;
+border-radius:8px;
+font-size:9px;
+font-weight:950;
+letter-spacing:.06em;
+text-transform:uppercase;
+background:rgba(0,0,0,.72);
+border:1px solid rgba(255,255,255,.2);
+color:rgba(255,255,255,.85);
+backdrop-filter:blur(6px);
+-webkit-backdrop-filter:blur(6px);
+}
+.baddestHallRankPill.is-top{
+border-color:rgba(255,140,84,.55);
+color:var(--red2);
+background:rgba(255,40,0,.18);
+box-shadow:0 0 14px rgba(255,102,0,.2);
+}
+.baddestHallFooter{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:center;
+gap:10px;
+margin-top:14px;
+}
+.baddestHallEmpty{
+margin:0;
+padding:20px 12px;
+text-align:center;
+font-size:13px;
+font-weight:700;
+color:rgba(255,255,255,.5);
+}
 .socialPostGridCard{
 border-radius:12px;
 border:1px solid rgba(255,255,255,.1);
@@ -5705,6 +5825,8 @@ width:100%;
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderAboutLink"><span>About</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
+<a class="siteHeaderNavLink" href="#the-baddest" id="siteHeaderBaddestLink"><span>The Baddest</span></a>
+<span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
 </nav>
 <div class="siteHeaderSlogan" id="siteHeaderSlogan">
@@ -6096,6 +6218,19 @@ width:100%;
 </div>
 
 <div class="wrap">
+<section class="baddestHallSection" id="the-baddest" aria-labelledby="baddestHallHeadingText">
+<div class="baddestHallInner">
+<div class="baddestHallHeadingStack">
+<h2 class="baddestHallHeadingText" id="baddestHallHeadingText">THE BADDEST</h2>
+<img id="baddestHallHeadingImg" class="baddestHallHeadingImg" src="projects/Users-michaelcboyer-cursor/assets/the-baddest-heading.png" alt="" width="560" height="140" decoding="async"/>
+</div>
+<p class="baddestHallSub">Community sticker hall — ranked by likes. Drop yours in Social; the crowd decides who lands here.</p>
+<div class="baddestHallFeed socialFeed" id="baddestHallFeed" aria-label="Top voted sticker designs"></div>
+<div class="baddestHallFooter">
+<button type="button" class="btn ghost" id="baddestHallOpenSocialBtn">Open Social · vote &amp; post</button>
+</div>
+</div>
+</section>
 <div class="grid">
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror mainPreviewVideoIdle">
@@ -7923,12 +8058,93 @@ p._socialImgFallback = true;
 this.src = makeRandomStickerDataUrl(postId + "_imgfb");
 }, { once: true });
 }
+const BADDEST_HALL_MAX = 20;
+function getBaddestHallRankedPosts(){
+const pool = socialPosts.filter((p) => p && String(p.imageUrl || "").trim().length > 4);
+return pool.slice().sort((a, b) => {
+const la = Number.isFinite(a.likes) ? a.likes : 0;
+const lb = Number.isFinite(b.likes) ? b.likes : 0;
+if(lb !== la) return lb - la;
+return String(a.id || "").localeCompare(String(b.id || ""));
+}).slice(0, BADDEST_HALL_MAX);
+}
+function renderBaddestHall(){
+const hall = document.getElementById("baddestHallFeed");
+if(!hall) return;
+hall.innerHTML = "";
+const ranked = getBaddestHallRankedPosts();
+if(!ranked.length){
+hall.innerHTML = "<p class=\"baddestHallEmpty\">No sticker art in the feed yet. Open Social and post your bottle — likes push designs into The Baddest.</p>";
+return;
+}
+ranked.forEach((post, idx) => {
+const postEl = document.createElement("div");
+postEl.className = "socialPostGridCard baddestHallCard" + (post.featured ? " socialPostFeatured" : "");
+postEl.dataset.postId = post.id;
+const avatarSrc = post.avatar || "";
+const channelPill = post.channel ? "<span class=\"socialPostChannelPill\">" + escapeHtml(humanizeSocialChannel(post.channel)) + "</span>" : "";
+const thumbResolved = post.imageUrl ? resolveSocialFeedMediaUrl(post.imageUrl) : "";
+const rankClass = "baddestHallRankPill" + (idx < 3 ? " is-top" : "");
+const thumb = post.imageUrl
+? "<span class=\"" + rankClass + "\">#" + (idx + 1) + "</span><div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><img src=\"" + escapeAttrForHtml(thumbResolved) + "\" alt=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer\" data-social-post-img=\"1\" /><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>"
+: "<span class=\"" + rankClass + "\">#" + (idx + 1) + "</span><div class=\"socialPostThumb\" data-post-id=\"" + post.id + "\" role=\"button\" tabindex=\"0\" aria-label=\"Open post\"><div class=\"socialPostThumbPlaceholder\">Bb</div><button type=\"button\" class=\"socialPostThumbOpen\" data-post-id=\"" + post.id + "\">Open</button></div>";
+postEl.innerHTML =
+thumb +
+"<div class=\"socialPostGridMeta\">" +
+channelPill +
+"<div class=\"socialPostGridTop\">" +
+"<img class=\"socialPostAvatar\" src=\"" + avatarSrc + "\" alt=\"\" onerror=\"this.style.display='none'\" />" +
+"<span class=\"socialPostAuthor\">" + escapeHtml(post.author) + "</span>" +
+"<span class=\"socialPostTime\">" + escapeHtml(post.time) + "</span>" +
+"</div>" +
+"<p class=\"socialPostCaptionGrid\">" + escapeHtml(post.caption || "") + "</p>" +
+"</div>" +
+"<div class=\"socialPostGridFooter\">" +
+"<span class=\"socialPostStat\"><strong>" + formatSocialLikeCount(post.likes) + "</strong> likes</span>" +
+"<div class=\"socialPostGridFooterActions\">" +
+"<button type=\"button\" class=\"socialPostAction" + (post.liked ? " liked" : "") + "\" data-action=\"like\" data-post-id=\"" + post.id + "\">♥ Like</button>" +
+"<button type=\"button\" class=\"socialPostAction\" data-action=\"comment\" data-post-id=\"" + post.id + "\">💬 Comment</button>" +
+"</div>" +
+"</div>" +
+"<div class=\"socialPostThread\" data-post-id=\"" + post.id + "\"></div>";
+hall.appendChild(postEl);
+});
+hall.querySelectorAll(".socialPostThumb img[data-social-post-img]").forEach((im) => {
+const wrap = im.closest(".socialPostThumb");
+const pid = wrap && wrap.getAttribute("data-post-id");
+if(pid) bindSocialPostImageFallback(im, pid);
+});
+hall.querySelectorAll("[data-action=\"like\"]").forEach((btn) => {
+btn.addEventListener("click", (e) => {
+e.stopPropagation();
+const post = socialPosts.find((p) => p.id === btn.dataset.postId);
+if(!post) return;
+post.liked = !post.liked;
+post.likes += post.liked ? 1 : -1;
+renderSocialFeed();
+const lb = document.getElementById("socialPostLightbox");
+if(lb && lb.classList.contains("is-open") && lb.dataset.postId === post.id) openSocialPostLightbox(post.id);
+});
+});
+}
+function initBaddestHallHeadingImg(){
+const img = document.getElementById("baddestHallHeadingImg");
+if(!img || img.__baddestHeadingInit) return;
+img.__baddestHeadingInit = true;
+img.addEventListener("load", function(){
+if(this.naturalWidth > 16) this.classList.add("is-loaded");
+});
+img.addEventListener("error", function(){
+this.style.display = "none";
+});
+}
 function renderSocialFeed(){
 const feed = document.getElementById("socialFeed");
 if(!feed){
 updateSocialStats();
 renderHeaderStickerFeed();
 persistSocialPosts();
+renderBaddestHall();
 return;
 }
 feed.innerHTML = "";
@@ -8017,6 +8233,7 @@ if(lb && lb.classList.contains("is-open") && lb.dataset.postId === postId) openS
 });
 renderHeaderStickerFeed();
 persistSocialPosts();
+renderBaddestHall();
 }
 function resolveSocialUserIdFromPost(post){
 if(!post) return "";
@@ -8351,6 +8568,35 @@ if(id) openSocialPostLightbox(id);
 });
 }
 setupSocialFeedThumbDelegation();
+function setupBaddestHallThumbDelegation(){
+const hall = document.getElementById("baddestHallFeed");
+if(!hall || hall.__thumbDelegation) return;
+hall.__thumbDelegation = true;
+hall.addEventListener("click", (e) => {
+const t = e.target.closest(".socialPostThumb");
+if(!t) return;
+if(e.target.closest(".socialPostAction")) return;
+const id = t.getAttribute("data-post-id");
+if(id) openSocialPostLightbox(id);
+});
+hall.addEventListener("keydown", (e) => {
+if(e.key !== "Enter" && e.key !== " ") return;
+const t = e.target.closest(".socialPostThumb");
+if(!t) return;
+e.preventDefault();
+const id = t.getAttribute("data-post-id");
+if(id) openSocialPostLightbox(id);
+});
+}
+setupBaddestHallThumbDelegation();
+initBaddestHallHeadingImg();
+const baddestHallOpenSocialBtn = document.getElementById("baddestHallOpenSocialBtn");
+if(baddestHallOpenSocialBtn){
+baddestHallOpenSocialBtn.addEventListener("click", (e) => {
+e.preventDefault();
+if(typeof showSocialModal === "function") showSocialModal();
+});
+}
 initHeaderStickerFeedDelegation();
 renderSocialFeed();
 function escapeHtml(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
@@ -12647,6 +12893,46 @@ skiing: [
 "gold chains and jewelry, luxury sticker art, punchy yellows, high contrast, shareable",
 "blinged-out dollar sign, glitter effect, pop art sticker, bold graphic, punchy colors",
 "luxury watch and rings, shiny metallic sticker art, viral design, eye-catching"
+],
+CAT: [
+"Sphynx cat in holographic collar, mirrored studio floor reflection, cobalt rim light on ears, microscopic glass whisker highlights",
+"Maine coon arched silhouette mid-hiss, gothic rose window backlight, charcoal smoke wisps curling, brushed silver fur edge light",
+"Black cat on rain-slicked alley asphalt, neon kanji sign puddle reflections, chromatic aberration halos, ultra-low street camera angle",
+"Bengal leopard rosettes shattering into cubist shards, golden hour dust particle suspension, aggressive tight facial crop, thick impasto paint ridges",
+"Disembodied Cheshire grin floating in violet void, vintage four-color comic ink bleed, exaggerated negative space swallowing edges, surreal paper texture",
+"Calico asleep on analog synthesizer keys, warm tungsten practical spill, cable jungle foreground bokeh, subtle analog scanline grain",
+"Russian blue in matte bubble helmet visor, curved earthrise glow through glass, cold brushed aluminum suit rivets, specular cyan catchlights",
+"Stray tabby swatting at pigeon flock explosion, rooftop sunset silhouette rim, motion-blurred wing feathers, dramatic orange sodium vapor haze"
+],
+DOG: [
+"Greyhound full sprint lateral blur, mud rooster tail off hind claws, stadium arc lights cutting rain, extreme wide dynamic composition",
+"Husky ice-blue iris macro, blizzard crystals caught in lashes, packed snow on wet nose leather, subsurface pink translucency glow",
+"Pit bull in patched therapy vest, oak dappled park bench slats, razor-thin depth of field falloff, late afternoon compassionate portrait warmth",
+"Dachshund comically stuffed inside yellow submarine hatch, chartreuse bulkhead rivet rows, brass gauge glass reflections, nautical claustrophobic comedy framing",
+"Golden retriever balancing on longboard nose, hollow turquoise Pacific barrel curl, airborne salt crystal highlights, heat shimmer above deck grip",
+"Boston terrier wearing oversized DJ cans tilted, floor-to-ceiling vinyl wall bokeh, split magenta and cyan gel cross-light, dust motes in diagonal sunbeam",
+"Wolfish malamute howling under ribbon aurora, boreal treeline tooth silhouette, ionospheric green plasma folds, frozen breath vapor plume",
+"St Bernard with miniature oak rescue keg, alpine whiteout fog swallowing legs, rotating beacon red strobes through flakes, heroic snow-level wide angle"
+],
+DANCE: [
+"Contemporary dancer horizontal floor drag freeze, sweat sheen mapping muscle topography, brutal side light carving ribs, chalk dust halo from palm slap",
+"Waacking voguing arms in sharp geometric fan, disco ball exploding thousand-point starfield, chrome jumpsuit sequin scatter, high shutter crystal clarity",
+"Kathakali performer in stacked brass jewelry layers, hyper-extended mudra fingers, temple stone pillar receding perspective, jewel-tone face paint under hard spot",
+"Flamenco dancer stomp rose petal shockwave, ruffled bata de cola fabric tornado spiral, motion-blurred crimson train, candlelit bodega warm bounce fill",
+"Krump battle chest pop mid-session, sodium vapor green underground garage spill, sweat-darkened white ribbed tank, ultra-wide aggressive low stance distortion",
+"Irish step dancer vertical jump rigid freeze, Celtic knot gobo projected across parquet, emerald spotlight cone through haze, iron-stiff torque line silhouette",
+"Butoh performer in white rice powder crackle skin, extreme slow spinal hinge backward, void black swallowing limbs, single surgical overhead pool isolation",
+"Salsa dip partner deep back-bend trust lean, centrifuge spin sequin dress explosion, warm dance hall mirror ball shards, intimate two-body spiral composition"
+],
+"MMA/FIGHTING": [
+"Cage fighter mouthguard grimace with blood-fleck spray, chain-link shadow lattice across cheekbones, harsh sodium fight-night top wash, corner steam towel blur",
+"Muay Thai high shin block impact spark, hemp rope corner post converging lines, chalk dust on shin wraps, golden hour arena particulate haze",
+"Wrestler double-leg takedown mid-collision float, mat-burn abrasion on cheek, overhead truss grid reflecting in sweat pool on canvas, frozen peak action",
+"Boxing glove meeting jaw ripple deformation, crown of suspended sweat droplets in flash freeze, single hard ring flash specular, selective monochrome with crimson glove pop only",
+"Strawweight champion hair-whip victory moment, leather championship strap weave macro texture, confetti cannon bokeh storm, flashbulb pupil star reflections",
+"Bare-knuckle brawler underground brick vault arch, swinging bare bulb motion shadow, volumetric smoke machine cones, desaturated grime documentary palette",
+"Kickboxer spinning heel hook afterimage trail arc, blurred neon event banner typography layers, duplicated motion ghost composite, electric cyan and magenta rim separation",
+"Cutman nitrile gloves pressing iodine cotton on swollen orbital, brown glass antiseptic bottle foreground, corner stool chrome legs, clinical intimate documentary lighting"
 ]
 };
 
