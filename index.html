@@ -12611,10 +12611,6 @@ return dedupePrompt(`${prompt}, ${AI_FRAMING_SUFFIX}, clean background, no borde
 function delay(ms){
 return new Promise(resolve => setTimeout(resolve, ms));
 }
-function isTransientSubNpBusyError(message){
-const s = String(message || '').toLowerCase();
-return /\bbusy\b|rate\s*limit|overload|capacity|queued|queue|504|503|429|timed out|timeout|try again|temporary|service unavailable|\b429\b|\b503\b|\b504\b/i.test(s);
-}
 async function tryDirectSubNPGenerate(prompt, model = 'turbo', width = 576, height = 576){
 if(/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/i.test(window.location.origin)){
 throw new Error('Skipping direct SubNP request on localhost due to CORS');
@@ -13965,18 +13961,6 @@ height: 576
 
 console.log("Request body:", JSON.stringify(requestBody, null, 2));
 
-const SUBNP_WORKER_RETRIES = 3;
-for(let wi = 0; wi < SUBNP_WORKER_RETRIES; wi++){
-try{
-if(wi > 0){
-console.warn("SubNP worker retry", wi + 1, "/", SUBNP_WORKER_RETRIES);
-if(statusMessage){
-statusMessage.textContent = "Waiting for AI capacity, retry " + wi + "/" + (SUBNP_WORKER_RETRIES - 1) + "…";
-statusMessage.style.display = "block";
-}
-await delay(1500 + wi * 900);
-}
-
 const controller = new AbortController();
 const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -14023,18 +14007,6 @@ statusMessage.textContent = "Generating image...";
 statusMessage.style.display = "block";
 }
 imageUrl = await pollWorkerForImage(data.requestId, progressFill, statusMessage);
-}
-if(!imageUrl || String(imageUrl).trim() === ""){
-throw new Error('No image URL received from AI generation.');
-}
-break;
-}catch(workerAttemptErr){
-const msg = (workerAttemptErr && workerAttemptErr.message) ? String(workerAttemptErr.message) : '';
-if(wi >= SUBNP_WORKER_RETRIES - 1 || !isTransientSubNpBusyError(msg)){
-throw workerAttemptErr;
-}
-console.warn("SubNP/worker transient error, backing off:", msg);
-}
 }
 }
 
