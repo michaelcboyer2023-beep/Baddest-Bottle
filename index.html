@@ -13,8 +13,7 @@
   • Avoid raw.githack/.../main — it often upgrades to CDN /main, which is cached ~1 year.
 -->
 <title>Custom Sticker Designer</title>
-<link rel="preconnect" href="https://t2i.mcpcore.xyz" crossorigin/>
-<link rel="dns-prefetch" href="https://subnp.com"/>
+<link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
 <link rel="preconnect" href="https://image.pollinations.ai" crossorigin/>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
@@ -6833,7 +6832,6 @@ const previewEmptyStateVideo = document.getElementById("previewEmptyStateVideo")
 const previewLoadingVideo = document.getElementById("previewLoadingVideo");
 const PREVIEW_VIDEO_FALLBACK_SRC = "projects/Users-michaelcboyer-cursor/assets/grok-video-0435a3d2-4696-42af-9b2c-18116987c1db-ezgif.com-video-to-gif-converter-81664189-aed3-410e-b75a-f40b90cc3bd8.png";
 const AI_WORKER_URL = "https://aigenerate.michaelcboyer2023.workers.dev";
-const T2I_API_BASE = "https://t2i.mcpcore.xyz";
 const siteHeaderHomeLink = document.getElementById("siteHeaderHomeLink");
 const siteHeaderBaddestLink = document.getElementById("siteHeaderBaddestLink");
 const siteHeaderSocialLink = document.getElementById("siteHeaderSocialLink");
@@ -12627,7 +12625,7 @@ throw new Error('Direct SubNP blocked on this host (CORS); using worker');
 const controller = new AbortController();
 const timeoutId = setTimeout(() => controller.abort(), 24000);
 try {
-const response = await fetch(T2I_API_BASE + "/api/free/generate", {
+const response = await fetch('https://subnp.com/api/free/generate', {
 method: 'POST',
 headers: {
 'Content-Type': 'application/json'
@@ -13292,7 +13290,7 @@ const workerMain = buildWorkerImageUrl(imageUrl, true);
 const useProxyFirst = /githack\.com/i.test(window.location.hostname || "");
 if(useProxyFirst) pushCandidate(workerMain);
 pushCandidate(imageUrl);
-const subnpMatch = imageUrl && imageUrl.match(/^https?:\/\/(?:subnp\.com|t2i\.mcpcore\.xyz)\/api\/image\/([a-f0-9-]+)/i);
+const subnpMatch = imageUrl && imageUrl.match(/^https?:\/\/subnp\.com\/api\/image\/([a-f0-9-]+)/i);
 if(subnpMatch){
 const imageId = subnpMatch[1];
 const directHttpCdnUrl = `http://free-cdn.mitraai.xyz/${imageId}.jpg`;
@@ -13920,7 +13918,7 @@ loadingBar.style.opacity = "1";
 
 try {
 // Use SubNP directly - Simple JSON API (no API key, works from browser)
-const subnpUrl = T2I_API_BASE + "/api/free/generate";
+const subnpUrl = 'https://subnp.com/api/free/generate';
 
 // Prompt is already enhanced with quality system, just use it directly
 const enhancedPrompt = prompt;
