@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "baddest-bottle",
   "buildCommand": null,
   "outputDirectory": ".",
   "rewrites": [
