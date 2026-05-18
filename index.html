@@ -13155,7 +13155,7 @@ return parseSubnpSseText(text);
 clearTimeout(timeoutId);
 }
 }
-async function trySiteAiGenerateApi(prompt, width = 576, height = 576){
+async function trySiteAiGenerateApi(prompt, width = 576, height = 576, statusEl){
 const controller = new AbortController();
 const timeoutId = setTimeout(() => controller.abort(), 120000);
 try {
@@ -13168,9 +13168,9 @@ signal: controller.signal
 });
 const data = await response.json().catch(() => ({}));
 if(response.ok && data.imageUrl){
-if(data.fallback && statusMessage){
-statusMessage.textContent = "SubNP busy — used backup generator.";
-statusMessage.style.display = "block";
+if(data.fallback && statusEl){
+statusEl.textContent = "SubNP busy — used backup generator.";
+statusEl.style.display = "block";
 }
 return data.imageUrl;
 }
@@ -13192,7 +13192,7 @@ const canUseSiteApi = !/^(localhost|127\.0\.0\.1)$/i.test(host) && !/githack\.co
 if(canUseSiteApi){
 try {
 onStatus("Generating via SubNP…");
-return await trySiteAiGenerateApi(prompt, width, height);
+return await trySiteAiGenerateApi(prompt, width, height, statusMessage);
 } catch(e){
 errors.push("site API: " + (e.message || e));
 console.warn("Site AI API failed", e);
@@ -13777,8 +13777,23 @@ ensureCategoryButtonsVisible(false);
 }
 });
 window.addEventListener("pageshow", () => {
-ensureCategoryButtonsVisible(false);
+ensureCategoryButtonsVisible(true);
 });
+
+function bootAiCategoryButtons(){
+try {
+const n = ensureCategoryButtonsVisible(true);
+if(n === 0) startCategoryButtonWatchdog();
+} catch(e) {
+console.warn("bootAiCategoryButtons:", e);
+startCategoryButtonWatchdog();
+}
+}
+if(document.readyState === "loading"){
+document.addEventListener("DOMContentLoaded", bootAiCategoryButtons, { once: true });
+} else {
+bootAiCategoryButtons();
+}
 
 // Random clock-friendly design prompts (legacy - kept for random button)
 const RANDOM_CLOCK_PROMPTS = [
@@ -15825,7 +15840,7 @@ dockAddToCartT3.addEventListener("click", startCheckout);
 let hasInitialized = false;
 function init(){
 if(hasInitialized) return;
-hasInitialized = true;
+ensureCategoryButtonsVisible(true);
 if(previewTop) setCanvasSize(previewTop);
 if(previewBottom) setCanvasSize(previewBottom);
 if(previewMobileBottom){
@@ -16176,6 +16191,8 @@ if(window.innerWidth < 980){
 updateScrollFades = setupScrollFadeEffects();
 }
 });
+ensureCategoryButtonsVisible(true);
+hasInitialized = true;
 }
 
 // Setup scroll-based fade effects for cards as they scroll behind preview
