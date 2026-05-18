@@ -13,9 +13,7 @@
 <link rel="preconnect" href="https://image.pollinations.ai" crossorigin/>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
-<!-- AI Image Generation: SubNP API via Cloudflare Worker proxy -->
-<!-- Setup required: Deploy cloudflare-worker-proxy.js to Cloudflare Workers (free tier) -->
-<!-- See CLOUDFLARE_WORKER_SETUP.md for one-time free setup instructions -->
+<!-- AI: SubNP free API (SSE) via /api/ai-generate on Vercel, with Pollinations fallback -->
 <style>
 :root{
 --bg:#09070a;
@@ -7325,7 +7323,10 @@ const previewPhotoImg = document.getElementById("previewPhotoImg");
 const previewEmptyStateVideo = document.getElementById("previewEmptyStateVideo");
 const previewLoadingVideo = document.getElementById("previewLoadingVideo");
 const PREVIEW_VIDEO_FALLBACK_SRC = "projects/Users-michaelcboyer-cursor/assets/grok-video-0435a3d2-4696-42af-9b2c-18116987c1db-ezgif.com-video-to-gif-converter-81664189-aed3-410e-b75a-f40b90cc3bd8.png";
+const AI_GENERATE_API = "/api/ai-generate";
 const AI_WORKER_URL = "https://aigenerate.michaelcboyer2023.workers.dev";
+const SUBNP_GENERATE_URL = "https://subnp.com/api/free/generate";
+const SUBNP_MODELS_TRY = ["turbo", "flux", "magic"];
 const siteHeaderHomeLink = document.getElementById("siteHeaderHomeLink");
 const siteHeaderBaddestLink = document.getElementById("siteHeaderBaddestLink");
 const siteHeaderSocialLink = document.getElementById("siteHeaderSocialLink");
@@ -13108,50 +13109,107 @@ return dedupePrompt(`${prompt}, ${AI_FRAMING_SUFFIX}, clean background, no borde
 function delay(ms){
 return new Promise(resolve => setTimeout(resolve, ms));
 }
-async function tryDirectSubNPGenerate(prompt, model = 'turbo', width = 576, height = 576){
-if(/^(http:\/\/localhost|http:\/\/127\.0\.0\.1)/i.test(window.location.origin)){
-throw new Error('Skipping direct SubNP request on localhost due to CORS');
-}
-if(/githack\.com|githubusercontent\.com/i.test(window.location.hostname || "")){
-throw new Error('Direct SubNP blocked on this host (CORS); using worker');
-}
-const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 24000);
+function parseSubnpSseText(text){
+let imageUrl = "";
+let lastError = "";
+for(const line of String(text || "").split(/\r?\n/)){
+const trimmed = line.trim();
+if(!trimmed.startsWith("data:")) continue;
+const payload = trimmed.replace(/^data:\s*/, "");
+if(!payload || payload === "[DONE]") continue;
 try {
-const response = await fetch('https://subnp.com/api/free/generate', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json'
-},
-cache: 'no-store',
+const data = JSON.parse(payload);
+if(data.status === "complete"){
+imageUrl = data.imageUrl || data.image || data.url || (data.images && data.images[0]) || imageUrl;
+}
+if(data.status === "error"){
+lastError = data.message || data.error || data.details || "SubNP generation failed";
+}
+} catch(_) {}
+}
+if(imageUrl) return imageUrl;
+throw new Error(lastError || "SubNP returned no image URL");
+}
+function buildPollinationsImageUrl(prompt, width = 576, height = 576){
+const seed = Math.abs(socialPromptHash(String(prompt) + "|" + Date.now())) % 2147483647;
+const p = encodeURIComponent(String(prompt).slice(0, 950));
+return `https://image.pollinations.ai/prompt/${p}?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`;
+}
+async function tryDirectSubNPGenerate(prompt, model = "turbo", width = 576, height = 576){
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 90000);
+try {
+const response = await fetch(SUBNP_GENERATE_URL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+cache: "no-store",
 body: JSON.stringify({ prompt, model, width, height }),
 signal: controller.signal
 });
-if(!response.ok){
-throw new Error(`Direct SubNP HTTP ${response.status}`);
-}
-const contentType = response.headers.get('content-type') || '';
-let imageUrl = '';
-if(contentType.includes('application/json')){
-const data = await response.json();
-imageUrl = data?.image || data?.images?.[0] || data?.imageUrl || data?.url || '';
-} else {
 const text = await response.text();
-text.split('\n').forEach(line => {
-if(imageUrl || !line.startsWith('data: ')) return;
-try {
-const data = JSON.parse(line.slice(6));
-imageUrl = data?.image || data?.images?.[0] || data?.imageUrl || data?.url || imageUrl;
-} catch(_) {}
-});
+if(!response.ok){
+throw new Error(`SubNP HTTP ${response.status}: ${text.slice(0, 120)}`);
 }
-if(!imageUrl){
-throw new Error('Direct SubNP returned no image URL');
-}
-return imageUrl;
+return parseSubnpSseText(text);
 } finally {
 clearTimeout(timeoutId);
 }
+}
+async function trySiteAiGenerateApi(prompt, width = 576, height = 576){
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 120000);
+try {
+const response = await fetch(AI_GENERATE_API, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+cache: "no-store",
+body: JSON.stringify({ prompt, width, height }),
+signal: controller.signal
+});
+const data = await response.json().catch(() => ({}));
+if(response.ok && data.imageUrl){
+if(data.fallback && statusMessage){
+statusMessage.textContent = "SubNP busy — used backup generator.";
+statusMessage.style.display = "block";
+}
+return data.imageUrl;
+}
+throw new Error(data.details || data.error || `API ${response.status}`);
+} finally {
+clearTimeout(timeoutId);
+}
+}
+async function generateAiImageUrl(prompt, width = 576, height = 576, statusMessage){
+const errors = [];
+const onStatus = (msg) => {
+if(statusMessage){
+statusMessage.textContent = msg;
+statusMessage.style.display = "block";
+}
+};
+const host = window.location.hostname || "";
+const canUseSiteApi = !/^(localhost|127\.0\.0\.1)$/i.test(host) && !/githack\.com$/i.test(host);
+if(canUseSiteApi){
+try {
+onStatus("Generating via SubNP…");
+return await trySiteAiGenerateApi(prompt, width, height);
+} catch(e){
+errors.push("site API: " + (e.message || e));
+console.warn("Site AI API failed", e);
+}
+}
+for(const model of SUBNP_MODELS_TRY){
+try {
+onStatus(`SubNP (${model})…`);
+return await tryDirectSubNPGenerate(prompt, model, width, height);
+} catch(e){
+errors.push(`${model}: ${(e.message || e)}`);
+console.warn("SubNP model failed", model, e);
+}
+}
+onStatus("Using backup image generator…");
+return buildPollinationsImageUrl(prompt, width, height);
+throw new Error(errors.length ? errors.join(" · ") : "AI generation failed");
 }
 async function pollWorkerForImage(requestId, progressFill, statusMessage){
 const maxAttempts = 68;
@@ -14410,108 +14468,27 @@ loadingBar.style.opacity = "1";
 // Using button loading bar animation
 
 try {
-// Use SubNP directly - Simple JSON API (no API key, works from browser)
-const subnpUrl = 'https://subnp.com/api/free/generate';
-
-// Prompt is already enhanced with quality system, just use it directly
 const enhancedPrompt = prompt;
-
-// Show loading overlay on preview canvas
 showPreviewLoading();
-
-// Update button loading bar to 30%
 activeLoadingButton = document.querySelector('#aiCategoryButtons .btn.loading');
 if(activeLoadingButton) {
 const loadingBar = activeLoadingButton.querySelector('.loadingBar');
 if(loadingBar) {
 loadingBar.style.height = "30%";
-// Force a reflow to ensure animation starts
 void loadingBar.offsetHeight;
 }
 }
-
 if(progressFill) progressFill.style.width = "30%";
-
-console.log("Submitting to SubNP:", subnpUrl);
-console.log("Enhanced prompt:", enhancedPrompt);
+console.log("AI generate prompt:", enhancedPrompt.slice(0, 120) + "…");
 const aiGenTimer = "ai-generate-" + Date.now();
 console.time(aiGenTimer);
-
-let imageUrl = "";
-try {
-imageUrl = await tryDirectSubNPGenerate(enhancedPrompt, 'turbo', 576, 576);
+let imageUrl = await generateAiImageUrl(enhancedPrompt, 576, 576, statusMessage);
 try { console.timeEnd(aiGenTimer); } catch(_) {}
-console.log('Direct SubNP image URL received:', imageUrl);
+console.log("AI image URL:", imageUrl);
 if(progressFill) progressFill.style.width = "80%";
-} catch (directGenerateError) {
-try { console.timeEnd(aiGenTimer); } catch(_) {}
-console.warn('Direct SubNP generate failed, falling back to worker:', directGenerateError);
-const proxyUrl = AI_WORKER_URL;
-
-const requestBody = {
-prompt: enhancedPrompt,
-provider: 'subnp',
-model: 'turbo',
-width: 576,
-height: 576
-};
-
-console.log("Request body:", JSON.stringify(requestBody, null, 2));
-
-const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-const response = await fetch(proxyUrl, {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-},
-cache: 'no-store',
-body: JSON.stringify(requestBody),
-signal: controller.signal
-}).catch(fetchError => {
-clearTimeout(timeoutId);
-console.error("Fetch error:", fetchError);
-if(fetchError.name === 'AbortError') {
-throw new Error("Request timed out. Please try again.");
-}
-throw new Error("Network error: " + fetchError.message);
-});
-
-clearTimeout(timeoutId);
-
-console.log("Worker response status:", response.status);
-
-if(!response.ok) {
-const errorText = await response.text();
-console.error('Worker error:', response.status, errorText);
-throw new Error(`Worker error: ${response.status} - ${errorText}`);
-}
-
-const data = await response.json();
-console.log('Worker response:', data);
-
-if(data.error) {
-console.error('Worker returned error:', data.error);
-throw new Error(data.error + (data.details ? ': ' + data.details : ''));
-}
-
-imageUrl = data?.image || data?.images?.[0] || data?.imageUrl || data?.url;
-if(!imageUrl && data?.requestId) {
-console.log('Worker returned async requestId, polling for final image:', data.requestId);
-if(statusMessage) {
-statusMessage.textContent = "Generating image...";
-statusMessage.style.display = "block";
-}
-imageUrl = await pollWorkerForImage(data.requestId, progressFill, statusMessage);
-}
-}
-
 if(!imageUrl) {
-throw new Error('No image URL received from AI generation.');
+throw new Error("No image URL received from AI generation.");
 }
-
-console.log('Got image URL:', imageUrl);
 
 // Update button loading bar to 80%
 activeLoadingButton = document.querySelector('#aiCategoryButtons .btn.loading');
@@ -14601,8 +14578,8 @@ let errorMsg = (error && error.message) ? error.message : "Unknown error occurre
 let helpText = "Please try again or check your prompt.";
 if(error && error.rateLimitReached) helpText = "Rate limit reached. Try again in a moment.";
 else if(/timed out|timeout/i.test(errorMsg)) helpText = "Request timed out. Try a shorter prompt.";
-else if(/SubNP|subnp/i.test(errorMsg)) helpText = "AI service busy. Try again in a moment.";
-else if(/Cloudflare Worker|proxy/i.test(errorMsg)) helpText = "Proxy/worker may need setup. See CLOUDFLARE_WORKER_SETUP.md.";
+else if(/SubNP|subnp|All SubNP/i.test(errorMsg)) helpText = "SubNP free API may be busy — backup generator will retry automatically, or try a shorter prompt.";
+else if(/pollinations/i.test(errorMsg)) helpText = "Backup image service failed. Check connection and try again.";
 else if(/Request failed|HTTP|Failed to fetch|Network/i.test(errorMsg)) helpText = "Network or service error. Check connection and try again.";
 else if(/No image URL/i.test(errorMsg)) helpText = "No image returned. Try a different prompt.";
 statusMessage.innerHTML = "<span style=\"color:var(--red2);\">" + (errorMsg.replace(/</g, "&lt;")) + "</span> — " + helpText;
