@@ -5,14 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="app-version" content="live-2026-03-25-githack-cache-note"/>
 <!--
-  Live URLs (read README in Baddest-Bottle repo):
-  • Best: GitHub Pages — https://michaelcboyer2023-beep.github.io/Baddest-Bottle/ (enable Pages once in repo Settings).
-  • raw.githack /rawcdn: must use FULL 40-char git SHA in the path, not "main", or you may see an old cached build.
-    Example: https://raw.githack.com/michaelcboyer2023-beep/Baddest-Bottle/b01c428bf88d657193dcdb013621b2e172341575/index.html
-    First visit: click "Open the page" on the security interstitial.
-  • Avoid raw.githack/.../main — it often upgrades to CDN /main, which is cached ~1 year.
+  Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
-<title>Custom Sticker Designer</title>
+<title>BADDEST BOTTLE — Custom Reusable Bottles</title>
 <link rel="preconnect" href="https://subnp.com" crossorigin/>
 <link rel="preconnect" href="https://aigenerate.michaelcboyer2023.workers.dev" crossorigin/>
 <link rel="preconnect" href="https://image.pollinations.ai" crossorigin/>
@@ -200,6 +195,298 @@ display:none !important;
 }
 .siteAppPage--baddest{
 padding-bottom:24px;
+}
+/* ===== Strategy landing (hero → builder funnel) ===== */
+.bbLanding{
+max-width:1560px;
+margin:0 auto;
+padding:8px 12px 4px;
+position:relative;
+z-index:1;
+}
+.bbHero{
+display:grid;
+grid-template-columns:1.05fr .95fr;
+gap:20px;
+align-items:center;
+padding:18px 16px 20px;
+border-radius:18px;
+border:1px solid rgba(255,140,84,.32);
+background:linear-gradient(155deg, rgba(255,102,0,.14), rgba(12,6,10,.82));
+box-shadow:0 16px 48px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.06);
+overflow:hidden;
+position:relative;
+}
+.bbHero::before{
+content:"";
+position:absolute;
+inset:-30% auto auto -20%;
+width:70%;
+height:80%;
+background:radial-gradient(ellipse at 30% 20%, rgba(255,102,0,.28), transparent 62%);
+pointer-events:none;
+}
+.bbHeroCopy,.bbHeroVisual{position:relative;z-index:1;}
+.bbHeroEyebrow{
+font-size:11px;
+font-weight:900;
+letter-spacing:.22em;
+text-transform:uppercase;
+color:var(--red2);
+margin:0 0 8px;
+}
+.bbHeroTitle{
+margin:0 0 10px;
+font-size:clamp(28px, 4.8vw, 48px);
+font-weight:950;
+line-height:1.02;
+letter-spacing:.02em;
+text-transform:uppercase;
+}
+.bbHeroLead{
+margin:0 0 14px;
+max-width:52ch;
+font-size:14px;
+line-height:1.55;
+color:rgba(255,255,255,.78);
+}
+.bbHeroActions{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:center;
+margin-bottom:12px;
+}
+.bbHeroPills{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+.bbHeroPill{
+padding:5px 10px;
+border-radius:999px;
+border:1px solid rgba(255,140,84,.35);
+background:rgba(0,0,0,.28);
+font-size:10px;
+font-weight:800;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:rgba(255,255,255,.72);
+}
+.bbHeroVisual{
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:220px;
+}
+.bbHeroBottleCard{
+width:min(100%, 380px);
+padding:14px;
+border-radius:16px;
+border:1px solid rgba(255,140,84,.28);
+background:rgba(0,0,0,.35);
+text-align:center;
+}
+.bbHeroBottleCard img{
+width:min(100%, 220px);
+height:auto;
+display:block;
+margin:0 auto 8px;
+filter:drop-shadow(0 12px 28px rgba(255,102,0,.35));
+}
+.bbHeroBottleTag{
+font-size:11px;
+font-weight:800;
+letter-spacing:.12em;
+text-transform:uppercase;
+color:var(--red3);
+}
+.bbSection{
+margin:14px 0 0;
+padding:16px 14px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(0,0,0,.28);
+}
+.bbSectionHead{
+display:flex;
+flex-wrap:wrap;
+align-items:flex-end;
+justify-content:space-between;
+gap:10px;
+margin-bottom:12px;
+}
+.bbSectionTitle{
+margin:0;
+font-size:clamp(18px, 2.6vw, 26px);
+font-weight:950;
+letter-spacing:.06em;
+text-transform:uppercase;
+}
+.bbSectionSub{
+margin:4px 0 0;
+font-size:12px;
+font-weight:700;
+color:rgba(255,255,255,.58);
+max-width:60ch;
+}
+.bbBenefitGrid{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:10px;
+}
+.bbBenefitCard{
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(255,140,84,.22);
+background:linear-gradient(165deg, rgba(255,102,0,.08), rgba(0,0,0,.35));
+}
+.bbBenefitCard h3{
+margin:0 0 6px;
+font-size:13px;
+font-weight:900;
+letter-spacing:.06em;
+text-transform:uppercase;
+color:var(--red2);
+}
+.bbBenefitCard p{
+margin:0;
+font-size:12px;
+line-height:1.45;
+color:rgba(255,255,255,.7);
+}
+.bbSustainStrip{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+padding:14px;
+border-radius:14px;
+border:1px dashed rgba(16,185,129,.45);
+background:linear-gradient(90deg, rgba(16,185,129,.12), rgba(255,102,0,.08));
+}
+.bbSustainStrip strong{
+display:block;
+font-size:13px;
+font-weight:900;
+letter-spacing:.1em;
+text-transform:uppercase;
+color:#6ee7b7;
+margin-bottom:4px;
+}
+.bbSustainStrip p{
+margin:0;
+font-size:12px;
+line-height:1.45;
+color:rgba(255,255,255,.72);
+max-width:58ch;
+}
+.bbApparelGrid{
+display:grid;
+grid-template-columns:repeat(3, minmax(0, 1fr));
+gap:10px;
+}
+.bbApparelCard{
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.1);
+background:rgba(255,255,255,.03);
+text-align:center;
+}
+.bbApparelCard .bbSoon{
+display:inline-block;
+margin-bottom:6px;
+padding:3px 8px;
+border-radius:999px;
+font-size:9px;
+font-weight:900;
+letter-spacing:.1em;
+text-transform:uppercase;
+background:rgba(255,102,0,.2);
+color:var(--red2);
+}
+.bbApparelCard h3{
+margin:0 0 4px;
+font-size:12px;
+font-weight:900;
+text-transform:uppercase;
+}
+.bbApparelCard p{
+margin:0;
+font-size:11px;
+color:rgba(255,255,255,.58);
+}
+.bbCommunityCta{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:center;
+justify-content:center;
+margin-top:10px;
+}
+.bbBuilderAnchor{
+scroll-margin-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 72px) + 12px);
+}
+.orderTrackTimeline{
+display:flex;
+flex-direction:column;
+gap:0;
+margin:12px 0 0;
+padding:0;
+list-style:none;
+}
+.orderTrackStep{
+display:flex;
+gap:10px;
+align-items:flex-start;
+padding:8px 0;
+position:relative;
+}
+.orderTrackStep::before{
+content:"";
+position:absolute;
+left:11px;
+top:26px;
+bottom:-8px;
+width:2px;
+background:rgba(255,255,255,.12);
+}
+.orderTrackStep:last-child::before{display:none;}
+.orderTrackDot{
+width:24px;
+height:24px;
+flex-shrink:0;
+border-radius:50%;
+border:2px solid rgba(255,255,255,.2);
+background:rgba(0,0,0,.4);
+display:grid;
+place-items:center;
+font-size:10px;
+font-weight:900;
+color:rgba(255,255,255,.5);
+}
+.orderTrackStep.is-done .orderTrackDot,
+.orderTrackStep.is-current .orderTrackDot{
+border-color:rgba(255,140,84,.65);
+color:#fff;
+background:rgba(255,102,0,.25);
+box-shadow:0 0 12px rgba(255,102,0,.25);
+}
+.orderTrackStep.is-current .orderTrackDot{
+animation:redGlow 2.4s ease-in-out infinite;
+}
+.orderTrackLabel{
+font-size:12px;
+font-weight:800;
+color:rgba(255,255,255,.88);
+}
+.orderTrackStep:not(.is-done):not(.is-current) .orderTrackLabel{
+color:rgba(255,255,255,.45);
+}
+@media (max-width: 900px){
+.bbHero{grid-template-columns:1fr;}
+.bbBenefitGrid,.bbApparelGrid{grid-template-columns:1fr;}
 }
 .baddestHallPageWrap{
 max-width:1560px;
@@ -5847,11 +6134,15 @@ width:100%;
 <nav class="siteHeaderNav siteHeaderNav--rail" aria-label="Website">
 <a class="siteHeaderNavLink" href="#" id="siteHeaderHomeLink"><span>Home</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
+<a class="siteHeaderNavLink" href="#builder" id="siteHeaderBuildLink"><span>Build</span></a>
+<span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderAboutLink"><span>About</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#baddest" id="siteHeaderBaddestLink"><span>The Baddest</span></a>
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderSocialLink"><span>Social</span></a>
+<span class="siteHeaderNavSep" aria-hidden="true"></span>
+<a class="siteHeaderNavLink" href="#" id="siteHeaderTrackLink"><span>Track</span></a>
 </nav>
 <div class="siteHeaderSlogan" id="siteHeaderSlogan">
 <div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
@@ -5969,6 +6260,32 @@ width:100%;
 <input class="loginEmailField" id="loginPasswordField" type="password" placeholder="Password" autocomplete="current-password" style="margin-top:8px" />
 <button class="btn primary glow loginEmailSubmit" id="loginEmailSubmit" type="button">Continue with Email</button>
 <p class="loginModalFootnote">New? Enter email and a password to create an account. By signing in you agree to use the app responsibly.</p>
+</div>
+</div>
+
+<div class="loginModal" id="orderTrackModal" aria-hidden="true">
+<div class="loginModalCard" role="dialog" aria-modal="true" aria-labelledby="orderTrackTitle">
+<button class="loginModalClose" id="orderTrackClose" type="button" aria-label="Close order tracking">×</button>
+<div class="loginModalEyebrow">Order status</div>
+<h3 class="loginModalTitle" id="orderTrackTitle">Track your bottle</h3>
+<p class="loginModalText">Enter the order ID from your confirmation email. Signed-in users can also see recent orders.</p>
+<div class="profileModalField">
+<label for="orderTrackId">Order ID</label>
+<input type="text" id="orderTrackId" placeholder="BB-…" autocomplete="off" />
+</div>
+<div class="profileModalField">
+<label for="orderTrackEmail">Email (optional)</label>
+<input type="email" id="orderTrackEmail" placeholder="you@email.com" autocomplete="email" />
+</div>
+<p class="loginAuthError" id="orderTrackError" role="alert" style="display:none;"></p>
+<div class="profileModalActions">
+<button class="btn ghost" type="button" id="orderTrackCancel">Cancel</button>
+<button class="btn primary glow" type="button" id="orderTrackSubmit">Look up</button>
+</div>
+<div id="orderTrackResult" hidden>
+<p class="loginModalText" id="orderTrackSummary" style="margin-top:12px;"></p>
+<ol class="orderTrackTimeline" id="orderTrackTimeline"></ol>
+</div>
 </div>
 </div>
 
@@ -6195,6 +6512,87 @@ width:100%;
 </div>
 
 <div id="pageHome" class="siteAppPage">
+<div class="bbLanding" id="bb-landing">
+<section class="bbHero" id="bb-hero" aria-labelledby="bbHeroTitle">
+<div class="bbHeroCopy">
+<p class="bbHeroEyebrow">Grip it · Sip it · Reuse it</p>
+<h1 class="bbHeroTitle" id="bbHeroTitle">Grab life by the bottles</h1>
+<p class="bbHeroLead">The BADDEST BOTTLE ships empty for reuse—patented finger holes, AI custom labels, and a community that posts the wildest drops. Build your wrap, approve the preview, checkout, we print and ship.</p>
+<div class="bbHeroActions">
+<button type="button" class="btn primary glow" id="bbHeroBuildBtn">Build your bottle</button>
+<button type="button" class="btn ghost" id="bbHeroGalleryBtn">Community gallery</button>
+</div>
+<div class="bbHeroPills">
+<span class="bbHeroPill">Full &amp; half wrap labels</span>
+<span class="bbHeroPill">AI + your uploads</span>
+<span class="bbHeroPill">End single-use plastic</span>
+</div>
+</div>
+<div class="bbHeroVisual">
+<div class="bbHeroBottleCard">
+<img src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE" width="220" height="80" decoding="async"/>
+<p class="bbHeroBottleTag">Chaos is optional. Grip is guaranteed.</p>
+</div>
+</div>
+</section>
+<section class="bbSection" id="bb-benefits" aria-labelledby="bbBenefitsTitle">
+<div class="bbSectionHead">
+<div>
+<h2 class="bbSectionTitle" id="bbBenefitsTitle">Why it hits different</h2>
+<p class="bbSectionSub">Physical product + AI customization + action-sports energy—not another forgettable water bottle.</p>
+</div>
+</div>
+<div class="bbBenefitGrid">
+<article class="bbBenefitCard">
+<h3>Patented grip</h3>
+<p>Finger-hole design for real-world chaos—wingsuit, skate wobble, or finals-week hydration without slippage.</p>
+</article>
+<article class="bbBenefitCard">
+<h3>AI label builder</h3>
+<p>Pick full or half wrap, theme, and style. Generate art, upload logos and memes, auto-fit to the label template.</p>
+</article>
+<article class="bbBenefitCard">
+<h3>Reuse culture</h3>
+<p>We sell the bottle empty on purpose. Refill, flex, post to Social, climb The Baddest hall of fame.</p>
+</article>
+</div>
+</section>
+<section class="bbSection" id="bb-mission" aria-labelledby="bbMissionTitle">
+<div class="bbSustainStrip">
+<div>
+<strong id="bbMissionTitle">End single-serve plastic use</strong>
+<p>Every refill in a BADDEST BOTTLE is one less throwaway. Sustainability is the mission—not a footnote on the About page.</p>
+</div>
+<button type="button" class="btn ghost" id="bbMissionAboutBtn">Our story</button>
+</div>
+</section>
+<section class="bbSection" id="bb-apparel" aria-labelledby="bbApparelTitle">
+<div class="bbSectionHead">
+<div>
+<h2 class="bbSectionTitle" id="bbApparelTitle">Apparel &amp; accessories</h2>
+<p class="bbSectionSub">Merch that matches the bottle energy—drops coming with the full lifestyle rollout.</p>
+</div>
+</div>
+<div class="bbApparelGrid">
+<article class="bbApparelCard"><span class="bbSoon">Soon</span><h3>Grip tees</h3><p>Street + action graphics</p></article>
+<article class="bbApparelCard"><span class="bbSoon">Soon</span><h3>Sticker packs</h3><p>Community top designs</p></article>
+<article class="bbApparelCard"><span class="bbSoon">Soon</span><h3>Drop hats</h3><p>Creator collabs</p></article>
+</div>
+</section>
+<section class="bbSection" id="bb-community" aria-labelledby="bbCommunityTitle">
+<div class="bbSectionHead">
+<div>
+<h2 class="bbSectionTitle" id="bbCommunityTitle">Community gallery</h2>
+<p class="bbSectionSub">Vote, post, and discover the baddest bottles—then build yours below.</p>
+</div>
+</div>
+<div class="bbCommunityCta">
+<button type="button" class="btn primary glow" id="bbOpenSocialBtn">Open Social feed</button>
+<button type="button" class="btn ghost" id="bbOpenBaddestBtn">The Baddest hall</button>
+</div>
+</section>
+</div>
+
 <!-- Mobile sticky bar -->
 <div class="mobileBar">
 <div class="mobileInfo">
@@ -6241,7 +6639,7 @@ width:100%;
 </div>
 </div>
 
-<div class="wrap">
+<div class="wrap bbBuilderAnchor" id="bb-builder">
 <div class="grid">
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror mainPreviewVideoIdle">
@@ -6754,6 +7152,95 @@ function initFirebaseAuth() {
 }
 initFirebaseAuth();
 
+const PLATFORM = {
+  checkoutApi: "/api/create-checkout-session",
+  ordersCollection: "orders"
+};
+const ORDER_STATUS_FLOW = [
+  { key: "order_received", label: "Order received" },
+  { key: "label_generating", label: "Label being generated" },
+  { key: "production_approved", label: "Production approved" },
+  { key: "printing_label", label: "Printing label" },
+  { key: "packaging_bottle", label: "Packaging bottle" },
+  { key: "shipment_created", label: "Shipment created" },
+  { key: "in_transit", label: "In transit" },
+  { key: "delivered", label: "Delivered" }
+];
+let firestoreDb = null;
+let firestoreInitPromise = null;
+const FB_FIRESTORE_URL = "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js";
+function initFirestore(){
+  if(firestoreInitPromise) return firestoreInitPromise;
+  firestoreInitPromise = initFirebaseAuth().then((auth) => {
+    if(!auth || typeof firebase === "undefined") return null;
+    const boot = () => {
+      try{
+        if(!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        if(typeof firebase.firestore !== "function") return null;
+        firestoreDb = firebase.firestore();
+        return firestoreDb;
+      }catch(e){
+        console.warn("Firestore init", e);
+        return null;
+      }
+    };
+    if(typeof firebase.firestore === "function") return boot();
+    return new Promise((resolve) => {
+      const s = document.createElement("script");
+      s.src = FB_FIRESTORE_URL;
+      s.onload = () => resolve(boot());
+      s.onerror = () => resolve(null);
+      (document.head || document.documentElement).appendChild(s);
+    });
+  });
+  return firestoreInitPromise;
+}
+initFirestore();
+function makeOrderId(){
+  return "BB-" + Date.now().toString(36).toUpperCase() + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+}
+function scrollToBuilder(){
+  setSiteRoute("home");
+  const el = document.getElementById("bb-builder");
+  if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function wireLandingAndPlatformNav(){
+  const build = document.getElementById("bbHeroBuildBtn");
+  const gallery = document.getElementById("bbHeroGalleryBtn");
+  const missionAbout = document.getElementById("bbMissionAboutBtn");
+  const openSocial = document.getElementById("bbOpenSocialBtn");
+  const openBaddest = document.getElementById("bbOpenBaddestBtn");
+  const buildLink = document.getElementById("siteHeaderBuildLink");
+  const trackLink = document.getElementById("siteHeaderTrackLink");
+  if(build) build.addEventListener("click", (e) => { e.preventDefault(); scrollToBuilder(); });
+  if(buildLink) buildLink.addEventListener("click", (e) => { e.preventDefault(); scrollToBuilder(); });
+  if(gallery) gallery.addEventListener("click", (e) => {
+    e.preventDefault();
+    if(typeof showSocialModal === "function") showSocialModal();
+  });
+  if(openSocial) openSocial.addEventListener("click", (e) => {
+    e.preventDefault();
+    if(typeof showSocialModal === "function") showSocialModal();
+  });
+  if(openBaddest) openBaddest.addEventListener("click", (e) => {
+    e.preventDefault();
+    try{ history.pushState(null, "", "#baddest"); }catch(_){ location.hash = "baddest"; }
+    setSiteRoute("baddest");
+  });
+  if(missionAbout) missionAbout.addEventListener("click", (e) => {
+    e.preventDefault();
+    if(typeof showAboutModal === "function") showAboutModal();
+  });
+  if(trackLink) trackLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    if(typeof showOrderTrackModal === "function") showOrderTrackModal();
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  wireLandingAndPlatformNav();
+  handleCheckoutReturnParams();
+});
+
 const FONTS = [
 "Arial","Helvetica","Verdana","Trebuchet MS","Tahoma","Georgia","Times New Roman",
 "Garamond","Palatino","Courier New","Lucida Console","Impact","Arial Black",
@@ -7035,6 +7522,9 @@ try{
 history.replaceState(null, "", location.pathname + location.search || "");
 }catch(_e){}
 setSiteRoute("home");
+const landing = document.getElementById("bb-landing");
+if(landing) landing.scrollIntoView({ behavior: "smooth", block: "start" });
+else window.scrollTo(0, 0);
 });
 }
 if(siteHeaderBaddestLink){
@@ -9207,7 +9697,7 @@ if(typeof updateSocialAccountBar === "function") updateSocialAccountBar(null);
 if(cartModalCheckoutBtn){
 cartModalCheckoutBtn.addEventListener("click", () => {
 hideCartModal();
-if(baseImg) sendToParent();
+if(baseImg) startCheckout();
 });
 }
 document.addEventListener("keydown", (event) => {
@@ -14794,7 +15284,7 @@ window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 if(lightboxContinue){
-lightboxContinue.addEventListener("click", sendToParent);
+lightboxContinue.addEventListener("click", startCheckout);
 }
 
 // Lightbox toolbar controls
@@ -15032,21 +15522,7 @@ updateAddToCartEnabled();
 }
 }
 
-// Continue buttons -> postMessage to Wix page
-async function sendToParent(){
-if(!baseImg){
-alert("Please choose a photo first.");
-return;
-}
-setAddToCartLoading(true);
-try {
-await sendToParentPayload();
-} finally {
-setAddToCartLoading(false);
-}
-}
-async function sendToParentPayload(){
-// Composite for cart: image + clock face only (no hand renders)
+async function buildOrderPayload(){
 const compositeNoHands = await buildCompositeNoHands();
 if(addToCartLoadingBar) addToCartLoadingBar.style.width = "70%";
 
@@ -15154,9 +15630,181 @@ upcharge: getSelectedStickerUpcharge(item.url)
 }))
 }
 };
-
-window.parent.postMessage(payload, "*");
+return payload;
 }
+async function saveOrderDraft(orderId, payload, email){
+const db = await initFirestore();
+if(!db) return false;
+try{
+const user = firebaseAuth && firebaseAuth.currentUser;
+const doc = {
+  orderId,
+  status: "order_received",
+  statusHistory: [{ status: "order_received", at: firebase.firestore.FieldValue.serverTimestamp() }],
+  email: email || (user && user.email) || null,
+  userId: user ? user.uid : null,
+  priceNumber: payload.priceNumber,
+  sizeValue: payload.sizeValue,
+  labelTemplate: payload.labelTemplate,
+  selectedStickerCount: payload.selectedStickerCount,
+  metadata: payload.metadata,
+  previewDataURL: payload.previewDataURL,
+  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+  updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+};
+await db.collection(PLATFORM.ordersCollection).doc(orderId).set(doc, { merge: true });
+return true;
+}catch(e){
+console.warn("Order draft save failed", e);
+return false;
+}
+}
+async function startCheckout(){
+if(!baseImg){
+alert("Please choose a photo first.");
+return;
+}
+setAddToCartLoading(true);
+try{
+const payload = await buildOrderPayload();
+const orderId = makeOrderId();
+const user = firebaseAuth && firebaseAuth.currentUser;
+const email = user && user.email ? user.email : null;
+await saveOrderDraft(orderId, payload, email);
+const origin = location.origin && location.origin !== "null" ? location.origin : "";
+const res = await fetch(PLATFORM.checkoutApi, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    orderId,
+    priceNumber: payload.priceNumber,
+    sizeValue: payload.sizeValue,
+    labelTemplate: payload.labelTemplate,
+    email,
+    successUrl: origin + "/?checkout=success&order_id=" + encodeURIComponent(orderId),
+    cancelUrl: origin + "/?checkout=cancel&order_id=" + encodeURIComponent(orderId)
+  })
+});
+if(!res.ok){
+const errText = await res.text().catch(() => "");
+throw new Error(errText || ("Checkout API returned " + res.status));
+}
+const data = await res.json();
+if(data && data.url){
+location.href = data.url;
+return;
+}
+throw new Error("No checkout URL returned");
+}catch(e){
+console.warn("Checkout", e);
+alert("Checkout needs Vercel env vars: STRIPE_SECRET_KEY and SITE_URL (see README). Your order draft may still be in Firebase.\n\n(" + (e.message || e) + ")");
+}finally{
+setAddToCartLoading(false);
+}
+}
+function showOrderTrackModal(){
+const modal = document.getElementById("orderTrackModal");
+if(!modal) return;
+modal.classList.add("active");
+modal.setAttribute("aria-hidden", "false");
+const user = firebaseAuth && firebaseAuth.currentUser;
+const emailEl = document.getElementById("orderTrackEmail");
+if(emailEl && user && user.email) emailEl.value = user.email;
+}
+function hideOrderTrackModal(){
+const modal = document.getElementById("orderTrackModal");
+if(!modal) return;
+modal.classList.remove("active");
+modal.setAttribute("aria-hidden", "true");
+}
+function renderOrderTimeline(currentStatus){
+const list = document.getElementById("orderTrackTimeline");
+if(!list) return;
+const idx = ORDER_STATUS_FLOW.findIndex((s) => s.key === currentStatus);
+const activeIdx = idx >= 0 ? idx : 0;
+list.innerHTML = ORDER_STATUS_FLOW.map((step, i) => {
+  const cls = i < activeIdx ? "is-done" : (i === activeIdx ? "is-current" : "");
+  return "<li class=\"orderTrackStep " + cls + "\"><span class=\"orderTrackDot\">" + (i + 1) + "</span><span class=\"orderTrackLabel\">" + step.label + "</span></li>";
+}).join("");
+}
+async function lookupOrderStatus(){
+const idEl = document.getElementById("orderTrackId");
+const emailEl = document.getElementById("orderTrackEmail");
+const errEl = document.getElementById("orderTrackError");
+const resultEl = document.getElementById("orderTrackResult");
+const summaryEl = document.getElementById("orderTrackSummary");
+const orderId = (idEl && idEl.value || "").trim();
+if(!orderId){
+if(errEl){ errEl.textContent = "Enter an order ID."; errEl.style.display = "block"; }
+return;
+}
+if(errEl) errEl.style.display = "none";
+const db = await initFirestore();
+if(!db){
+if(errEl){ errEl.textContent = "Order lookup needs Firestore enabled in Firebase."; errEl.style.display = "block"; }
+return;
+}
+try{
+const snap = await db.collection(PLATFORM.ordersCollection).doc(orderId).get();
+if(!snap.exists){
+if(errEl){ errEl.textContent = "No order found for that ID."; errEl.style.display = "block"; }
+if(resultEl) resultEl.hidden = true;
+return;
+}
+const data = snap.data() || {};
+const email = (emailEl && emailEl.value || "").trim().toLowerCase();
+if(email && data.email && String(data.email).toLowerCase() !== email){
+if(errEl){ errEl.textContent = "Email does not match this order."; errEl.style.display = "block"; }
+if(resultEl) resultEl.hidden = true;
+return;
+}
+if(resultEl) resultEl.hidden = false;
+if(summaryEl){
+summaryEl.textContent = "Order " + orderId + " · $" + Number(data.priceNumber || 0).toFixed(2) + " · " + (data.sizeValue || "—") + "\" · " + (data.labelTemplate === "halfWrap" ? "Half wrap" : "Full wrap");
+}
+renderOrderTimeline(data.status || "order_received");
+}catch(e){
+if(errEl){ errEl.textContent = "Could not load order. Check Firestore rules."; errEl.style.display = "block"; }
+}
+}
+function handleCheckoutReturnParams(){
+const params = new URLSearchParams(location.search);
+const checkout = params.get("checkout");
+const orderId = params.get("order_id");
+if(!checkout || !orderId) return;
+if(checkout === "success"){
+initFirestore().then(async (db) => {
+if(db){
+try{
+await db.collection(PLATFORM.ordersCollection).doc(orderId).set({
+  status: "order_received",
+  paidAt: firebase.firestore.FieldValue.serverTimestamp(),
+  updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+}, { merge: true });
+}catch(_){}
+}
+const idEl = document.getElementById("orderTrackId");
+if(idEl) idEl.value = orderId;
+showOrderTrackModal();
+renderOrderTimeline("order_received");
+const resultEl = document.getElementById("orderTrackResult");
+const summaryEl = document.getElementById("orderTrackSummary");
+if(resultEl) resultEl.hidden = false;
+if(summaryEl) summaryEl.textContent = "Thanks! Payment received for order " + orderId + ". Production starts soon.";
+});
+}
+try{
+const clean = location.pathname + location.hash;
+history.replaceState(null, "", clean);
+}catch(_){}
+}
+const orderTrackClose = document.getElementById("orderTrackClose");
+const orderTrackCancel = document.getElementById("orderTrackCancel");
+const orderTrackSubmit = document.getElementById("orderTrackSubmit");
+if(orderTrackClose) orderTrackClose.addEventListener("click", hideOrderTrackModal);
+if(orderTrackCancel) orderTrackCancel.addEventListener("click", hideOrderTrackModal);
+if(orderTrackSubmit) orderTrackSubmit.addEventListener("click", lookupOrderStatus);
+
 function updateAddToCartEnabled(){
 const ok = baseImg && chosenSize;
 if(dockAddBtn) dockAddBtn.disabled = !ok;
@@ -15174,98 +15822,19 @@ if(b) b.disabled = !ok;
 }
 }
 
-if(dockAddBtn) dockAddBtn.addEventListener("click", sendToParent);
-if(footerContinue) footerContinue.addEventListener("click", sendToParent);
-if(mobileAddBtn) mobileAddBtn.addEventListener("click", sendToParent);
+if(dockAddBtn) dockAddBtn.addEventListener("click", startCheckout);
+if(footerContinue) footerContinue.addEventListener("click", startCheckout);
+if(mobileAddBtn) mobileAddBtn.addEventListener("click", startCheckout);
 
 // Add to Cart buttons under Text 2 and Text 3
 const dockAddToCartT2 = document.getElementById("dockAddToCartT2");
 const dockAddToCartT3 = document.getElementById("dockAddToCartT3");
 
 if(dockAddToCartT2){
-dockAddToCartT2.addEventListener("click", sendToParent);
+dockAddToCartT2.addEventListener("click", startCheckout);
 }
 if(dockAddToCartT3){
-dockAddToCartT3.addEventListener("click", sendToParent);
-}
-
-// ========= Parent -> iframe messaging =========
-window.addEventListener("message", async (event)=>{
-const msg = event && event.data;
-if(!msg || typeof msg !== "object") return;
-
-if(msg.type === "SET_BASE_IMAGE" && msg.url){
-try{
-baseImgSourceUrl = msg.url;
-await loadImageFromUrl(msg.url);
-}catch(e){
-console.warn("SET_BASE_IMAGE failed:", e);
-}
-}
-
-if(msg.type === "SET_SIZE" && msg.size){
-const n = parseInt(msg.size,10);
-if(SIZES.includes(n)){
-chosenSize=n;
-buildSizes();
-setPriceUI();
-await renderAll();
-}
-}
-
-if(msg.type === "SET_SHAPE" && msg.shape){
-maskShape = "label";
-if(shapeCircle) shapeCircle.classList.toggle("active", false);
-if(shapeSquare) shapeSquare.classList.toggle("active", false);
-if(shapeLabel) shapeLabel.classList.toggle("active", true);
-ensureFrames();
-buildFaces();
-await renderAll();
-}
-
-if(msg.type === "SET_SOURCE_PRODUCT" && msg.productId){
-window.__SOURCE_PRODUCT_ID__ = msg.productId;
-}
-});
-
-function notifyReady(){
-window.parent.postMessage({ type:"IFRAME_READY" }, "*");
-// Report height to parent for iframe resizing
-reportHeight();
-}
-
-// Report page height to parent window for iframe resizing
-function reportHeight(){
-if(window.parent !== window){
-const height = Math.max(
-document.body.scrollHeight,
-document.body.offsetHeight,
-document.documentElement.clientHeight,
-document.documentElement.scrollHeight,
-document.documentElement.offsetHeight
-);
-window.parent.postMessage({ type: "IFRAME_HEIGHT", height: height }, "*");
-}
-}
-
-// Report height on load, resize, and content changes
-window.addEventListener("load", () => {
-setTimeout(reportHeight, 100);
-setTimeout(reportHeight, 500);
-});
-window.addEventListener("resize", () => {
-setTimeout(reportHeight, 100);
-});
-// Use MutationObserver to detect content changes
-if(window.MutationObserver){
-const observer = new MutationObserver(() => {
-setTimeout(reportHeight, 100);
-});
-observer.observe(document.body, {
-childList: true,
-subtree: true,
-attributes: false
-});
+dockAddToCartT3.addEventListener("click", startCheckout);
 }
 
 // ========= INIT =========
@@ -15516,7 +16085,7 @@ const nextStep = step + 1;
 console.log("Moving to step:", nextStep);
 updateMobileStep(nextStep);
 } else {
-if(baseImg && chosenSize) sendToParent();
+if(baseImg && chosenSize) startCheckout();
 }
 });
 }
@@ -15612,7 +16181,6 @@ setTimeout(() => ensureCategoryButtonsVisible(false), 120);
 // Image always customizable - no lock
 updateLockButton();
 
-notifyReady();
 hidePreviewLoading();
 
 // Add scroll-based fade effects for cards on mobile

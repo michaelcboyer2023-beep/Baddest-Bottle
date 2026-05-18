@@ -1,0 +1,13 @@
+{
+  "name": "baddest-bottle",
+  "private": true,
+  "description": "BADDEST BOTTLE — static designer + Vercel serverless checkout",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "stripe": "^17.5.0"
+  }
+}
