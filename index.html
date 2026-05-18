@@ -198,11 +198,13 @@ padding-bottom:24px;
 }
 /* ===== Strategy landing (hero → builder funnel) ===== */
 .bbLanding{
-max-width:1560px;
-margin:0 auto;
-padding:8px 12px 4px;
+width:100%;
+max-width:100%;
+margin:0 0 12px;
+padding:0;
 position:relative;
-z-index:1;
+z-index:2;
+box-sizing:border-box;
 }
 .bbHero{
 display:grid;
@@ -487,6 +489,12 @@ color:rgba(255,255,255,.45);
 @media (max-width: 900px){
 .bbHero{grid-template-columns:1fr;}
 .bbBenefitGrid,.bbApparelGrid{grid-template-columns:1fr;}
+.bbHeroVisual{min-height:0;}
+.bbHeroBottleCard img{width:min(100%, 160px);}
+}
+@media (max-width: 979px){
+.bbLanding{margin-bottom:8px;}
+.bbSection{padding:12px;}
 }
 .baddestHallPageWrap{
 max-width:1560px;
@@ -1772,19 +1780,17 @@ display:none !important;
 .mobileBottomPreview{
 display:none !important;
 }
-/* Make main preview fixed below site header on mobile - stays visible while scrolling */
+/* Main preview in document flow on mobile — landing scrolls above, not underneath */
 .previewShell{
-position:fixed !important;
-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px)) !important;
-left:0 !important;
-right:0 !important;
-z-index:100 !important;
-background:#000000 !important;
-padding:12px !important;
-padding-left:max(12px, env(safe-area-inset-left, 12px)) !important;
-padding-right:max(12px, env(safe-area-inset-right, 12px)) !important;
-box-shadow:0 4px 20px rgba(0,0,0,0.8) !important;
-margin:0 !important;
+position:relative !important;
+top:auto !important;
+left:auto !important;
+right:auto !important;
+z-index:1 !important;
+background:transparent !important;
+padding:0 !important;
+box-shadow:none !important;
+margin:0 0 8px !important;
 width:100% !important;
 max-width:100% !important;
 box-sizing:border-box !important;
@@ -1792,7 +1798,7 @@ display:block !important;
 visibility:visible !important;
 opacity:1 !important;
 gap:0 !important;
-pointer-events:none !important; /* Allow scrolling through preview area */
+pointer-events:auto !important;
 }
 /* But allow interactions with preview content */
 .previewShell .previewBlock,
@@ -1803,10 +1809,10 @@ pointer-events:auto !important;
 will-change:contents;
 contain:layout style paint;
 }
-/* Add padding to grid so content doesn't hide behind fixed header + preview */
+/* Designer steps follow preview in normal scroll (landing → video → controls) */
 .grid{
-padding-top:calc(var(--site-header-stack, 64px) + min(96vw, 1280px) + 28px) !important;
-min-height:calc(100vh + 1500px) !important;
+padding-top:0 !important;
+min-height:0 !important;
 height:auto !important;
 max-height:none !important;
 overflow:visible !important;
@@ -6512,6 +6518,55 @@ width:100%;
 </div>
 
 <div id="pageHome" class="siteAppPage">
+
+
+<!-- Mobile sticky bar -->
+<div class="mobileBar">
+<div class="mobileInfo">
+<div class="mobilePrice">$<span id="mobilePriceVal">19.99</span></div>
+<div class="priceShippingNote">Always Free Shipping</div>
+<div class="mobileSub"><span id="mobileSizeVal">12</span>″ • Custom Sticker</div>
+</div>
+</div>
+
+<!-- Mobile Sticky Preview (always visible on mobile) -->
+<div class="mobileStickyPreview" id="mobileStickyPreview">
+</div>
+
+<!-- Mobile Step Indicator - Hidden, Next button moved to mobileNavButtons -->
+<div class="mobileStepIndicator" id="mobileStepIndicator" style="display:none !important;">
+<div class="stepDots" id="mobileStepDots"></div>
+<div class="stepTitle" id="mobileStepTitle">Step 1: Choose Photo</div>
+<div class="mobileStepNav">
+<!-- Buttons moved to mobileNavButtons container -->
+</div>
+</div>
+
+<!-- Desktop sticky dock -->
+<div class="stickyDock" id="stickyDock">
+<div class="dockCard">
+<div class="dockHead">
+<div class="dockMeta">
+<div class="dockPrice">$<span id="dockPriceVal">19.99</span></div>
+<div class="priceShippingNote">Always Free Shipping</div>
+<div class="dockSub"><span id="dockSizeVal">12</span>″</div>
+</div>
+</div>
+<div class="dockPreview">
+<div class="dockThumb showDockEmptyVideo" id="dockThumb"><div class="smartTvGlowHalo" id="smartTvGlowDock" aria-hidden="true"></div><div class="dockEmptyStateVideo" id="dockEmptyStateVideo" aria-hidden="true"><div class="previewEmptyStateVideoPlane"><div class="previewEmptyStateVideoKen"><iframe class="previewEmptyStateArt" src="https://www.youtube.com/embed/9EX9T0UyEF0?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=9EX9T0UyEF0&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;iv_load_policy=3" title="Bottle preview animation" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div></div><img id="dockImg" alt="preview"/></div>
+<div class="dockLogo" style="margin-top:12px;text-align:center;">
+<img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE" />
+</div>
+</div>
+<div class="selectedStickerSection" id="selectedStickerSection">
+<div class="selectedStickerLabel">Selected Stickers. Checkmarked stickers add $5.00 each. Always free shipping.</div>
+<div class="selectedStickerGrid" id="selectedStickerGrid"></div>
+<button type="button" class="btn primary glow selectedStickerShareToFeedBtn" id="shareBottleToFeedBtn">Share my bottle to feed</button>
+</div>
+</div>
+</div>
+
+<div class="wrap bbBuilderAnchor" id="bb-builder">
 <div class="bbLanding" id="bb-landing">
 <section class="bbHero" id="bb-hero" aria-labelledby="bbHeroTitle">
 <div class="bbHeroCopy">
@@ -6592,54 +6647,6 @@ width:100%;
 </div>
 </section>
 </div>
-
-<!-- Mobile sticky bar -->
-<div class="mobileBar">
-<div class="mobileInfo">
-<div class="mobilePrice">$<span id="mobilePriceVal">19.99</span></div>
-<div class="priceShippingNote">Always Free Shipping</div>
-<div class="mobileSub"><span id="mobileSizeVal">12</span>″ • Custom Sticker</div>
-</div>
-</div>
-
-<!-- Mobile Sticky Preview (always visible on mobile) -->
-<div class="mobileStickyPreview" id="mobileStickyPreview">
-</div>
-
-<!-- Mobile Step Indicator - Hidden, Next button moved to mobileNavButtons -->
-<div class="mobileStepIndicator" id="mobileStepIndicator" style="display:none !important;">
-<div class="stepDots" id="mobileStepDots"></div>
-<div class="stepTitle" id="mobileStepTitle">Step 1: Choose Photo</div>
-<div class="mobileStepNav">
-<!-- Buttons moved to mobileNavButtons container -->
-</div>
-</div>
-
-<!-- Desktop sticky dock -->
-<div class="stickyDock" id="stickyDock">
-<div class="dockCard">
-<div class="dockHead">
-<div class="dockMeta">
-<div class="dockPrice">$<span id="dockPriceVal">19.99</span></div>
-<div class="priceShippingNote">Always Free Shipping</div>
-<div class="dockSub"><span id="dockSizeVal">12</span>″</div>
-</div>
-</div>
-<div class="dockPreview">
-<div class="dockThumb showDockEmptyVideo" id="dockThumb"><div class="smartTvGlowHalo" id="smartTvGlowDock" aria-hidden="true"></div><div class="dockEmptyStateVideo" id="dockEmptyStateVideo" aria-hidden="true"><div class="previewEmptyStateVideoPlane"><div class="previewEmptyStateVideoKen"><iframe class="previewEmptyStateArt" src="https://www.youtube.com/embed/9EX9T0UyEF0?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=9EX9T0UyEF0&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;iv_load_policy=3" title="Bottle preview animation" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div></div><img id="dockImg" alt="preview"/></div>
-<div class="dockLogo" style="margin-top:12px;text-align:center;">
-<img class="dockLogoImg" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE" />
-</div>
-</div>
-<div class="selectedStickerSection" id="selectedStickerSection">
-<div class="selectedStickerLabel">Selected Stickers. Checkmarked stickers add $5.00 each. Always free shipping.</div>
-<div class="selectedStickerGrid" id="selectedStickerGrid"></div>
-<button type="button" class="btn primary glow selectedStickerShareToFeedBtn" id="shareBottleToFeedBtn">Share my bottle to feed</button>
-</div>
-</div>
-</div>
-
-<div class="wrap bbBuilderAnchor" id="bb-builder">
 <div class="grid">
 <div class="previewShell">
 <div class="previewBlock mainPreviewMirror mainPreviewVideoIdle">
@@ -7201,7 +7208,7 @@ function makeOrderId(){
 }
 function scrollToBuilder(){
   setSiteRoute("home");
-  const el = document.getElementById("bb-builder");
+  const el = document.querySelector("#bb-builder .previewShell") || document.getElementById("bb-builder");
   if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function wireLandingAndPlatformNav(){
