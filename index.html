@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://image.pollinations.ai" crossorigin/>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
-<!-- AI: SubNP free API (SSE) via /api/ai-generate on Vercel, with Pollinations fallback -->
+<!-- AI: Cloudflare Worker (Flux Schnell + Pollinations) at aigenerate.michaelcboyer2023.workers.dev -->
 <style>
 :root{
 --bg:#09070a;
@@ -7325,8 +7325,9 @@ const previewLoadingVideo = document.getElementById("previewLoadingVideo");
 const PREVIEW_VIDEO_FALLBACK_SRC = "projects/Users-michaelcboyer-cursor/assets/grok-video-0435a3d2-4696-42af-9b2c-18116987c1db-ezgif.com-video-to-gif-converter-81664189-aed3-410e-b75a-f40b90cc3bd8.png";
 const AI_GENERATE_API = "/api/ai-generate";
 const AI_WORKER_URL = "https://aigenerate.michaelcboyer2023.workers.dev";
-const SUBNP_GENERATE_URL = "https://subnp.com/api/free/generate";
-const SUBNP_MODELS_TRY = ["turbo", "flux", "magic"];
+const SUBNP_API_BASES = ["https://subnp.com", "https://t2i.mcpcore.xyz"];
+const SUBNP_MODELS_TRY = ["turbo", "flux"];
+const AI_GEN_MAX_MS = 90000;
 const siteHeaderHomeLink = document.getElementById("siteHeaderHomeLink");
 const siteHeaderBaddestLink = document.getElementById("siteHeaderBaddestLink");
 const siteHeaderSocialLink = document.getElementById("siteHeaderSocialLink");
@@ -11146,7 +11147,7 @@ const isExternalAI = skipCacheBust;
 const isProxied = url.includes(AI_WORKER_URL);
 const isRemoteUrl = /^https?:\/\//i.test(url);
 
-if(url.startsWith('data:') || url.toLowerCase().endsWith('.gif')){
+if(url.startsWith('data:') || url.startsWith('blob:') || url.toLowerCase().endsWith('.gif')){
 // Allow GIFs to animate, skip crossOrigin
 } else if(isProxied || isRemoteUrl || !isExternalAI) {
 // Try anonymous CORS first for remote images so direct AI URLs can render fast when allowed.
@@ -11766,8 +11767,8 @@ overlay._loadingInterval = interval;
 if(overlay._safetyTimeout) clearTimeout(overlay._safetyTimeout);
 overlay._safetyTimeout = setTimeout(() => {
 overlay._safetyTimeout = null;
-hidePreviewLoading();
-}, 150000);
+if(isGenerating) resetAiGenerateUi();
+}, AI_GEN_MAX_MS + 5000);
 }
 }
 
@@ -13130,16 +13131,90 @@ lastError = data.message || data.error || data.details || "SubNP generation fail
 if(imageUrl) return imageUrl;
 throw new Error(lastError || "SubNP returned no image URL");
 }
-function buildPollinationsImageUrl(prompt, width = 576, height = 576){
+function withTimeout(promise, ms, label){
+return new Promise((resolve, reject) => {
+const t = setTimeout(() => reject(new Error((label || "Request") + " timed out")), ms);
+promise.then(
+(v) => { clearTimeout(t); resolve(v); },
+(e) => { clearTimeout(t); reject(e); }
+);
+});
+}
+function releaseAiGenerateLock(){
+isGenerating = false;
+if(aiGenerateButton){
+aiGenerateButton.disabled = false;
+aiGenerateButton.textContent = "Generate";
+}
+}
+function resetAiGenerateUi(){
+releaseAiGenerateLock();
+hidePreviewLoading();
+const progressBar = document.getElementById("aiProgressBar");
+const progressFill = document.getElementById("aiProgressFill");
+if(progressBar) progressBar.style.display = "none";
+if(progressFill) progressFill.style.width = "0%";
+document.querySelectorAll("#aiCategoryButtons .btn").forEach((b) => {
+b.classList.remove("loading");
+const bar = b.querySelector(".loadingBar");
+if(bar) bar.remove();
+});
+}
+function buildPollinationsImageUrl(prompt, width = 576, height = 576, modelOverride){
 const seed = Math.abs(socialPromptHash(String(prompt) + "|" + Date.now())) % 2147483647;
 const p = encodeURIComponent(String(prompt).slice(0, 950));
-return `https://image.pollinations.ai/prompt/${p}?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`;
+const model = modelOverride || "flux";
+return `https://image.pollinations.ai/prompt/${p}?width=${width}&height=${height}&nologo=true&nofeed=true&safe=true&seed=${seed}&model=${model}&referrer=baddestbottle.com`;
+}
+async function tryPollinationsImageUrl(prompt, width, height, model){
+const url = buildPollinationsImageUrl(prompt, width, height, model);
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 30000);
+try {
+const response = await fetch(url, { method: "GET", cache: "no-store", signal: controller.signal });
+if(!response.ok) throw new Error(`Pollinations HTTP ${response.status}`);
+const contentType = response.headers.get("content-type") || "";
+if(!/^image\//i.test(contentType)) throw new Error(`Pollinations returned ${contentType || "non-image"}`);
+return url;
+} finally {
+clearTimeout(timeoutId);
+}
+}
+// Calls our Cloudflare Worker — Cloudflare Flux Schnell → Pollinations fallback server-side.
+async function tryCloudflareWorkerGenerate(prompt, width, height){
+const controller = new AbortController();
+const timeoutId = setTimeout(() => controller.abort(), 60000);
+try {
+const response = await fetch(AI_WORKER_URL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+cache: "no-store",
+body: JSON.stringify({ prompt, width, height }),
+signal: controller.signal
+});
+if(!response.ok){
+let detail = "";
+try { const j = await response.json(); detail = j.error || j.details || ""; } catch(_) {}
+throw new Error(`Worker HTTP ${response.status}${detail ? ": " + detail : ""}`);
+}
+const contentType = response.headers.get("content-type") || "";
+if(!/^image\//i.test(contentType)){
+throw new Error(`Worker returned ${contentType || "non-image"}`);
+}
+const blob = await response.blob();
+return URL.createObjectURL(blob);
+} finally {
+clearTimeout(timeoutId);
+}
 }
 async function tryDirectSubNPGenerate(prompt, model = "turbo", width = 576, height = 576){
+const errors = [];
+for(const base of SUBNP_API_BASES){
 const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 90000);
+const timeoutId = setTimeout(() => controller.abort(), 26000);
 try {
-const response = await fetch(SUBNP_GENERATE_URL, {
+const origin = base.replace(/\/$/, "");
+const response = await fetch(`${origin}/api/free/generate`, {
 method: "POST",
 headers: { "Content-Type": "application/json" },
 cache: "no-store",
@@ -13148,16 +13223,21 @@ signal: controller.signal
 });
 const text = await response.text();
 if(!response.ok){
-throw new Error(`SubNP HTTP ${response.status}: ${text.slice(0, 120)}`);
+errors.push(`${base}: HTTP ${response.status}`);
+continue;
 }
 return parseSubnpSseText(text);
+} catch(e){
+errors.push(`${base}: ${e.message || e}`);
 } finally {
 clearTimeout(timeoutId);
 }
 }
+throw new Error(errors.join(" · ") || "SubNP request failed");
+}
 async function trySiteAiGenerateApi(prompt, width = 576, height = 576, statusEl){
 const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 120000);
+const timeoutId = setTimeout(() => controller.abort(), 50000);
 try {
 const response = await fetch(AI_GENERATE_API, {
 method: "POST",
@@ -13168,13 +13248,13 @@ signal: controller.signal
 });
 const data = await response.json().catch(() => ({}));
 if(response.ok && data.imageUrl){
-if(data.fallback && statusEl){
-statusEl.textContent = "SubNP busy — used backup generator.";
-statusEl.style.display = "block";
-}
 return data.imageUrl;
 }
-throw new Error(data.details || data.error || `API ${response.status}`);
+const err = data.error || data.details || `API ${response.status}`;
+if(data.retryable){
+throw new Error(err + " Try again in 30 seconds.");
+}
+throw new Error(err);
 } finally {
 clearTimeout(timeoutId);
 }
@@ -13187,29 +13267,26 @@ statusMessage.textContent = msg;
 statusMessage.style.display = "block";
 }
 };
-const host = window.location.hostname || "";
-const canUseSiteApi = !/^(localhost|127\.0\.0\.1)$/i.test(host) && !/githack\.com$/i.test(host);
-if(canUseSiteApi){
+
 try {
-onStatus("Generating via SubNP…");
-return await trySiteAiGenerateApi(prompt, width, height, statusMessage);
+onStatus("Generating your design…");
+return await tryCloudflareWorkerGenerate(prompt, width, height);
 } catch(e){
-errors.push("site API: " + (e.message || e));
-console.warn("Site AI API failed", e);
+errors.push("worker: " + (e.message || e));
+console.warn("Cloudflare Worker generation failed", e);
 }
-}
-for(const model of SUBNP_MODELS_TRY){
+
 try {
-onStatus(`SubNP (${model})…`);
-return await tryDirectSubNPGenerate(prompt, model, width, height);
+onStatus("Trying backup generator…");
+return await tryPollinationsImageUrl(prompt, width, height, "flux");
 } catch(e){
-errors.push(`${model}: ${(e.message || e)}`);
-console.warn("SubNP model failed", model, e);
+errors.push("pollinations: " + (e.message || e));
+console.warn("Direct Pollinations failed", e);
 }
-}
+
 onStatus("Using backup image generator…");
-return buildPollinationsImageUrl(prompt, width, height);
-throw new Error(errors.length ? errors.join(" · ") : "AI generation failed");
+console.warn("All verified generators failed. Errors:", errors);
+return buildPollinationsImageUrl(prompt, width, height, "flux");
 }
 async function pollWorkerForImage(requestId, progressFill, statusMessage){
 const maxAttempts = 68;
@@ -13852,18 +13929,22 @@ if(!url || seen.has(url)) return;
 seen.add(url);
 candidates.push(url);
 };
-const workerMain = buildWorkerImageUrl(imageUrl, true);
-const useProxyFirst = /githack\.com/i.test(window.location.hostname || "");
-if(useProxyFirst) pushCandidate(workerMain);
-pushCandidate(imageUrl);
-const subnpMatch = imageUrl && imageUrl.match(/^https?:\/\/subnp\.com\/api\/image\/([a-f0-9-]+)/i);
+const bust = (url) => {
+if(!url || url.startsWith("data:") || url.startsWith("blob:")) return url;
+const sep = url.includes("?") ? "&" : "?";
+return url + sep + "bb=" + Date.now();
+};
+const isSubnpCdn = /subnp\.com\/api\/image|mitraai\.xyz|mcpcore\.xyz/i.test(imageUrl || "");
+const useProxyFirst = /githack\.com/i.test(window.location.hostname || "") && !isSubnpCdn;
+pushCandidate(bust(imageUrl));
+if(isSubnpCdn){
+const subnpMatch = imageUrl.match(/^https?:\/\/subnp\.com\/api\/image\/([a-f0-9-]+)/i);
 if(subnpMatch){
 const imageId = subnpMatch[1];
-const directHttpCdnUrl = `http://free-cdn.mitraai.xyz/${imageId}.jpg`;
-pushCandidate(directHttpCdnUrl);
-pushCandidate(buildWorkerImageUrl(directHttpCdnUrl, true));
+pushCandidate(bust(`https://free-cdn.mitraai.xyz/${imageId}.jpg`));
 }
-if(!useProxyFirst) pushCandidate(workerMain);
+}
+if(useProxyFirst) pushCandidate(buildWorkerImageUrl(imageUrl, true));
 return candidates;
 }
 function getStickerProxyUrl(item){
@@ -14452,10 +14533,17 @@ console.error("Error enhancing prompt:", e);
 // Continue with original prompt if enhancement fails
 }
 
-// Set generating flag and disable button
 isGenerating = true;
+if(aiGenerateButton){
 aiGenerateButton.disabled = true;
 aiGenerateButton.textContent = "Generating...";
+}
+const genSafetyTimer = setTimeout(() => {
+if(isGenerating){
+console.warn("AI generation safety reset");
+resetAiGenerateUi();
+}
+}, AI_GEN_MAX_MS + 8000);
 
 console.log("Starting generation with prompt:", prompt.substring(0, 100) + "...");
 
@@ -14482,6 +14570,7 @@ loadingBar.style.opacity = "1";
 // Don't update status message - keep it empty (user requested removal)
 // Using button loading bar animation
 
+let genSucceeded = false;
 try {
 const enhancedPrompt = prompt;
 showPreviewLoading();
@@ -14523,7 +14612,7 @@ let lastImageLoadError = null;
 for(const candidateUrl of imageLoadCandidates){
 try {
 console.log("Attempting AI image load:", candidateUrl);
-await loadImageFromUrl(candidateUrl, `AI Generated: ${originalPrompt}`, true, 16000);
+await loadImageFromUrl(candidateUrl, `AI Generated: ${originalPrompt}`, true, 45000);
 loadedPreviewUrl = candidateUrl;
 imageLoaded = true;
 break;
@@ -14569,45 +14658,23 @@ if(progressBar) progressBar.style.display = "none";
 if(progressFill) progressFill.style.width = "0%";
 }, 500);
 
+genSucceeded = true;
+
 } catch(error) {
 console.error("AI Generation Error:", error);
-
-// Hide preview loading overlay on error
-hidePreviewLoading();
-
-// Remove loading animation from category buttons on error
-document.querySelectorAll('#aiCategoryButtons .btn').forEach(b => {
-b.classList.remove('loading');
-const loadingBar = b.querySelector('.loadingBar');
-if(loadingBar) loadingBar.remove();
-});
-
-// Hide progress bar on error
-const progressBar = document.getElementById("aiProgressBar");
-const progressFill = document.getElementById("aiProgressFill");
-if(progressBar) progressBar.style.display = "none";
-if(progressFill) progressFill.style.width = "0%";
-
 if(statusMessage){
 let errorMsg = (error && error.message) ? error.message : "Unknown error occurred";
-let helpText = "Please try again or check your prompt.";
-if(error && error.rateLimitReached) helpText = "Rate limit reached. Try again in a moment.";
-else if(/timed out|timeout/i.test(errorMsg)) helpText = "Request timed out. Try a shorter prompt.";
-else if(/SubNP|subnp|All SubNP/i.test(errorMsg)) helpText = "SubNP free API may be busy — backup generator will retry automatically, or try a shorter prompt.";
-else if(/pollinations/i.test(errorMsg)) helpText = "Backup image service failed. Check connection and try again.";
-else if(/Request failed|HTTP|Failed to fetch|Network/i.test(errorMsg)) helpText = "Network or service error. Check connection and try again.";
-else if(/No image URL/i.test(errorMsg)) helpText = "No image returned. Try a different prompt.";
+let helpText = "Tap Generate again in a moment.";
+if(/timed out|timeout/i.test(errorMsg)) helpText = "Timed out — try a shorter prompt.";
+else if(/SubNP|subnp|busy|unavailable/i.test(errorMsg)) helpText = "SubNP free tier is busy. Wait 30s and retry, or shorten the prompt.";
+else if(/Failed to load|load timeout/i.test(errorMsg)) helpText = "Image URL loaded slowly. Try Generate again.";
 statusMessage.innerHTML = "<span style=\"color:var(--red2);\">" + (errorMsg.replace(/</g, "&lt;")) + "</span> — " + helpText;
 statusMessage.style.display = "block";
-console.error("AI Generation Error:", errorMsg, helpText);
 }
 } finally {
-hidePreviewLoading();
-isGenerating = false;
-if(aiGenerateButton) {
-aiGenerateButton.disabled = false;
-aiGenerateButton.textContent = "Generate";
-}
+clearTimeout(genSafetyTimer);
+if(genSucceeded) releaseAiGenerateLock();
+else resetAiGenerateUi();
 }
 };
 
