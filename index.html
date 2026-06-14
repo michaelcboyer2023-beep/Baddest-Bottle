@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-copy-nav"/>
+<meta name="app-version" content="live-2026-05-18-hero-copy"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -504,6 +504,14 @@ padding:10px 12px 20px;
 }
 .baddestBackHomeBtn{
 margin-bottom:10px;
+}
+.siteHeaderSloganRow{
+display:none;
+width:100%;
+justify-content:center;
+align-items:center;
+padding:0 24px 6px;
+box-sizing:border-box;
 }
 .siteHeaderSlogan{
 position:relative;
@@ -1321,8 +1329,13 @@ letter-spacing:.13em;
 .siteHeaderNavSep{
 height:24px;
 }
+.siteHeaderSloganRow{
+display:flex;
+padding:6px max(20px, calc((100vw - min(100vw, var(--site-max-width))) / 2 + var(--site-header-px, 20px))) 10px;
+margin-top:2px;
+}
 .siteHeaderSlogan{
-flex:1 1 auto;
+flex:none;
 min-width:0;
 max-width:min(100%, 920px);
 padding:0 8px;
@@ -6243,11 +6256,6 @@ width:100%;
 <span class="siteHeaderNavSep" aria-hidden="true"></span>
 <a class="siteHeaderNavLink" href="#" id="siteHeaderTrackLink"><span>Track</span></a>
 </nav>
-<div class="siteHeaderSlogan" id="siteHeaderSlogan">
-<div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
-<span class="siteHeaderSloganText">Grip it · Sip it · Reuse it</span>
-</div>
-</div>
 <div class="siteHeaderActions">
 <div class="siteHeaderSocials" aria-label="Social Media">
 <a class="siteHeaderSocialBtn instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" data-label="Instagram">
@@ -6307,6 +6315,13 @@ width:100%;
 <button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownProfile">Profile</button>
 <button type="button" class="siteHeaderLoginDropdownItem" id="loginDropdownLogout">Log out</button>
 </div>
+</div>
+</div>
+</div>
+<div class="siteHeaderSloganRow" id="siteHeaderSloganRow">
+<div class="siteHeaderSlogan" id="siteHeaderSlogan">
+<div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
+<span class="siteHeaderSloganText">Grip it · Sip it · Reuse it</span>
 </div>
 </div>
 </div>
@@ -6664,7 +6679,7 @@ width:100%;
 <section class="bbHero" id="bb-hero" aria-labelledby="bbHeroTitle">
 <div class="bbHeroCopy">
 <h1 class="bbHeroTitle" id="bbHeroTitle">Grip it · Sip it · Reuse it</h1>
-<p class="bbHeroLead">The BADDEST BOTTLE ships empty for reuse, so you can fill it with whatever fuels your lifestyle. Featuring patented finger-hole grip technology, AI-powered custom labels, unlimited personalization, and a community that posts the wildest drops. Build your bottle wrap, preview it, order it—we print it, ship it, and you grab life by the bottles.</p>
+<p class="bbHeroLead">The BADDEST BOTTLE ships empty for reuse, so you can fill it with whatever fuels your lifestyle. Featuring patented finger-hole grip technology, AI-powered custom labels, unlimited personalization, and a community that posts the wildest drops. Build your bottle wrap, preview it, order it—we print it, ship it, and you GRAB LIFE BY THE BOTTLES&reg;.</p>
 <div class="bbHeroActions">
 <button type="button" class="btn primary glow" id="bbHeroBuildBtn">Build your bottle</button>
 <button type="button" class="btn ghost" id="bbHeroGalleryBtn">Community gallery</button>
@@ -6704,7 +6719,7 @@ width:100%;
 <div class="bbSustainStrip">
 <div>
 <strong id="bbMissionTitle">End single-serve plastic use</strong>
-<p>Every refill in a BADDEST BOTTLE is one less throwaway. The average disposable bottle gets used for a few minutes. Then it spends hundreds of years hanging around. Grip it, sip it, reuse it.</p>
+<p>Every refill in a BADDEST BOTTLE is one less throwaway. The average disposable bottle gets used for a few minutes. Then it spends hundreds of years hanging around. GRIP IT, SIP IT, REUSE IT.</p>
 </div>
 <button type="button" class="btn ghost" id="bbMissionAboutBtn">Our story</button>
 </div>
@@ -7507,7 +7522,7 @@ if(!header) return;
 const cs = getComputedStyle(header);
 if(cs.display === "none" || cs.visibility === "hidden") return;
 let bottom = header.getBoundingClientRect().bottom;
-header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganWrap, .siteHeaderStickerFeed").forEach((el) => {
+header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganRow, .siteHeaderSloganWrap, .siteHeaderStickerFeed").forEach((el) => {
 const r = el.getBoundingClientRect();
 if(r.height > 0) bottom = Math.max(bottom, r.bottom);
 });
