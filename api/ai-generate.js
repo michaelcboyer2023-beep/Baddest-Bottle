@@ -1,10 +1,10 @@
 /**
- * SubNP image generation proxy (SSE → JSON for the designer).
+ * SubNP image generation proxy (SSE → JSON).
  * Docs: https://subnp.com/free-api
  */
 
 const SUBNP_BASES = ["https://subnp.com", "https://t2i.mcpcore.xyz"];
-const SUBNP_MODELS = ["turbo", "flux", "magic"];
+const SUBNP_MODELS = ["turbo", "flux"];
 
 function parseSubnpSseBody(text) {
   let imageUrl = "";
@@ -39,18 +39,31 @@ function parseSubnpSseBody(text) {
   return { error: lastError || "SubNP returned no image URL" };
 }
 
-async function generateViaSubnp(prompt, model, width, height, baseUrl) {
+async function generateViaSubnp(prompt, model, width, height, baseUrl, timeoutMs) {
   const origin = baseUrl.replace(/\/$/, "");
-  const response = await fetch(`${origin}/api/free/generate`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, model, width, height }),
-  });
-  const text = await response.text();
-  if (!response.ok) {
-    return { error: `SubNP HTTP ${response.status}: ${text.slice(0, 200)}` };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(`${origin}/api/free/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt, model, width, height }),
+      signal: controller.signal,
+    });
+    const text = await response.text();
+    if (!response.ok) {
+      return { error: `SubNP HTTP ${response.status}: ${text.slice(0, 160)}` };
+    }
+    return parseSubnpSseBody(text);
+  } catch (err) {
+    const msg =
+      err && err.name === "AbortError"
+        ? "timed out"
+        : err.message || String(err);
+    return { error: msg };
+  } finally {
+    clearTimeout(timer);
   }
-  return parseSubnpSseBody(text);
 }
 
 module.exports = async function handler(req, res) {
@@ -83,57 +96,39 @@ module.exports = async function handler(req, res) {
   const width = Math.min(1024, Math.max(256, Number(body?.width) || 576));
   const height = Math.min(1024, Math.max(256, Number(body?.height) || 576));
   const models =
-    body?.model && body.model !== "auto"
-      ? [String(body.model)]
-      : SUBNP_MODELS;
+    body?.model && body.model !== "auto" ? [String(body.model)] : SUBNP_MODELS;
 
   const errors = [];
+  const deadline = Date.now() + 55000;
 
   for (const base of SUBNP_BASES) {
     for (const model of models) {
-      try {
-        const result = await generateViaSubnp(
-          prompt,
+      if (Date.now() > deadline) break;
+      const remaining = Math.max(8000, deadline - Date.now());
+      const perTry = Math.min(22000, remaining);
+      const result = await generateViaSubnp(
+        prompt,
+        model,
+        width,
+        height,
+        base,
+        perTry
+      );
+      if (result.imageUrl) {
+        return res.status(200).json({
+          imageUrl: result.imageUrl,
           model,
-          width,
-          height,
-          base
-        );
-        if (result.imageUrl) {
-          return res.status(200).json({
-            imageUrl: result.imageUrl,
-            model,
-            base,
-            provider: "subnp",
-          });
-        }
-        errors.push(
-          `${base} (${model}): ${result.error || "unknown error"}`
-        );
-      } catch (err) {
-        errors.push(`${base} (${model}): ${err.message || err}`);
+          base,
+          provider: "subnp",
+        });
       }
+      errors.push(`${base} (${model}): ${result.error || "unknown"}`);
     }
   }
 
-  const seed = Math.abs(hashPrompt(prompt)) % 2147483647;
-  const pollinationsUrl =
-    "https://image.pollinations.ai/prompt/" +
-    encodeURIComponent(prompt.slice(0, 950)) +
-    `?width=${width}&height=${height}&nologo=true&seed=${seed}&model=flux`;
-
-  return res.status(200).json({
-    imageUrl: pollinationsUrl,
-    provider: "pollinations",
-    fallback: true,
-    subnpErrors: errors,
+  return res.status(503).json({
+    error: "SubNP is busy or unavailable. Wait a moment and try again.",
+    details: errors.slice(0, 4).join("; "),
+    retryable: true,
   });
 };
-
-function hashPrompt(text) {
-  let h = 2166136261;
-  for (let i = 0; i < text.length; i++) {
-    h = Math.imul(h ^ text.charCodeAt(i), 16777619);
-  }
-  return h;
-}
