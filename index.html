@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-grab-life-scale"/>
+<meta name="app-version" content="live-2026-05-18-about-modal-grip-fix"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -4491,13 +4491,26 @@ text-shadow:0 0 14px rgba(255,102,0,.14);
 #aboutModalTitle{
 font-size:42px;
 font-weight:1000;
-line-height:.98;
+line-height:1.08;
 letter-spacing:.01em;
 text-transform:uppercase;
 color:#fff6eb;
 text-shadow:0 0 18px rgba(255,140,84,.22), 0 0 34px rgba(255,102,0,.14);
-padding-right:48px;
+padding:2px 0 0;
+margin:0;
 box-sizing:border-box;
+}
+.aboutModalHead{
+flex:0 0 auto;
+position:relative;
+z-index:2;
+padding:14px 52px 12px 24px;
+border-bottom:1px solid rgba(255,255,255,.08);
+background:linear-gradient(180deg, rgba(20,13,18,.98), rgba(16,10,14,.96));
+overflow:visible;
+}
+.aboutModalHead .loginModalEyebrow{
+margin:0 0 8px;
 }
 /* About: scrollable tall content + close control like Social */
 #aboutModal .loginModalCard.aboutModalCard{
@@ -4522,11 +4535,11 @@ overflow-y:auto;
 overflow-x:hidden;
 -webkit-overflow-scrolling:touch;
 overscroll-behavior:contain;
-padding:18px 22px 22px;
-padding-top:50px;
+padding:16px 22px 22px;
 }
 @media (max-width:480px){
-#aboutModalTitle{ font-size:clamp(22px,9vw,36px); padding-right:44px; }
+#aboutModalTitle{ font-size:clamp(22px,9vw,36px); }
+.aboutModalHead{ padding:12px 48px 10px 20px; }
 #aboutModal .aboutModalScroll{ padding-left:16px; padding-right:16px; }
 }
 /* Desktop / laptop: wide + height-capped so About + Social fit a standard screen */
@@ -7043,9 +7056,11 @@ width:100%;
 <div class="loginModal" id="aboutModal" aria-hidden="true">
 <div class="loginModalCard aboutModalCard" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
 <button class="loginModalClose" id="aboutModalClose" type="button" aria-label="Close about popup">×</button>
-<div class="aboutModalScroll">
+<div class="aboutModalHead">
 <div class="loginModalEyebrow">About The Brand</div>
 <h3 class="loginModalTitle" id="aboutModalTitle">Grip it. Sip it. Reuse it.</h3>
+</div>
+<div class="aboutModalScroll">
 <p class="loginModalText"><strong class="aboutPlasticCallout">END SINGLE SERVE PLASTIC USE</strong> and do it with the BADDEST BOTTLE in your hand. Our patented finger-hole grip design makes drinking cool, functional, and safe—whether you sip during finals, hydrate wingsuit flying over the Alps, or chug through a downhill skate wobble. Chaos is optional. Grip is guaranteed.</p>
 <p class="loginModalText" style="margin-top:12px;font-weight:800;color:var(--red2);"><strong>GRIP IT. SIP IT. REUSE IT.</strong></p>
 <hr style="border:0;height:1px;background:rgba(255,255,255,.12);margin:18px 0;"/>
@@ -8063,10 +8078,14 @@ const header = document.querySelector(".siteHeader");
 if(!header) return;
 const cs = getComputedStyle(header);
 if(cs.display === "none" || cs.visibility === "hidden") return;
-const bottom = header.getBoundingClientRect().bottom;
+let bottom = header.getBoundingClientRect().bottom;
+const sloganWrap = document.getElementById("siteHeaderSloganWrap");
+if(sloganWrap){
+bottom = Math.max(bottom, sloganWrap.getBoundingClientRect().bottom);
+}
 const isDesktop = window.matchMedia("(min-width:980px)").matches;
-const buffer = isDesktop ? 10 : 14;
-const minPad = isDesktop ? 160 : 88;
+const buffer = isDesktop ? 10 : 20;
+const minPad = isDesktop ? 160 : 120;
 const pad = Math.max(Math.ceil(bottom) + buffer, minPad);
 const prevPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 0;
 if(Math.abs(pad - prevPad) < 2) return;
@@ -8344,6 +8363,7 @@ loginModal.setAttribute("aria-hidden", "true");
 }
 function showAboutModal(){
 if(!aboutModal) return;
+if(typeof syncSiteHeaderStackHeight === "function") syncSiteHeaderStackHeight();
 aboutModal.classList.add("active");
 aboutModal.setAttribute("aria-hidden", "false");
 }
