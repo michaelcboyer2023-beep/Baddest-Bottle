@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-hero-copy"/>
+<meta name="app-version" content="live-2026-05-18-mobile-ux"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -494,8 +494,69 @@ color:rgba(255,255,255,.45);
 .bbHeroBottleCard img{width:min(100%, 160px);}
 }
 @media (max-width: 979px){
+body{
+padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 72px));
+}
+.mobileBar{
+display:none !important;
+}
+.wrap#bb-builder{
+padding-right:0 !important;
+padding-left:0 !important;
+display:block !important;
+grid-template-columns:none !important;
+}
+.wrap#bb-builder > .grid{
+grid-column:auto !important;
+width:100% !important;
+max-width:100% !important;
+}
+.siteHeaderInner{
+flex-wrap:nowrap;
+align-items:center;
+}
+.siteHeaderBrand,
+.siteHeaderActions{
+flex-shrink:0;
+}
+.siteHeaderNav{
+flex:1 1 auto;
+min-width:0;
+overflow:hidden;
+margin-left:4px;
+}
+.siteHeaderNav--rail{
+display:flex;
+flex-wrap:nowrap;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+max-width:100%;
+padding:3px 4px;
+}
+.siteHeaderNav--rail::-webkit-scrollbar{
+display:none;
+}
+.siteHeaderNav--rail .siteHeaderNavLink{
+flex-shrink:0;
+min-height:44px;
+padding:0 12px;
+font-size:10px;
+}
+#bb-builder .grid,
+#bb-builder .controlsBetween{
+padding-bottom:calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+}
 .bbLanding{margin-bottom:8px;}
 .bbSection{padding:12px;}
+.bbHeroActions .btn{
+min-height:48px;
+font-size:15px;
+}
+.previewBlock{
+padding:10px;
+border-radius:18px;
+}
 }
 .baddestHallPageWrap{
 max-width:var(--site-max-width);
@@ -1043,24 +1104,10 @@ position:relative !important;
 touch-action:pan-y !important;
 }
 }
-/* Mobile: add horizontal scroll indicator on right side */
+/* Mobile: no decorative scroll hint */
 @media (max-width: 979px){
-.wrap{
-position:relative;
-}
 .wrap::after{
-content:"";
-position:fixed;
-right:0;
-top:50%;
-transform:translateY(-50%);
-width:4px;
-height:100px;
-background:linear-gradient(180deg, rgba(255,102,0,0.6), rgba(255,102,0,0.3));
-border-radius:2px 0 0 2px;
-pointer-events:none;
-z-index:1;
-animation:none !important; /* Disable animation on mobile */
+display:none !important;
 }
 /* Mobile: drop heavy animations — exclude site header tickers so they stay “live” when header is visible */
 *:not(.siteHeaderStickerFeed):not(.siteHeaderStickerFeedViewport):not(.siteHeaderStickerFeedTrack):not(.headerStickerFeedRow):not(.headerStickerCard):not(.headerStickerCardThumb):not(.headerStickerCardInfo):not(.headerStickerCardName):not(.headerStickerCardLike){
@@ -2564,6 +2611,33 @@ touch-action:none !important;
 .photoZoomControls{
 display:none !important;
 }
+@media (max-width: 979px){
+label.photoZoomControls,
+.row.photoZoomControls{
+display:flex !important;
+}
+label.photoZoomControls{
+display:block !important;
+margin-top:10px;
+}
+.row.photoZoomControls input[type="range"]{
+min-height:36px;
+}
+.mobilePhotoTip{
+display:block;
+margin:0 0 12px;
+padding:10px 12px;
+border-radius:12px;
+border:1px solid rgba(255,102,0,.22);
+background:rgba(255,102,0,.08);
+font-size:12px;
+line-height:1.45;
+color:rgba(255,255,255,.78);
+}
+}
+.mobilePhotoTip{
+display:none;
+}
 /* On mobile, allow scrolling - disable canvas interaction when scrolling */
 @media (max-width: 979px){
 .canvas{
@@ -2901,8 +2975,42 @@ grid-template-columns:repeat(auto-fit, minmax(70px, 1fr)) !important;
 gap:6px !important;
 }
 #aiCategoryButtons .btn{
-padding:6px 8px !important;
-font-size:9px !important;
+padding:10px 8px !important;
+font-size:10px !important;
+min-height:44px !important;
+}
+#aiPromptInput,
+#aiGenerateButton,
+#choosePhotoBtn,
+.templateShapeBtn{
+min-height:48px !important;
+-webkit-tap-highlight-color:transparent;
+}
+@media (max-width: 600px){
+.card[data-step="1"] .row:first-of-type{
+flex-direction:column !important;
+align-items:stretch !important;
+}
+.templateShapePicker{
+width:100%;
+}
+.templateShapeBtn{
+width:100%;
+min-width:0 !important;
+}
+#choosePhotoBtn{
+width:100%;
+}
+#aiImageHistory{
+position:static !important;
+top:auto !important;
+right:auto !important;
+max-width:100% !important;
+margin:8px 0 10px !important;
+justify-content:flex-start !important;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+}
 }
 /* Show microphone icon on mobile, hide random icon */
 #aiRandomButton .randomIcon{
@@ -3414,52 +3522,93 @@ border-color:rgba(255,102,0,.6);
 }
 }
 @media (max-width: 979px){
-.mobileStickyPreview{
-display:none !important;
-}
-/* Mobile Navigation Buttons - sticky at bottom when scrolling reaches it */
+/* Mobile Navigation — fixed bottom dock while building */
 .mobileNavButtons{
 display:flex !important;
 flex-direction:column !important;
-position:sticky !important;
+position:fixed !important;
 bottom:0 !important;
+left:0 !important;
+right:0 !important;
 gap:8px !important;
-padding:12px !important;
-padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+padding:10px 12px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
 width:100% !important;
 max-width:100% !important;
 box-sizing:border-box !important;
-background:linear-gradient(180deg, rgba(9,7,10,.98), rgba(9,7,10,.95)) !important;
-border:1px solid rgba(255,102,0,.25) !important;
-border-radius:12px 12px 0 0 !important;
-backdrop-filter:blur(12px) !important;
-box-shadow:0 -4px 20px rgba(0,0,0,0.8) !important;
+background:linear-gradient(180deg, rgba(9,7,10,.97), rgba(9,7,10,.99)) !important;
+border-top:1px solid rgba(255,102,0,.32) !important;
+border-radius:0 !important;
+backdrop-filter:blur(14px) !important;
+-webkit-backdrop-filter:blur(14px) !important;
+box-shadow:0 -8px 32px rgba(0,0,0,.65) !important;
 visibility:visible !important;
 opacity:1 !important;
-margin-top:20px !important;
-margin-bottom:0 !important;
-z-index:100 !important;
+margin:0 !important;
+z-index:120 !important;
 }
-.mobileNavButtons > div:first-child{
+.mobileBuilderDockMeta{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+font-size:12px;
+color:var(--muted);
+}
+.mobileBuilderDockPrice{
+font-size:20px;
+font-weight:1000;
+color:#ffb26b;
+letter-spacing:.01em;
+}
+.mobileBuilderDockSize{
+font-weight:800;
+color:rgba(255,255,255,.88);
+}
+.mobileBuilderDockShip{
+font-size:10px;
+font-weight:800;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:rgba(255,140,84,.9);
+}
+.mobileBuilderDockActions{
 display:flex !important;
 width:100% !important;
 gap:8px !important;
 }
+.mobileNavButtons #mobileScrollPreviewBtn,
 .mobileNavButtons #mobileStepNext,
 .mobileNavButtons #mobileStepPrev{
 display:flex !important;
 flex:1 !important;
-padding:12px !important;
-font-size:14px !important;
+min-height:48px !important;
+padding:12px 14px !important;
+font-size:15px !important;
 font-weight:800 !important;
 border-radius:12px !important;
 align-items:center !important;
 justify-content:center !important;
 visibility:visible !important;
 opacity:1 !important;
+-webkit-tap-highlight-color:transparent;
+}
+.mobileNavButtons #mobileScrollPreviewBtn{
+flex:0 0 auto !important;
+min-width:108px !important;
 }
 .mobileNavButtons #mobileStepPrev{
-display:none !important; /* Hidden by default, shown by JavaScript when not on step 1 */
+display:none !important;
+}
+.mobileNavButtons .stickerSelectHint{
+display:none !important;
+}
+.mobileNavButtons .mobileStickyThumbnails:empty{
+display:none !important;
+}
+body:not(.mobileBuilderDockActive) #bb-builder .grid,
+body:not(.mobileBuilderDockActive) #bb-builder .controlsBetween{
+padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)) !important;
 }
 /* AI thumbnails inside navigation container - smaller size */
 .mobileNavButtons .mobileStickyThumbnails{
@@ -6890,6 +7039,7 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 
 <label class="photoZoomControls">Photo Position & Zoom</label>
+<p class="mobilePhotoTip">Tip: Drag the preview to reposition your image. Use the zoom slider to resize.</p>
 <div class="row photoZoomControls">
 <input id="photoZoom" type="range" min="20" max="300" value="100"/>
 <div class="pill"><span id="photoZoomVal">100</span>%</div>
@@ -7005,13 +7155,18 @@ referrerpolicy="strict-origin-when-cross-origin"
 
 </div>
 
-<!-- Mobile Navigation Buttons - positioned below all sections, always visible -->
-<div class="mobileNavButtons" id="mobileNavButtons" style="margin-top:20px;margin-bottom:20px;">
-<div style="display:flex;gap:8px;width:100%;">
-<button class="btn ghost" id="mobileStepPrev" type="button" style="flex:1;padding:12px;font-size:14px;font-weight:800;display:none;">← Previous</button>
-<button class="btn primary" id="mobileStepNext" type="button" style="flex:1;padding:12px;font-size:14px;font-weight:800;">Next →</button>
+<!-- Mobile fixed bottom dock — price, preview jump, checkout -->
+<div class="mobileNavButtons is-hidden" id="mobileNavButtons">
+<div class="mobileBuilderDockMeta">
+<span class="mobileBuilderDockPrice">$<span id="mobileDockPriceVal">19.99</span></span>
+<span class="mobileBuilderDockSize"><span id="mobileDockSizeVal">12</span>″ wrap</span>
+<span class="mobileBuilderDockShip">Free shipping</span>
 </div>
-<!-- AI generation thumbnails (up to 15) - moved here below buttons -->
+<div class="mobileBuilderDockActions">
+<button class="btn ghost" id="mobileScrollPreviewBtn" type="button">↑ Preview</button>
+<button class="btn ghost" id="mobileStepPrev" type="button" style="display:none;" aria-hidden="true">← Back</button>
+<button class="btn primary glow" id="mobileStepNext" type="button">Add to Cart</button>
+</div>
 <div class="stickerSelectHint">Tap the checkmark on any sticker you want to add. Each selected sticker adds $5.00.</div>
 <div class="mobileStickyThumbnails" id="mobileStickyThumbnails">
 <!-- AI generation thumbnails (up to 15) -->
@@ -7373,6 +7528,47 @@ function wireLandingAndPlatformNav(){
     e.preventDefault();
     dismissSiteModals();
     if(typeof showOrderTrackModal === "function") showOrderTrackModal();
+  });
+  initMobileBuilderDock();
+}
+function initMobileBuilderDock(){
+  const dock = document.getElementById("mobileNavButtons");
+  const builder = document.getElementById("bb-builder");
+  if(!dock) return;
+  const previewBtn = document.getElementById("mobileScrollPreviewBtn");
+  if(previewBtn && !previewBtn.__bound){
+    previewBtn.__bound = true;
+    previewBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const preview = document.querySelector("#bb-builder .previewShell");
+      if(!preview) return;
+      const headerPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 72;
+      const top = preview.getBoundingClientRect().top + window.scrollY - headerPad - 6;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
+  }
+  if(!builder || builder.__mobileDockIo) return;
+  builder.__mobileDockIo = true;
+  const syncDock = (visible) => {
+    if(window.innerWidth >= 980){
+      dock.classList.remove("is-hidden");
+      document.body.classList.remove("mobileBuilderDockActive");
+      return;
+    }
+    if(visible){
+      dock.classList.remove("is-hidden");
+      document.body.classList.add("mobileBuilderDockActive");
+    } else {
+      dock.classList.add("is-hidden");
+      document.body.classList.remove("mobileBuilderDockActive");
+    }
+  };
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => syncDock(entry.isIntersecting));
+  }, { threshold: 0.06, rootMargin: "0px 0px -40px 0px" });
+  io.observe(builder);
+  window.addEventListener("resize", () => {
+    if(window.innerWidth >= 980) syncDock(false);
   });
 }
 document.addEventListener("DOMContentLoaded", () => {
@@ -9989,6 +10185,8 @@ const dockPriceVal = document.getElementById("dockPriceVal");
 const dockSizeVal = document.getElementById("dockSizeVal");
 const mobilePriceVal = document.getElementById("mobilePriceVal");
 const mobileSizeVal = document.getElementById("mobileSizeVal");
+const mobileDockPriceVal = document.getElementById("mobileDockPriceVal");
+const mobileDockSizeVal = document.getElementById("mobileDockSizeVal");
 const selectedStickerSection = document.getElementById("selectedStickerSection");
 const selectedStickerGrid = document.getElementById("selectedStickerGrid");
 let stickerHoverPreview = null;
@@ -11246,17 +11444,22 @@ footerTotal.textContent = p;
 if(dockPriceVal) dockPriceVal.textContent = p;
 if(dockSizeVal) dockSizeVal.textContent = chosenSize;
 if(headerCartCount) headerCartCount.textContent = String(cartItemCount);
-mobilePriceVal.textContent = p;
-mobileSizeVal.textContent = chosenSize;
+if(mobilePriceVal) mobilePriceVal.textContent = p;
+if(mobileSizeVal) mobileSizeVal.textContent = chosenSize;
+if(mobileDockPriceVal) mobileDockPriceVal.textContent = p;
+if(mobileDockSizeVal) mobileDockSizeVal.textContent = chosenSize;
 updateLightboxInfo();
 updateCartModalUI();
 }
 
 function enableCheckoutButtons(){
 const ok = !!baseImg && !!chosenSize;
+const mobileNav = document.getElementById("mobileNavButtons");
+const mobileStepNextBtn = mobileNav ? mobileNav.querySelector("#mobileStepNext") : document.getElementById("mobileStepNext");
 if(dockAddBtn) dockAddBtn.disabled = !ok;
 if(footerContinue) footerContinue.disabled = !ok;
 if(mobileAddBtn) mobileAddBtn.disabled = !ok;
+if(mobileStepNextBtn) mobileStepNextBtn.disabled = !ok;
 }
 
 function getOverlayList(){
@@ -16251,8 +16454,8 @@ const mobileStepNextEl = mobileNavButtonsContainer ? mobileNavButtonsContainer.q
 const mobileStepPrevEl = mobileNavButtonsContainer ? mobileNavButtonsContainer.querySelector("#mobileStepPrev") : document.getElementById("mobileStepPrev");
 
 if(mobileStepNextEl) {
-mobileStepNextEl.textContent = step < totalSteps ? "Next →" : "Add to Cart";
-mobileStepNextEl.disabled = false;
+mobileStepNextEl.textContent = "Add to Cart";
+mobileStepNextEl.disabled = !(typeof baseImg !== "undefined" && baseImg && chosenSize);
 }
 
 // Show/hide Previous button - hide on step 1, show on all other steps
