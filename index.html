@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-mobile-ux"/>
+<meta name="app-version" content="live-2026-05-18-mobile-scroll-header"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -71,6 +71,9 @@ right:0;
 height:auto;
 min-height:0;
 z-index:150;
+padding-top:env(safe-area-inset-top, 0px);
+box-sizing:border-box;
+overflow:visible;
 background:linear-gradient(180deg, rgba(9,7,10,.96), rgba(9,7,10,.88));
 border-bottom:1px solid rgba(255,102,0,.18);
 backdrop-filter:blur(12px);
@@ -495,10 +498,13 @@ color:rgba(255,255,255,.45);
 }
 @media (max-width: 979px){
 body{
-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 72px));
+padding-top:var(--site-header-stack, 88px);
 }
 .mobileBar{
 display:none !important;
+}
+#pageHome{
+padding-bottom:calc(130px + env(safe-area-inset-bottom, 0px));
 }
 .wrap#bb-builder{
 padding-right:0 !important;
@@ -511,28 +517,54 @@ grid-column:auto !important;
 width:100% !important;
 max-width:100% !important;
 }
-.siteHeaderInner{
-flex-wrap:nowrap;
-align-items:center;
+.siteHeader{
+overflow:visible !important;
 }
-.siteHeaderBrand,
-.siteHeaderActions{
+.siteHeaderInner{
+display:grid !important;
+grid-template-columns:1fr auto;
+grid-template-rows:auto auto;
+align-items:center !important;
+gap:8px 10px !important;
+width:100% !important;
+max-width:100% !important;
+overflow:visible !important;
+row-gap:8px !important;
+padding:10px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)) !important;
+box-sizing:border-box !important;
+}
+.siteHeaderBrand{
+grid-column:1;
+grid-row:1;
 flex-shrink:0;
 }
+.siteHeaderActions{
+grid-column:2;
+grid-row:1;
+flex-shrink:0;
+margin-left:0 !important;
+justify-self:end;
+}
 .siteHeaderNav{
+grid-column:1 / -1;
+grid-row:2;
 flex:1 1 auto;
+width:100%;
 min-width:0;
-overflow:hidden;
-margin-left:4px;
+overflow:visible !important;
+margin-left:0 !important;
 }
 .siteHeaderNav--rail{
 display:flex;
 flex-wrap:nowrap;
+width:100%;
 overflow-x:auto;
 -webkit-overflow-scrolling:touch;
 scrollbar-width:none;
 max-width:100%;
-padding:3px 4px;
+margin-left:0 !important;
+padding:4px 6px;
+justify-content:flex-start;
 }
 .siteHeaderNav--rail::-webkit-scrollbar{
 display:none;
@@ -545,7 +577,7 @@ font-size:10px;
 }
 #bb-builder .grid,
 #bb-builder .controlsBetween{
-padding-bottom:calc(148px + env(safe-area-inset-bottom, 0px)) !important;
+padding-bottom:24px !important;
 }
 .bbLanding{margin-bottom:8px;}
 .bbSection{padding:12px;}
@@ -556,6 +588,11 @@ font-size:15px;
 .previewBlock{
 padding:10px;
 border-radius:18px;
+}
+.bbHero,
+.previewShell,
+#bb-hero{
+scroll-margin-top:calc(var(--site-header-stack, 80px) + 12px);
 }
 }
 .baddestHallPageWrap{
@@ -997,10 +1034,10 @@ filter:drop-shadow(0 0 12px rgba(255,102,0,.22)) drop-shadow(0 0 26px rgba(255,1
 html{
 overflow-x:hidden !important;
 overflow-y:auto !important;
-height:100% !important;
+min-height:100% !important;
 -webkit-overflow-scrolling:touch !important;
 touch-action:pan-y !important;
-scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack, 64px));
+scroll-padding-top:var(--site-header-stack, 88px);
 }
 body{
 overflow-x:hidden !important;
@@ -1010,33 +1047,57 @@ min-height:100% !important;
 -webkit-overflow-scrolling:touch !important;
 touch-action:pan-y !important;
 position:relative !important;
-/* Ensure body is actually scrollable */
+padding-top:var(--site-header-stack, 88px);
 overscroll-behavior-y:auto !important;
 }
 /* Persistent site header — compact on small screens (normal site nav) */
 .siteHeader{
 z-index:160;
+overflow:visible !important;
 }
 .siteHeaderInner{
-flex-wrap:wrap;
-row-gap:6px;
-padding:8px max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
-gap:8px;
-align-items:center;
+display:grid !important;
+grid-template-columns:1fr auto;
+grid-template-rows:auto auto;
+align-items:center !important;
+gap:8px 10px !important;
+width:100% !important;
+max-width:100% !important;
+overflow:visible !important;
+row-gap:8px !important;
+padding:10px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)) !important;
+box-sizing:border-box !important;
+}
+.siteHeaderBrand{
+grid-column:1;
+grid-row:1;
+}
+.siteHeaderActions{
+grid-column:2;
+grid-row:1;
+margin-left:0 !important;
+justify-self:end;
 }
 .siteHeaderLogo{
 height:clamp(40px, 11vw, 52px) !important;
 top:0 !important;
 }
 .siteHeaderNav{
+grid-column:1 / -1;
+grid-row:2;
 flex:1 1 auto;
-margin-left:0;
+margin-left:0 !important;
 min-width:0;
-justify-content:flex-end;
+width:100%;
+overflow:visible !important;
+justify-content:flex-start;
 }
 .siteHeaderNav--rail{
-margin-left:auto;
-padding:2px 5px;
+width:100%;
+margin-left:0 !important;
+padding:4px 6px;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
 }
 .siteHeaderNav--rail .siteHeaderNavLink{
 min-height:32px;
@@ -1332,10 +1393,10 @@ max-width:100% !important;
 --site-header-stack:calc(0px + max(118px, min(248px, 34vh)) + 28px + var(--site-header-band-gap) + 16px);
 }
 html{
-scroll-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
+scroll-padding-top:var(--site-header-stack, 160px);
 }
 body{
-padding-top:calc(env(safe-area-inset-top, 0px) + var(--site-header-stack));
+padding-top:var(--site-header-stack, 160px);
 }
 /* Full-size row — compact so more of the designer tool stays visible */
 .siteHeaderInner{
@@ -2675,7 +2736,7 @@ touch-action:none !important;
 html{
 overflow-y:auto !important;
 overflow-x:hidden !important;
-height:100% !important;
+min-height:100% !important;
 -webkit-overflow-scrolling:touch !important;
 touch-action:pan-y !important;
 }
@@ -3606,9 +3667,8 @@ display:none !important;
 .mobileNavButtons .mobileStickyThumbnails:empty{
 display:none !important;
 }
-body:not(.mobileBuilderDockActive) #bb-builder .grid,
-body:not(.mobileBuilderDockActive) #bb-builder .controlsBetween{
-padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+.mobileNavButtons.is-hidden{
+display:none !important;
 }
 /* AI thumbnails inside navigation container - smaller size */
 .mobileNavButtons .mobileStickyThumbnails{
@@ -7156,7 +7216,7 @@ referrerpolicy="strict-origin-when-cross-origin"
 </div>
 
 <!-- Mobile fixed bottom dock — price, preview jump, checkout -->
-<div class="mobileNavButtons is-hidden" id="mobileNavButtons">
+<div class="mobileNavButtons" id="mobileNavButtons">
 <div class="mobileBuilderDockMeta">
 <span class="mobileBuilderDockPrice">$<span id="mobileDockPriceVal">19.99</span></span>
 <span class="mobileBuilderDockSize"><span id="mobileDockSizeVal">12</span>″ wrap</span>
@@ -7533,7 +7593,6 @@ function wireLandingAndPlatformNav(){
 }
 function initMobileBuilderDock(){
   const dock = document.getElementById("mobileNavButtons");
-  const builder = document.getElementById("bb-builder");
   if(!dock) return;
   const previewBtn = document.getElementById("mobileScrollPreviewBtn");
   if(previewBtn && !previewBtn.__bound){
@@ -7542,34 +7601,23 @@ function initMobileBuilderDock(){
       e.preventDefault();
       const preview = document.querySelector("#bb-builder .previewShell");
       if(!preview) return;
-      const headerPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 72;
-      const top = preview.getBoundingClientRect().top + window.scrollY - headerPad - 6;
+      const headerPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 88;
+      const top = preview.getBoundingClientRect().top + window.scrollY - headerPad - 8;
       window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
     });
   }
-  if(!builder || builder.__mobileDockIo) return;
-  builder.__mobileDockIo = true;
-  const syncDock = (visible) => {
+  const syncDock = () => {
     if(window.innerWidth >= 980){
-      dock.classList.remove("is-hidden");
-      document.body.classList.remove("mobileBuilderDockActive");
+      dock.classList.add("is-hidden");
       return;
     }
-    if(visible){
-      dock.classList.remove("is-hidden");
-      document.body.classList.add("mobileBuilderDockActive");
-    } else {
-      dock.classList.add("is-hidden");
-      document.body.classList.remove("mobileBuilderDockActive");
-    }
+    dock.classList.remove("is-hidden");
   };
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => syncDock(entry.isIntersecting));
-  }, { threshold: 0.06, rootMargin: "0px 0px -40px 0px" });
-  io.observe(builder);
-  window.addEventListener("resize", () => {
-    if(window.innerWidth >= 980) syncDock(false);
-  });
+  syncDock();
+  if(!window.__mobileDockResizeBound){
+    window.__mobileDockResizeBound = true;
+    window.addEventListener("resize", syncDock, { passive: true });
+  }
 }
 document.addEventListener("DOMContentLoaded", () => {
   wireLandingAndPlatformNav();
@@ -7717,19 +7765,21 @@ const header = document.querySelector(".siteHeader");
 if(!header) return;
 const cs = getComputedStyle(header);
 if(cs.display === "none" || cs.visibility === "hidden") return;
-let bottom = header.getBoundingClientRect().bottom;
-header.querySelectorAll(".siteHeaderInner, .siteHeaderLogo, .siteHeaderSloganRow, .siteHeaderSloganWrap, .siteHeaderStickerFeed").forEach((el) => {
-const r = el.getBoundingClientRect();
-if(r.height > 0) bottom = Math.max(bottom, r.bottom);
-});
+const bottom = header.getBoundingClientRect().bottom;
 const isDesktop = window.matchMedia("(min-width:980px)").matches;
-/* Tight to real header: small buffer only; avoid old 248px floor that floated content far below the bar */
-const minPad = isDesktop ? 160 : 48;
-const pad = Math.max(Math.ceil(bottom) + 1, minPad);
+const buffer = isDesktop ? 10 : 14;
+const minPad = isDesktop ? 160 : 88;
+const pad = Math.max(Math.ceil(bottom) + buffer, minPad);
+const prevPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 0;
+if(Math.abs(pad - prevPad) < 2) return;
 document.documentElement.style.setProperty("--site-header-stack", pad + "px");
 }catch(_e){}
 }
-window.addEventListener("resize", () => requestAnimationFrame(syncSiteHeaderStackHeight));
+let headerStackResizeTimer = null;
+window.addEventListener("resize", () => {
+clearTimeout(headerStackResizeTimer);
+headerStackResizeTimer = setTimeout(() => requestAnimationFrame(syncSiteHeaderStackHeight), 250);
+}, { passive: true });
 window.addEventListener("orientationchange", () => setTimeout(syncSiteHeaderStackHeight, 100));
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(syncSiteHeaderStackHeight));
 window.addEventListener("load", () => requestAnimationFrame(syncSiteHeaderStackHeight));
@@ -16364,7 +16414,7 @@ const totalSteps = 1;
 let currentStep = 1;
 const stepTitles = { 1: "Step 1: Choose Photo" };
 
-function updateMobileStep(step) {
+function updateMobileStep(step, shouldScroll) {
 if(window.innerWidth >= 980) return; // Only work on mobile
 
 console.log("updateMobileStep called with step:", step);
@@ -16467,28 +16517,25 @@ mobileStepPrevEl.style.setProperty("display", "flex", "important");
 }
 }
 
-// Scroll to show the full current section - ensure all content is visible
+// Scroll only when user changes steps — never on resize/init (prevents iOS scroll snap-back)
+if(shouldScroll){
 setTimeout(() => {
 const currentCard = document.querySelector(`.card[data-step="${step}"]`);
 if(currentCard && window.innerWidth < 980) {
 const previewHeight = document.querySelector('.previewShell')?.offsetHeight || 0;
-const navHeight = document.querySelector('.mobileStepIndicator')?.offsetHeight || 80;
 const cardTop = currentCard.offsetTop;
-
-// Scroll to top of card so user can see all content from the start
 const scrollPosition = Math.max(0, cardTop - previewHeight - 5);
 window.scrollTo({
 top: scrollPosition,
 behavior: 'smooth'
 });
-
-// Ensure card content is fully visible and scrollable
 currentCard.style.setProperty('overflow-y', 'auto', 'important');
 currentCard.style.setProperty('overflow-x', 'visible', 'important');
 currentCard.style.setProperty('max-height', 'none', 'important');
 currentCard.style.setProperty('height', 'auto', 'important');
 }
 }, 150);
+}
 }
 
 // Desktop: Always show all cards (restore desktop layout)
@@ -16537,7 +16584,7 @@ console.log("Next button clicked, currentStep:", step, "totalSteps:", totalSteps
 if(step < totalSteps) {
 const nextStep = step + 1;
 console.log("Moving to step:", nextStep);
-updateMobileStep(nextStep);
+updateMobileStep(nextStep, true);
 } else {
 if(baseImg && chosenSize) startCheckout();
 }
@@ -16576,13 +16623,13 @@ console.log("Previous button clicked, currentStep:", step);
 if(step > 1) {
 const prevStep = step - 1;
 console.log("Moving to step:", prevStep);
-updateMobileStep(prevStep);
+updateMobileStep(prevStep, true);
 }
 });
 }
 };
 
-updateMobileStep(1);
+updateMobileStep(1, false);
 setupMobileNavigation(); // Setup navigation buttons
 
 // Show mobile section actions only on mobile (step 5 only)
@@ -16600,19 +16647,11 @@ setInterval(syncButtons, 500);
 }
 }
 
-// Update on resize
+// Update on resize — do NOT call updateMobileStep (it scrolls and fights iOS address-bar resize)
 window.addEventListener('resize', () => {
 if(window.innerWidth < 980) {
-// Mobile: use step navigation
-if(typeof currentStep !== 'undefined') {
-updateMobileStep(currentStep);
-setupMobileNavigation(); // Re-setup navigation
-} else {
-updateMobileStep(1);
 setupMobileNavigation();
-}
 } else {
-// Desktop: show all cards
 document.querySelectorAll(".card[data-step]").forEach(card => {
 card.style.display = "block";
 });
