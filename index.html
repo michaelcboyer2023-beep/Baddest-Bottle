@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-mobile-header-logo"/>
+<meta name="app-version" content="live-2026-05-18-header-logos-restore"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -105,6 +105,17 @@ top:6px;
 filter:drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
 }
 .siteHeaderGrabLogo{
+display:none;
+}
+.siteHeaderSloganImg{
+display:block;
+width:auto;
+height:auto;
+max-width:min(100%, 920px);
+object-fit:contain;
+filter:url(#grabHeaderKeyBlack) drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+}
+.siteHeaderSloganText{
 display:none;
 }
 .siteHeaderNav{
@@ -558,17 +569,25 @@ justify-self:end;
 gap:6px !important;
 }
 .siteHeaderLogo{
-display:none !important;
+display:block !important;
+height:clamp(58px, 16vw, 80px) !important;
+top:0 !important;
 }
 .siteHeaderGrabLogo{
-display:block;
-max-width:min(100%, calc(100vw - 152px));
-width:auto;
-height:auto;
-max-height:clamp(28px, 7vw, 40px);
-margin:0 auto;
-object-fit:contain;
-filter:url(#grabHeaderKeyBlack) drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+display:none !important;
+}
+.siteHeaderSloganRow{
+display:flex !important;
+justify-content:center;
+align-items:center;
+padding:0 max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+}
+.siteHeaderSlogan{
+display:inline-flex !important;
+}
+.siteHeaderSloganImg{
+height:clamp(36px, 11vw, 52px);
+max-height:52px;
 }
 #bb-builder .grid,
 #bb-builder .controlsBetween{
@@ -647,7 +666,10 @@ position:relative;
 z-index:1;
 }
 .siteHeaderSloganImg{
-display:none !important;
+display:block;
+height:clamp(172px, 20vw, 248px);
+max-height:min(248px, 34vh);
+width:auto;
 }
 .siteHeaderSloganText{
 display:block;
@@ -786,17 +808,25 @@ grid-row:1;
 justify-self:end;
 }
 .siteHeaderLogo{
-display:none !important;
+display:block !important;
+height:clamp(58px, 16vw, 80px) !important;
+top:0 !important;
 }
 .siteHeaderGrabLogo{
-display:block;
-max-width:min(100%, calc(100vw - 152px));
-width:auto;
-height:auto;
-max-height:clamp(28px, 7vw, 40px);
-margin:0 auto;
-object-fit:contain;
-filter:url(#grabHeaderKeyBlack) drop-shadow(0 0 10px rgba(255,102,0,.18)) drop-shadow(0 0 22px rgba(255,102,0,.12));
+display:none !important;
+}
+.siteHeaderSloganRow{
+display:flex !important;
+justify-content:center;
+align-items:center;
+padding:0 max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
+}
+.siteHeaderSlogan{
+display:inline-flex !important;
+}
+.siteHeaderSloganImg{
+height:clamp(36px, 11vw, 52px);
+max-height:52px;
 }
 .siteHeaderNav{
 grid-column:unset !important;
@@ -1214,17 +1244,25 @@ justify-self:end;
 gap:6px !important;
 }
 .siteHeaderLogo{
-height:clamp(40px, 11vw, 52px) !important;
+height:clamp(58px, 16vw, 80px) !important;
 top:0 !important;
-display:none !important;
+display:block !important;
 }
 .siteHeaderGrabLogo{
-display:block;
-max-width:min(100%, calc(100vw - 152px));
-max-height:clamp(28px, 7vw, 40px);
+display:none !important;
+}
+.siteHeaderSloganRow{
+display:flex !important;
+justify-content:center;
+align-items:center;
+padding:0 max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));
 }
 .siteHeaderSlogan{
-display:none !important;
+display:inline-flex !important;
+}
+.siteHeaderSloganImg{
+height:clamp(36px, 11vw, 52px);
+max-height:52px;
 }
 .siteHeaderSocials{
 display:none !important;
@@ -6569,7 +6607,6 @@ width:100%;
 </button>
 <div class="siteHeaderBrand">
 <img class="siteHeaderLogo" src="projects/Users-michaelcboyer-cursor/assets/badlogo-1a0e3a15-f9ef-4b01-89ab-61faa0b09d1b.png" alt="BADDEST BOTTLE"/>
-<img class="siteHeaderGrabLogo" src="projects/Users-michaelcboyer-cursor/assets/grab-life-by-the-bottles-banner.png" alt="GRAB LIFE BY THE BOTTLES" decoding="async"/>
 </div>
 <nav class="siteHeaderNav siteHeaderNav--rail" id="siteHeaderNav" aria-label="Website">
 <a class="siteHeaderNavLink" href="#" id="siteHeaderHomeLink"><span>Home</span></a>
@@ -6652,7 +6689,7 @@ width:100%;
 <div class="siteHeaderSloganRow" id="siteHeaderSloganRow">
 <div class="siteHeaderSlogan" id="siteHeaderSlogan">
 <div class="siteHeaderSloganWrap" id="siteHeaderSloganWrap">
-<span class="siteHeaderSloganText">Grip it · Sip it · Reuse it</span>
+<img class="siteHeaderSloganImg" src="projects/Users-michaelcboyer-cursor/assets/grab-life-by-the-bottles-banner.png" alt="GRAB LIFE BY THE BOTTLES" decoding="async"/>
 </div>
 </div>
 </div>
