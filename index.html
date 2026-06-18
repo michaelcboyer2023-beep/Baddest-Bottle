@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-header-logo-scale"/>
+<meta name="app-version" content="live-2026-05-18-grab-life-scale"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -543,7 +543,7 @@ gap:8px 10px !important;
 width:100% !important;
 max-width:100% !important;
 overflow:visible !important;
-padding:10px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)) !important;
+padding:10px max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)) !important;
 box-sizing:border-box !important;
 }
 .siteHeaderMenuBtn{
@@ -588,7 +588,8 @@ display:flex !important;
 justify-content:center;
 align-items:center;
 width:100%;
-padding:2px max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
+padding:0 max(10px, env(safe-area-inset-right, 0px)) 4px max(10px, env(safe-area-inset-left, 0px));
+margin-top:-20px;
 box-sizing:border-box;
 }
 .siteHeaderSlogan{
@@ -600,14 +601,17 @@ max-width:100%;
 .siteHeaderSloganWrap{
 display:flex;
 justify-content:center;
+align-items:center;
 width:100%;
 }
 .siteHeaderSloganImg{
-height:clamp(52px, 14vw, 76px);
-max-height:76px;
-width:auto;
-max-width:min(100%, calc(100vw - 24px));
+display:block !important;
+width:min(100%, calc(100vw - 20px)) !important;
+height:auto !important;
+max-height:clamp(112px, 32vw, 156px) !important;
+max-width:none !important;
 margin:0 auto;
+object-fit:contain;
 }
 #bb-builder .grid,
 #bb-builder .controlsBetween{
@@ -847,7 +851,8 @@ display:flex !important;
 justify-content:center;
 align-items:center;
 width:100%;
-padding:2px max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
+padding:0 max(10px, env(safe-area-inset-right, 0px)) 4px max(10px, env(safe-area-inset-left, 0px));
+margin-top:-20px;
 box-sizing:border-box;
 }
 .siteHeaderSlogan{
@@ -859,14 +864,17 @@ max-width:100%;
 .siteHeaderSloganWrap{
 display:flex;
 justify-content:center;
+align-items:center;
 width:100%;
 }
 .siteHeaderSloganImg{
-height:clamp(52px, 14vw, 76px);
-max-height:76px;
-width:auto;
-max-width:min(100%, calc(100vw - 24px));
+display:block !important;
+width:min(100%, calc(100vw - 20px)) !important;
+height:auto !important;
+max-height:clamp(112px, 32vw, 156px) !important;
+max-width:none !important;
 margin:0 auto;
+object-fit:contain;
 }
 .siteHeaderNav{
 grid-column:unset !important;
@@ -1264,7 +1272,7 @@ gap:8px 10px !important;
 width:100% !important;
 max-width:100% !important;
 overflow:visible !important;
-padding:10px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)) !important;
+padding:10px max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px)) !important;
 box-sizing:border-box !important;
 }
 .siteHeaderMenuBtn{
@@ -1304,7 +1312,8 @@ display:flex !important;
 justify-content:center;
 align-items:center;
 width:100%;
-padding:2px max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
+padding:0 max(10px, env(safe-area-inset-right, 0px)) 4px max(10px, env(safe-area-inset-left, 0px));
+margin-top:-20px;
 box-sizing:border-box;
 }
 .siteHeaderSlogan{
@@ -1316,14 +1325,17 @@ max-width:100%;
 .siteHeaderSloganWrap{
 display:flex;
 justify-content:center;
+align-items:center;
 width:100%;
 }
 .siteHeaderSloganImg{
-height:clamp(52px, 14vw, 76px);
-max-height:76px;
-width:auto;
-max-width:min(100%, calc(100vw - 24px));
+display:block !important;
+width:min(100%, calc(100vw - 20px)) !important;
+height:auto !important;
+max-height:clamp(112px, 32vw, 156px) !important;
+max-width:none !important;
 margin:0 auto;
+object-fit:contain;
 }
 .siteHeaderSocials{
 display:none !important;
