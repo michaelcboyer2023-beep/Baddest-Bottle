@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-mobile-header-unified"/>
+<meta name="app-version" content="live-2026-05-18-iphone-header-about-fix"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -4504,7 +4504,7 @@ box-sizing:border-box;
 flex:0 0 auto;
 position:relative;
 z-index:2;
-padding:14px 52px 12px 24px;
+padding:14px 52px 12px 28px;
 border-bottom:1px solid rgba(255,255,255,.08);
 background:linear-gradient(180deg, rgba(20,13,18,.98), rgba(16,10,14,.96));
 overflow:visible;
@@ -4538,9 +4538,26 @@ overscroll-behavior:contain;
 padding:16px 22px 22px;
 }
 @media (max-width:480px){
-#aboutModalTitle{ font-size:clamp(22px,9vw,36px); }
-.aboutModalHead{ padding:12px 48px 10px 20px; }
+#aboutModalTitle{ font-size:clamp(20px,7.8vw,34px); line-height:1.12; letter-spacing:0; padding:4px 0 0 8px; }
+.aboutModalHead{ padding:12px 44px 12px 28px; }
 #aboutModal .aboutModalScroll{ padding-left:16px; padding-right:16px; }
+}
+@media (max-width:979px){
+#aboutModal .aboutModalHead{
+padding:12px 44px 12px 28px;
+}
+#aboutModalTitle{
+font-size:clamp(20px,7.8vw,34px);
+line-height:1.12;
+letter-spacing:0;
+padding:4px 0 0 8px;
+overflow:visible;
+-webkit-font-smoothing:antialiased;
+}
+#aboutModal .loginModalCard.aboutModalCard{
+-webkit-transform:translateZ(0);
+transform:translateZ(0);
+}
 }
 /* Desktop / laptop: wide + height-capped so About + Social fit a standard screen */
 @media (min-width:981px){
@@ -6711,6 +6728,11 @@ width:100% !important;
 max-width:100% !important;
 min-width:0 !important;
 text-align:center !important;
+position:relative !important;
+z-index:3 !important;
+opacity:1 !important;
+visibility:visible !important;
+flex-shrink:0 !important;
 }
 .siteHeaderActions{
 grid-column:3 !important;
@@ -6725,9 +6747,36 @@ display:block !important;
 height:var(--mobile-bb-logo-h) !important;
 width:auto !important;
 max-width:min(100%, calc(100vw - 108px)) !important;
+min-height:var(--mobile-bb-logo-h) !important;
 margin:0 auto !important;
 top:0 !important;
 position:relative !important;
+opacity:1 !important;
+visibility:visible !important;
+flex-shrink:0 !important;
+object-fit:contain !important;
+}
+.siteHeaderInner > .siteHeaderNav.siteHeaderNav--rail{
+position:absolute !important;
+width:1px !important;
+height:1px !important;
+overflow:hidden !important;
+clip:rect(0,0,0,0) !important;
+white-space:nowrap !important;
+clip-path:inset(50%) !important;
+margin:-1px !important;
+padding:0 !important;
+border:0 !important;
+}
+body.siteNavOpen .siteHeaderInner > .siteHeaderNav.siteHeaderNav--rail{
+display:flex !important;
+position:fixed !important;
+width:auto !important;
+height:auto !important;
+overflow:visible !important;
+clip:auto !important;
+clip-path:none !important;
+margin:0 !important;
 }
 .siteHeaderGrabLogo{
 display:none !important;
@@ -6752,6 +6801,7 @@ display:flex !important;
 justify-content:center !important;
 align-items:center !important;
 width:100% !important;
+transform:none !important;
 }
 .siteHeaderSloganImg{
 display:block !important;
@@ -8180,14 +8230,21 @@ if(sloganWrap){
 bottom = Math.max(bottom, sloganWrap.getBoundingClientRect().bottom);
 }
 const isDesktop = window.matchMedia("(min-width:980px)").matches;
-const buffer = isDesktop ? 10 : 20;
-const minPad = isDesktop ? 160 : 120;
+const buffer = isDesktop ? 10 : 24;
+const minPad = isDesktop ? 160 : 152;
 const pad = Math.max(Math.ceil(bottom) + buffer, minPad);
 const prevPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 0;
 if(Math.abs(pad - prevPad) < 2) return;
 document.documentElement.style.setProperty("--site-header-stack", pad + "px");
 }catch(_e){}
 }
+document.querySelectorAll(".siteHeaderLogo, .siteHeaderSloganImg").forEach((img) => {
+if(!img || img.__headerStackBound) return;
+img.__headerStackBound = true;
+const bump = () => requestAnimationFrame(syncSiteHeaderStackHeight);
+if(img.complete) bump();
+else img.addEventListener("load", bump, { once: true });
+});
 let headerStackResizeTimer = null;
 window.addEventListener("resize", () => {
 clearTimeout(headerStackResizeTimer);
@@ -8301,6 +8358,10 @@ if(document.visibilityState === "visible") initPreviewVideos();
 window.addEventListener("pointerdown", () => initPreviewVideos(), { passive:true, once:true });
 (function initSloganCursorFollow(){
 if(!siteHeaderSloganWrap) return;
+if(window.matchMedia("(max-width:979px), (hover:none) and (pointer:coarse)").matches){
+siteHeaderSloganWrap.style.transform = "none";
+return;
+}
 const panRange = 14;
 const scaleRange = 0.06;
 let targetX = 0, targetY = 0, targetS = 1;
@@ -8462,6 +8523,9 @@ if(!aboutModal) return;
 if(typeof syncSiteHeaderStackHeight === "function") syncSiteHeaderStackHeight();
 aboutModal.classList.add("active");
 aboutModal.setAttribute("aria-hidden", "false");
+requestAnimationFrame(() => {
+if(typeof syncSiteHeaderStackHeight === "function") syncSiteHeaderStackHeight();
+});
 }
 function hideAboutModal(){
 if(!aboutModal) return;
