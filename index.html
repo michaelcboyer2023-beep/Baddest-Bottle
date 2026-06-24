@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="app-version" content="live-2026-05-18-iphone-header-about-fix"/>
+<meta name="app-version" content="live-2026-05-18-mobile-preview-pan"/>
 <!--
   Production: deploy to Vercel (see README). Set STRIPE_SECRET_KEY + SITE_URL for checkout.
 -->
@@ -7947,6 +7947,17 @@ function scrollToBuilder(){
   if(el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   updateSiteNavActive("builder");
 }
+function isMobileBuilder(){
+  return window.innerWidth < 980;
+}
+function scrollToMainPreview(){
+  if(!isMobileBuilder()) return;
+  const preview = document.querySelector("#bb-builder .previewShell") || document.getElementById("shapeFrameTop");
+  if(!preview) return;
+  const headerPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 88;
+  const top = preview.getBoundingClientRect().top + window.scrollY - headerPad - 8;
+  window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+}
 function wireLandingAndPlatformNav(){
   const build = document.getElementById("bbHeroBuildBtn");
   const gallery = document.getElementById("bbHeroGalleryBtn");
@@ -7993,11 +8004,7 @@ function initMobileBuilderDock(){
     previewBtn.__bound = true;
     previewBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      const preview = document.querySelector("#bb-builder .previewShell");
-      if(!preview) return;
-      const headerPad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--site-header-stack")) || 88;
-      const top = preview.getBoundingClientRect().top + window.scrollY - headerPad - 8;
-      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+      scrollToMainPreview();
     });
   }
   const syncDock = () => {
@@ -11379,8 +11386,7 @@ const ryLo = -(ch - dh) / 2;
 const ryHi = (ch - dh) / 2;
 photoOffsetX = clamp(photoOffsetX, Math.min(rxLo, rxHi), Math.max(rxLo, rxHi));
 photoOffsetY = clamp(photoOffsetY, Math.min(ryLo, ryHi), Math.max(ryLo, ryHi));
-return;
-}
+} else {
 const centeredX = (BASE - dw) / 2;
 const centeredY = (BASE - dh) / 2;
 const edgeX1 = bounds.x + bounds.w - dw - centeredX;
@@ -11390,6 +11396,10 @@ const edgeY2 = bounds.y - centeredY;
 
 photoOffsetX = clamp(photoOffsetX, Math.min(edgeX1, edgeX2), Math.max(edgeX1, edgeX2));
 photoOffsetY = clamp(photoOffsetY, Math.min(edgeY1, edgeY2), Math.max(edgeY1, edgeY2));
+}
+if(window.innerWidth < 980){
+photoOffsetX = 0;
+}
 }
 function getMaskBounds(){
 if (window._maskBounds) return window._maskBounds;
@@ -14608,6 +14618,8 @@ btn.addEventListener('click', async () => {
 const prompts = AI_CATEGORIES[category];
 if(!prompts || prompts.length === 0) return;
 
+if(isMobileBuilder()) scrollToMainPreview();
+
 // Add loading bar inside this button (mobile and desktop)
 // Remove loading from all buttons first
 document.querySelectorAll('#aiCategoryButtons .btn').forEach(b => {
@@ -15910,7 +15922,7 @@ const dx = x - drag.startX;
 const dy = y - drag.startY;
 
 if(drag.target==="photo"){
-photoOffsetX = drag.startOX + dx;
+photoOffsetX = drag.startOX + (window.innerWidth < 980 ? 0 : dx);
 photoOffsetY = drag.startOY + dy;
 clampPhotoOffsets();
 } else if(drag.target==="text" && drag.idx>=0){
@@ -15960,7 +15972,7 @@ const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
 const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 const rect = canvas.getBoundingClientRect();
 const s = BASE / rect.width;
-photoOffsetX = pinchStartOX + (midX - pinchStartMidX) * s;
+photoOffsetX = pinchStartOX + (window.innerWidth < 980 ? 0 : (midX - pinchStartMidX) * s);
 photoOffsetY = pinchStartOY + (midY - pinchStartMidY) * s;
 clampPhotoOffsets();
 if(!pinchRaf) pinchRaf = requestAnimationFrame(()=>{ pinchRaf=0; renderAll(); });
@@ -16072,7 +16084,7 @@ const dx = x - drag.startX;
 const dy = y - drag.startY;
 
 if(drag.target === "photo"){
-photoOffsetX = drag.startOX + dx;
+photoOffsetX = drag.startOX + (isMobileBuilder() ? 0 : dx);
 photoOffsetY = drag.startOY + dy;
 clampPhotoOffsets();
 pushMainPreviewUpdate();
