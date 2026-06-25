@@ -34,7 +34,7 @@ Custom reusable bottle designer, community gallery, and ecommerce flow aligned w
 
 ## Firebase setup
 
-1. Project **`baddest-bottle`** (config is already in `index.html`).
+1. Project **`baddest-bottle-8aa9b`** (config is in `index.html`).
 2. Enable **Authentication** (Google, email), **Firestore**, **Storage**.
 3. Firestore collection: **`orders`** (document ID = order ID, e.g. `BB-…`).
 4. Start with test rules, then lock down before launch:
